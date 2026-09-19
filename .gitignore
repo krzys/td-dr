@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+test/.visual/
+gallery/
+*.log
+.DS_Store
+test/.tmp/

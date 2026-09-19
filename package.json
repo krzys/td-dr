@@ -1,0 +1,29 @@
+{
+  "name": "tddr",
+  "version": "0.0.0",
+  "private": true,
+  "description": "td;dr (too divvy; didn't render) — compile normal HTML/CSS into email-safe HTML",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "tsc --noEmit && vitest run"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "dependencies": {
+    "css-select": "^7.0.0",
+    "dom-serializer": "^3.1.1",
+    "lightningcss": "^1.33.0",
+    "parse5": "^8.0.1",
+    "parse5-htmlparser2-tree-adapter": "^8.0.1",
+    "postcss": "^8.5.30"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}
