@@ -1,0 +1,9 @@
+{
+  "url": "https://www.caniemail.com/api/data.json",
+  "api_version": "1.0.4",
+  "last_update_date": "2026-09-16 13:05:00 +0000",
+  "features": 308,
+  "sha256": "7328f873fae3bb24455d10bf3005464b2af12cbbcc5b54da51683d4911235628",
+  "fetched_at": "2026-10-18",
+  "license": "MIT, (c) 2019 Rémi Parmentier (https://github.com/hteumeuleu/caniemail)"
+}

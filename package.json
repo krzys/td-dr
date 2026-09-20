@@ -10,7 +10,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "tsc --noEmit && vitest run"
+    "check": "tsc --noEmit && vitest run",
+    "caniemail": "node --experimental-strip-types scripts/caniemail.ts"
   },
   "packageManager": "pnpm@10.28.0",
   "dependencies": {
