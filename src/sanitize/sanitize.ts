@@ -1,0 +1,214 @@
+import type { Ctx } from "../ctx.ts";
+import type { SrcLoc } from "../loc.ts";
+import { children, findAllElements, findElement, isComment, isElement, isText, locOf, type DomChild, type DomDocument, type DomElement, type DomNode } from "../parse/dom.ts";
+import type { ParsedDoc } from "../parse/html.ts";
+import { TDDR_TAGS } from "../template/chain.ts";
+import { TEMPLATE_ATTRS } from "../template/hints.ts";
+import { markChains } from "./chains.ts";
+
+const DROP_TAGS = new Set(["script", "noscript", "template", "style", "link", "meta", "title", "base"]);
+const URL_ATTRS = new Set(["href", "src", "action", "formaction", "background"]);
+
+// Conditional comments the MSO patterns depend on, in all their spellings.
+const MSO_COMMENT = /^\s*(\[if[\s\]]|\[endif\]|<!\[endif\])/;
+
+// Browsers drop tabs/newlines and trim control chars around the scheme.
+const isJsUrl = (v: string): boolean => v.replace(/[\x00-\x20]/g, "").toLowerCase().startsWith("javascript:");
+
+// Kept <svg> is author markup shown in a mail client's webview: no data: links, no embedded
+// HTML, no references to other documents.
+// parse5 stores xlink:href under the key href, so the second name only matters for hand-built trees.
+const SVG_HREFS = ["href", "xlink:href"];
+// These can pull in another document, so only #fragment references survive.
+const SAME_DOC_ONLY = new Set(["use", "feimage"]);
+const ANIMATORS = new Set(["animate", "set", "animatemotion", "animatetransform"]);
+// SMIL can set an href at runtime and so dodge the attribute checks below.
+const animatesHref = (c: { name: string; attribs: Record<string, string> }): boolean =>
+  ANIMATORS.has(c.name.toLowerCase()) && SVG_HREFS.includes((c.attribs.attributename ?? c.attribs.attributeName ?? "").trim().toLowerCase());
+const isDataUrl = (v: string): boolean => v.replace(/[\x00-\x20]/g, "").toLowerCase().startsWith("data:");
+
+const detach = (kids: DomChild[], drop: DomChild): void => {
+  const i = kids.indexOf(drop);
+  const prev = kids[i - 1] ?? null;
+  const next = kids[i + 1] ?? null;
+  if (prev) prev.next = next;
+  if (next) next.prev = prev;
+  kids.splice(i, 1);
+  drop.parent = null;
+};
+
+// raw / outlook-only blocks that only held a preheader would otherwise leave an empty shell.
+const pruneEmptyHints = (el: DomNode): void => {
+  if (!isElement(el) || !/^(raw|outlook-only)$/.test(el.attribs["data-email"] ?? "")) return;
+  if (children(el).some((c) => !(isText(c) && c.data.trim() === ""))) return;
+  const parent = el.parent;
+  if (!parent) return;
+  detach(children(parent), el);
+  pruneEmptyHints(parent);
+};
+
+const templateAttr = (el: DomElement): string | undefined => {
+  if ((TDDR_TAGS as readonly string[]).includes(el.name)) return `<${el.name}>`;
+  const a = TEMPLATE_ATTRS.find((name) => el.attribs[name] !== undefined);
+  return a && `${a}="${el.attribs[a]}"`;
+};
+
+const PREHEADER_HINT = "The preheader is one string and takes no blocks. Put the condition on the content of a placeholder instead, e.g. send the preheader text as a field.";
+
+type Category = "script" | "handler" | "jsUrl" | "svg";
+const WHAT: Record<Category, string> = {
+  script: "script element",
+  handler: "event handler attribute",
+  jsUrl: "javascript: URL",
+  svg: "unsafe SVG content",
+};
+
+export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
+  const document = doc.document.cloneNode(true) as DomDocument;
+  const body: DomElement | undefined = findElement(document, (el) => el.name === "body");
+  if (!body) throw new Error("cloned document lost its <body>");
+
+  // One I001 per category, pointing at the first hit.
+  const firstHit = new Map<Category, SrcLoc | undefined>();
+  const note = (k: Category, n: DomNode): void => {
+    if (!firstHit.has(k)) firstHit.set(k, locOf(n));
+  };
+
+  const preheader: string[] = [];
+  // only what a reader would see; stylesheet-hidden text can't be known here
+  const shown = (n: DomNode): string => {
+    if (isText(n)) return n.data;
+    if (!isElement(n) || "hidden" in n.attribs || /display\s*:\s*none/i.test(n.attribs["style"] ?? "")) return "";
+    return children(n).map(shown).join("");
+  };
+
+  // The preheader leaves the body here, before any template hint is read, so a hint on, in or
+  // around it would just be ignored.
+  const hintAt = (el: DomElement, message: string): void => ctx.diagnostics.report("E012", { message, hint: PREHEADER_HINT, loc: locOf(el) });
+
+  // A nested preheader stays in its parent's subtree so the text reads in document order.
+  let inPreheader = false;
+  let guard: string | undefined;
+  let inSvg = false;
+  const walk = (node: DomNode): void => {
+    const kids = children(node);
+    for (const c of [...kids]) {
+      if (isComment(c)) {
+        if (!MSO_COMMENT.test(c.data)) detach(kids, c);
+        continue;
+      }
+      if (!isElement(c)) continue;
+      const hint = templateAttr(c);
+      if (hint && inPreheader) hintAt(c, `${hint} inside a preheader`);
+      if (c.attribs["data-email"] === "preheader") {
+        if (hint && !inPreheader) hintAt(c, `${hint} on a preheader`);
+        else if (guard && !inPreheader) hintAt(c, `a preheader inside ${guard} is always sent`);
+        const nested = inPreheader;
+        inPreheader = true;
+        walk(c);
+        inPreheader = nested;
+        if (nested) continue;
+        const text = children(c).map(shown).join("").replace(/\s+/g, " ").trim();
+        if (text) preheader.push(text);
+        else {
+          ctx.diagnostics.report("W007", {
+            message: "Preheader has no visible text and was dropped",
+            hint: "Put the preview text inside the data-email=\"preheader\" element, and don't hide it with display:none or hidden.",
+            loc: locOf(c),
+          });
+        }
+        const parent = c.parent;
+        detach(kids, c);
+        if (parent) pruneEmptyHints(parent);
+        continue;
+      }
+      // an svg title is its accessible name; DROP_TAGS is about the head title
+      if (DROP_TAGS.has(c.name) && !(inSvg && c.name === "title")) {
+        if (c.name === "script") note("script", c);
+        detach(kids, c);
+        continue;
+      }
+      const lower = c.name.toLowerCase();
+      if (inSvg && (lower === "foreignobject" || (SAME_DOC_ONLY.has(lower) && SVG_HREFS.some((h) => !(c.attribs[h] ?? "#").trim().startsWith("#"))) || animatesHref(c))) {
+        note("svg", c);
+        detach(kids, c);
+        continue;
+      }
+      for (const [name, value] of Object.entries(c.attribs)) {
+        if (name.startsWith("on")) {
+          note("handler", c);
+          delete c.attribs[name];
+        } else if ((URL_ATTRS.has(name) || (inSvg || lower === "svg") && name === "xlink:href") && isJsUrl(value)) {
+          note("jsUrl", c);
+          delete c.attribs[name];
+        } else if ((inSvg || lower === "svg") && SVG_HREFS.includes(name) && isDataUrl(value)) {
+          note("svg", c);
+          delete c.attribs[name];
+        }
+        // data-* (data-v-* scoped styles, data-reactroot…) stay until the cascade has
+        // used them; serializeStyled drops them from the output.
+      }
+      const outer = guard;
+      guard = hint ?? guard;
+      const wasSvg = inSvg;
+      inSvg ||= lower === "svg";
+      walk(c);
+      inSvg = wasSvg;
+      guard = outer;
+    }
+  };
+  // <picture> compiles as its <img>: the fallback every client loads anyway
+  const pictureSelectors = new Set<string>();
+  const stripped = doc.styles.map((s) => s.css.replace(/\/\*[\s\S]*?\*\//g, ""));
+  for (const css of stripped) {
+    for (const m of css.matchAll(/([^{}]+)\{/g)) {
+      for (const sel of m[1]!.split(",").map((x) => x.trim())) {
+        if (!sel.startsWith("@") && /(^|[\s>+~(])picture(?![\w-])/.test(sel)) pictureSelectors.add(sel);
+      }
+    }
+  }
+  for (const pic of findAllElements(body, (e) => e.name === "picture")) {
+    const img = children(pic).find((k): k is DomElement => isElement(k) && k.name === "img");
+    const parent = pic.parent;
+    if (!img || !parent) continue;
+    const sources = children(pic).some((k) => isElement(k) && k.name === "source");
+    const own = ["class", "style", "id"].filter((k) => pic.attribs[k] !== undefined);
+    const extra = children(pic).filter((k) => k !== img && !isComment(k) && !(isElement(k) && k.name === "source") && !(isText(k) && k.data.trim() === ""));
+    if (sources) ctx.diagnostics.report("I007", { message: "<picture> sources dropped, the <img> is used", loc: locOf(pic) });
+    if (own.length > 0) {
+      ctx.diagnostics.report("W001", {
+        message: `<picture> ${own.join("/")} attributes dropped, the <img> is used: what they style is lost`,
+        hint: "Put the class or style on the <img> itself.",
+        loc: locOf(pic),
+      });
+    }
+    if (extra.length > 0) {
+      ctx.diagnostics.report("W001", {
+        message: "<picture> content other than <source> and the first <img> is dropped",
+        hint: "A <picture> compiles as its first <img>; move anything else out of it.",
+        loc: locOf(pic),
+      });
+    }
+    for (const sel of pictureSelectors) {
+      ctx.diagnostics.report("W001", {
+        message: `selector "${sel}" targets a <picture>, which compiles as its <img>: it no longer matches there`,
+        hint: "Select the image itself (img, .hero img) or give the <img> a class.",
+        loc: locOf(pic),
+      });
+    }
+    pictureSelectors.clear();
+    children(parent).splice(children(parent).indexOf(pic), 1, img);
+    img.parent = parent;
+    img.prev = pic.prev;
+    img.next = pic.next;
+    if (pic.prev) pic.prev.next = img;
+    if (pic.next) pic.next.prev = img;
+  }
+  walk(body);
+  markChains(body, ctx);
+
+  for (const [k, loc] of firstHit) ctx.diagnostics.report("I001", { message: `Removed ${WHAT[k]}`, loc });
+
+  const meta = preheader.length > 0 ? { ...doc.meta, preheader: preheader.join(" ") } : doc.meta;
+  return { document, body, styles: doc.styles, meta };
+};
