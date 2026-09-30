@@ -1,0 +1,16 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #1f2937; font-size: 15px; line-height: 22px;">
+  <div style="display: flex; gap: 16px; padding: 16px 24px; background: #f9fafb;">
+    <div style="width: 180px;"><b>{{plan.name}}</b><br>{{plan.price}} a month</div>
+    <div style="flex: 1;">
+      <div data-email-if="plan.renews" style="padding: 10px 12px; background: #dcfce7; color: #166534;">Renews on {{plan.renewsOn}}.</div>
+      <div data-email-else style="padding: 10px 12px; background: #fee2e2; color: #991b1b;">Ends on {{plan.endsOn}}. <b>Renew now</b> to keep your files.</div>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px 24px;">
+    <div style="padding: 10px 12px; background: #f3f4f6;">Usage this month: {{usage.used}} of {{usage.limit}}</div>
+    <div data-email-if="usage.over" style="padding: 10px 12px; background: #fee2e2;">You are over your limit.</div>
+    <div data-email-else-if="usage.near" style="padding: 10px 12px; background: #fef3c7;">You are close to your limit.</div>
+    <div data-email-else style="padding: 10px 12px; background: #dcfce7;">Plenty of room left.</div>
+    <div style="padding: 10px 12px; background: #f3f4f6;">Manage your plan in settings.</div>
+  </div>
+</div>

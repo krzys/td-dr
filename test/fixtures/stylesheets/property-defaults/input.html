@@ -1,0 +1,36 @@
+<style>
+@layer theme, base, utilities;
+@layer theme {
+  :root { --color-ink: #0f172a; --color-line: #cbd5e1; --color-brand: #4338ca; --font-weight-bold: 700; }
+}
+@layer base {
+  *, ::after, ::before { box-sizing: border-box; margin: 0; padding: 0; border: 0 solid; }
+  body { font-family: Arial, Helvetica, sans-serif; color: var(--color-ink); background: #ffffff; }
+}
+@layer utilities {
+  .wrap { max-width: 600px; margin: 0 auto; padding: 24px; }
+  .border-b { border-bottom-style: var(--tw-border-style); border-bottom-width: 1px; }
+  .border-t { border-top-style: var(--tw-border-style); border-top-width: 2px; }
+  .border-dashed { --tw-border-style: dashed; border-style: dashed; }
+  .border-line { border-color: var(--color-line); }
+  .pb-4 { padding-bottom: 16px; }
+  .pt-4 { padding-top: 16px; }
+  .mt-4 { margin-top: 16px; }
+  .font-bold { --tw-font-weight: var(--font-weight-bold); font-weight: var(--font-weight-bold); }
+  .weight { font-weight: var(--tw-font-weight, 400); }
+  .text-brand { color: var(--tw-text-color); }
+  .text-lg { font-size: 18px; line-height: 26px; }
+  .text-sm { font-size: 14px; line-height: 20px; }
+}
+@property --tw-border-style { syntax: "*"; inherits: false; initial-value: solid; }
+@property --tw-font-weight { syntax: "*"; inherits: false; }
+@property --tw-text-color { syntax: "<color>"; inherits: true; initial-value: #4338ca; }
+</style>
+<div class="wrap">
+  <p class="text-lg font-bold border-b border-line pb-4">Your order has shipped</p>
+  <div class="font-bold mt-4">
+    <p class="weight text-sm">This line falls back to 400: --tw-font-weight doesn't inherit.</p>
+  </div>
+  <p class="text-sm text-brand mt-4">This line uses the registered initial colour.</p>
+  <p class="text-sm border-t border-dashed border-line pt-4 mt-4">A dashed rule set by a utility that changes the variable.</p>
+</div>

@@ -1,0 +1,1 @@
+{ "trip": { "cancelled": false, "changed": true, "accepted": false, "city": "Oslo", "refund": "", "legs": [{ "from": "Leeds", "to": "Oslo", "time": "09:30", "late": false }], "notes": [{ "text": "New departure time." }] } }

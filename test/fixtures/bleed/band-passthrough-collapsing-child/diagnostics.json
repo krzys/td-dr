@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-bottom: -24px is negative and a child's margin-bottom collapses into it",
+    "hint": "Give the band padding-bottom (or remove the child's margin-bottom) so the bleed is the only margin on that edge.",
+    "loc": {
+      "line": 9,
+      "col": 3
+    }
+  }
+]

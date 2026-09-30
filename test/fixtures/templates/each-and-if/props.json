@@ -1,0 +1,9 @@
+{
+  "show": true,
+  "user": { "name": "Ada" },
+  "deals": [
+    { "title": "Green tea", "price": "$9", "onSale": true, "was": "$12" },
+    { "title": "Teapot", "price": "$30", "onSale": false, "was": null },
+    { "title": "Strainer", "price": "$4", "onSale": true, "was": "$5" }
+  ]
+}

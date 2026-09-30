@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook can't wrap auto-width items in a wrapping row; give them a px width or flex-basis",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow is ignored in a wrapping row with auto-width items",
+    "hint": "The auto items' widths are decided by the table, so there is no leftover to grow into; give every item a basis.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  }
+]

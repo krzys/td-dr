@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "margin is only partly supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Partial. Negative values are not supported.",
+    "loc": {
+      "line": 5,
+      "col": 24
+    }
+  }
+]

@@ -1,0 +1,222 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Translucent colour kept as written (background-color: rgba(255, 255, 255, 0.06); border-top-color: rgba(255, 255, 255, 0.12); border-right-color: rgba(255, 255, 255, 0.12); border-bottom-color: rgba(255, 255, 255, 0.12); border-left-color: rgba(255, 255, 255, 0.12)): it sits over a gradient, photo or colour td;dr can't resolve",
+    "hint": "Outlook ignores rgba() and some Gmail and Yahoo clients drop it; use a solid colour here.",
+    "loc": {
+      "line": 42,
+      "col": 7
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (10 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 31,
+      "col": 3
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "letter-spacing is only partly supported in Outlook Windows (4 places)",
+    "hint": "Partial. Big negative values are rendered differently from CSS standards.",
+    "loc": {
+      "line": 34,
+      "col": 5
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "linear-gradient() isn't supported in Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Android (2 places)",
+    "hint": "Gradients can be created in VML using `type=\"gradient\"` on a `<v:fill>`. See [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element#gradient-fill).",
+    "loc": {
+      "line": 41,
+      "col": 5
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "an rgba() colour isn't supported in Outlook Windows; partly in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Whitespace syntax is not supported (`rgb(0 128 0 / 1)`).",
+    "loc": {
+      "line": 42,
+      "col": 7
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (4 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 55,
+      "col": 7
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "background-image isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Background images can be used in VML. See [backgrounds.cm](https://backgrounds.cm/) and [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element).",
+    "loc": {
+      "line": 92,
+      "col": 5
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "opacity isn't supported in Gmail Mobile Webmail, Outlook Windows",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 92,
+      "col": 5
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 11px is very small",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 31,
+      "col": 28
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 10px is very small (5 places)",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 87,
+      "col": 5
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Text clipped to its background becomes solid #2f3cff",
+    "hint": "Email clients can't clip a background to text; the first colour stop is used. Set a solid color to choose it.",
+    "loc": {
+      "line": 34,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook button size is estimated; give the button a px width",
+    "hint": "Outlook draws rounded buttons with a fixed-size shape, so td;dr guesses it from the text.",
+    "loc": {
+      "line": 37,
+      "col": 5
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Outlook shows the gradient's first colour, #0b0b3d",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 41,
+      "col": 5
+    }
+  },
+  {
+    "code": "I004",
+    "severity": "info",
+    "message": "<a href> around a block: the link moves onto the 5 text runs or images inside",
+    "hint": "Email clients can't make a whole box a link (Outlook drops a link around a table), so each text run and image inside gets the href; the padding between them isn't clickable.",
+    "loc": {
+      "line": 40,
+      "col": 3
+    }
+  },
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-left: -8px is negative",
+    "hint": "Negative margins on flex and grid items are never lowered: space the items with gap or padding, or for an overlap (an avatar stack) use a single pre-composed image.",
+    "loc": {
+      "line": 77,
+      "col": 7
+    }
+  },
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-left: -8px is negative",
+    "hint": "Negative margins on flex and grid items are never lowered: space the items with gap or padding, or for an overlap (an avatar stack) use a single pre-composed image.",
+    "loc": {
+      "line": 78,
+      "col": 7
+    }
+  },
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-left: -8px is negative",
+    "hint": "Negative margins on flex and grid items are never lowered: space the items with gap or padding, or for an overlap (an avatar stack) use a single pre-composed image.",
+    "loc": {
+      "line": 79,
+      "col": 7
+    }
+  },
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-left: -8px is negative",
+    "hint": "Negative margins on flex and grid items are never lowered: space the items with gap or padding, or for an overlap (an avatar stack) use a single pre-composed image.",
+    "loc": {
+      "line": 80,
+      "col": 7
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Text clipped to its background becomes solid #2f3cff",
+    "hint": "Email clients can't clip a background to text; the first colour stop is used. Set a solid color to choose it.",
+    "loc": {
+      "line": 83,
+      "col": 5
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "overflow: hidden is dropped: content that sticks out of this box will show instead of being cut off, and nothing is clipped to its rounded corners",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 86,
+      "col": 3
+    }
+  },
+  {
+    "code": "E002",
+    "severity": "error",
+    "message": "position: absolute on <div> is not supported",
+    "hint": "Absolute, fixed and sticky positioning do not work in email clients; use normal flow or flex. Without strict mode the element stays where it sits in the HTML.",
+    "loc": {
+      "line": 92,
+      "col": 5
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Text clipped to its background becomes solid #c7cdfb",
+    "hint": "Email clients can't clip a background to text; the first colour stop is used. Set a solid color to choose it.",
+    "loc": {
+      "line": 92,
+      "col": 5
+    }
+  }
+]

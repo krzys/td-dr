@@ -1,0 +1,22 @@
+[
+  {
+    "code": "E007",
+    "severity": "error",
+    "message": "flex-wrap: wrap-reverse is not supported",
+    "hint": "Supported: flex-direction row/column, gap, justify-content, align-items, flex-grow/basis, flex-wrap.",
+    "loc": {
+      "line": 5,
+      "col": 1
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "columns overflow the row (618 > 552) and were scaled down",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 5,
+      "col": 1
+    }
+  }
+]

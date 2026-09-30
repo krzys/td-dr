@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "min-height 300px on a flex row: browsers stretch the painted items to it, the cells only reach their content",
+    "hint": "Table cells can't stretch items to a min-height; give each item its own px min-height.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

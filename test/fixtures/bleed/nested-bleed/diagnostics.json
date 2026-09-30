@@ -1,0 +1,32 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 9,
+      "col": 1
+    }
+  },
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-right: -24px is negative",
+    "hint": "To overlap items (an avatar stack), use spacing between them, or a single pre-composed image. A negative margin only works as a full-bleed band that exactly cancels the parent's padding.",
+    "loc": {
+      "line": 10,
+      "col": 22
+    }
+  },
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-left: -24px is negative",
+    "hint": "To overlap items (an avatar stack), use spacing between them, or a single pre-composed image. A negative margin only works as a full-bleed band that exactly cancels the parent's padding.",
+    "loc": {
+      "line": 10,
+      "col": 22
+    }
+  }
+]

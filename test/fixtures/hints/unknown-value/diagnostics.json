@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E011",
+    "severity": "error",
+    "message": "Unknown data-email value \"rwa\"",
+    "hint": "Valid values: raw, outlook-only, preheader, button.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

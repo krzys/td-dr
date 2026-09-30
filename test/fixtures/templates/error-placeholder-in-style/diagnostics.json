@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E013",
+    "severity": "error",
+    "message": "Placeholder in CSS",
+    "hint": "A field can be the whole value of color, background-color, background, border-color or border-*-color, or the colour of a border shorthand. Anywhere else td;dr needs the real value to lower the layout: pick between fixed styles with data-email-if / -unless.",
+    "loc": {
+      "line": 2,
+      "col": 57
+    }
+  }
+]

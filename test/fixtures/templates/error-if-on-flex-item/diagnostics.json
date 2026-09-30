@@ -1,0 +1,22 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "width is only partly supported in Outlook Windows",
+    "hint": "Partial. Not supported on `<body>`, `<span>`, `<div>`, `<p>` or `<img>` elements.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-if on an item of a row or grid",
+    "hint": "data-email-each / -if / -unless work on a block in a stack or on text-level elements; on a row item or grid cell the column widths would depend on data. Wrap the row in the construct, or put it inside the cell.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  }
+]

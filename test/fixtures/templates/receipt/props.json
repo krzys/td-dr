@@ -1,0 +1,16 @@
+{
+  "paid": true,
+  "brand": { "name": "Teahouse", "logo": "96x32.png" },
+  "user": { "name": "Ada" },
+  "order": {
+    "id": "A-1042", "date": "May 3, 2026", "total": "$63.00", "card": "Card 4242", "payUrl": "https://shop.test/pay/A-1042",
+    "items": [
+      { "name": "Sencha tea", "qty": 2, "price": "$24.00", "discount": "-$4.00" },
+      { "name": "Cast iron pot", "qty": 1, "price": "$35.00", "discount": null },
+      { "name": "Cups", "qty": 3, "price": "$4.00", "discount": null }
+    ]
+  },
+  "shipping": { "name": "Ada Lindholm", "street": "Rua das Flores 12", "city": "Porto" },
+  "billing": { "name": "Ada Lindholm", "street": "Rua das Flores 12", "city": "Porto" },
+  "support": { "email": "help@shop.test" }
+}

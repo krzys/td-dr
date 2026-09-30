@@ -1,0 +1,62 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "min-width: 160px is dropped",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 7,
+      "col": 3
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "min-width: 160px is dropped",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 8,
+      "col": 3
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "min-width: 160px is dropped",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 9,
+      "col": 3
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "min-width: 160px is dropped",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 10,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch in a wrapping row",
+    "hint": "Wrapped items are separate inline blocks, so painted cards of different heights on one line stay ragged. Use align-items: flex-start to make that explicit.",
+    "loc": {
+      "line": 6,
+      "col": 1
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow in a wrapping row is resolved at the design width (568px); below it, grown items keep that width as a cap",
+    "hint": "On a phone, stacked grow items fill the line only up to their grown width, and a line stacks earlier than in the browser.",
+    "loc": {
+      "line": 6,
+      "col": 1
+    }
+  }
+]

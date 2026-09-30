@@ -1,0 +1,4 @@
+<style>
+@supports (-webkit-appearance: none) { @font-face { font-family: Brand; src: url(https://example.com/brand.woff2) format("woff2"); } }
+</style>
+<p style="margin:0;font-family:Brand,Arial,sans-serif">A face under a false @supports is not collected, so nothing is emitted.</p>

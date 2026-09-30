@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I009",
+    "severity": "info",
+    "message": "Language defaulted to English",
+    "hint": "Screen readers pick a voice from lang. Set <html lang>, the lang option (--lang), or export const lang = \"de\" in a component.",
+    "loc": {
+      "line": 3,
+      "col": 1
+    }
+  }
+]

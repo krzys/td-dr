@@ -1,0 +1,8 @@
+[
+  {
+    "code": "I008",
+    "severity": "info",
+    "message": "Web font kept: A, B",
+    "hint": "Apple Mail, iOS and Samsung load it; Gmail, Yahoo and Outlook show the next font in the stack."
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (5 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 52,
+      "col": 5
+    }
+  },
+  {
+    "code": "W017",
+    "severity": "warning",
+    "message": "Transparent image may vanish in dark mode",
+    "hint": "Gmail apps and Outlook darken the background behind it, so dark ink disappears. Give it a light outline or a solid background baked into the image.",
+    "loc": {
+      "line": 73,
+      "col": 5
+    }
+  }
+]

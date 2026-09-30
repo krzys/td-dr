@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E007",
+    "severity": "error",
+    "message": "flex-direction: column-reverse is not supported",
+    "hint": "Supported: flex-direction row/column, gap, justify-content, align-items, flex-grow/basis, flex-wrap.",
+    "loc": {
+      "line": 6,
+      "col": 1
+    }
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-if=\"order.paid\" on a preheader",
+    "hint": "The preheader is one string and takes no blocks. Put the condition on the content of a placeholder instead, e.g. send the preheader text as a field.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "a preheader inside data-email-unless=\"order.paid\" is always sent",
+    "hint": "The preheader is one string and takes no blocks. Put the condition on the content of a placeholder instead, e.g. send the preheader text as a field.",
+    "loc": {
+      "line": 4,
+      "col": 5
+    }
+  }
+]

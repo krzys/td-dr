@@ -1,0 +1,22 @@
+[
+  {
+    "code": "I007",
+    "severity": "info",
+    "message": "<picture> sources dropped, the <img> is used",
+    "hint": "A <picture> compiles as its <img>; Gmail, Outlook and Yahoo ignore <source> anyway, so size the <img> for every client.",
+    "loc": {
+      "line": 7,
+      "col": 3
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "selector \"picture img\" targets a <picture>, which compiles as its <img>: it no longer matches there",
+    "hint": "Select the image itself (img, .hero img) or give the <img> a class.",
+    "loc": {
+      "line": 7,
+      "col": 3
+    }
+  }
+]

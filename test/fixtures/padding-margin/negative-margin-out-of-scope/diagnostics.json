@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-top: -12px is negative",
+    "hint": "A vertical bleed must equal the parent's padding-top (24px) and sit on its first child.",
+    "loc": {
+      "line": 8,
+      "col": 3
+    }
+  }
+]

@@ -1,0 +1,1 @@
+{ "trip": { "cancelled": true, "changed": true, "accepted": false, "city": "Rome", "refund": "€240", "legs": [], "notes": [] } }

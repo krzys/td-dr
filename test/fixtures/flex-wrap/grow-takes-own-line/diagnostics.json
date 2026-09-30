@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch in a wrapping row",
+    "hint": "Wrapped items are separate inline blocks, so painted cards of different heights on one line stay ragged. Use align-items: flex-start to make that explicit.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "a wrapping item needs a px flex-basis or width to know when to wrap",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 4,
+      "col": 3
+    }
+  }
+]

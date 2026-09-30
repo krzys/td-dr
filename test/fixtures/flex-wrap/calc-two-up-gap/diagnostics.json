@@ -1,0 +1,52 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (4 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 13,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 14,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 19,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 24,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 29,
+      "col": 5
+    }
+  }
+]

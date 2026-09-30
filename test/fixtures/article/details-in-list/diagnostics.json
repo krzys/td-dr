@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "<details> has no disclosure widget in most email clients: its content shows expanded",
+    "hint": "Apple Mail may keep it collapsible; elsewhere the summary and content are always visible. Drop <details> or write the content as plain blocks.",
+    "loc": {
+      "line": 2,
+      "col": 7
+    }
+  }
+]

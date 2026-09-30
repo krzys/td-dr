@@ -1,0 +1,18 @@
+[
+  {
+    "code": "I008",
+    "severity": "info",
+    "message": "Web font kept: Inter, Lora",
+    "hint": "Apple Mail, iOS and Samsung load it; Gmail, Yahoo and Outlook show the next font in the stack."
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Font stacks fall back to different fonts (Arial, Georgia); Outlook for Windows uses the most used fallback, Arial, for all of them",
+    "hint": "Use the same web-safe font after the web font in every stack.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  }
+]

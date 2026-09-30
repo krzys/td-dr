@@ -1,0 +1,1 @@
+{ "user": { "name": "Ada", "vip": true, "trial": false, "staff": false, "verified": true, "optedOut": false, "bounced": false }, "cart": { "empty": false, "expired": true }, "promo": { "active": true, "code": "VIP20" } }

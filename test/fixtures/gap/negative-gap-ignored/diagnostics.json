@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W002",
+    "severity": "warning",
+    "message": "row-gap: -4px is invalid (a gap can't be negative) and was ignored",
+    "hint": "The declaration or rule could not be parsed and was ignored.",
+    "loc": {
+      "line": 6,
+      "col": 3
+    }
+  },
+  {
+    "code": "W002",
+    "severity": "warning",
+    "message": "column-gap: -6px is invalid (a gap can't be negative) and was ignored",
+    "hint": "The declaration or rule could not be parsed and was ignored.",
+    "loc": {
+      "line": 10,
+      "col": 3
+    }
+  }
+]

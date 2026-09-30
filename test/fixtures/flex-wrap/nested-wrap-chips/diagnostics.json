@@ -1,0 +1,82 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (8 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 12,
+      "col": 7
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "extra space is left under the last line of this wrapping row",
+    "hint": "The row gap becomes bottom spacing on every item; a padding-bottom of 6px on the row absorbs it.",
+    "loc": {
+      "line": 11,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "items in this wrapping row sit up to 3px in from its edges",
+    "hint": "Email has no negative margins, so the row's side padding has to absorb half the gap at each edge. Add padding: 0 3px to the row.",
+    "loc": {
+      "line": 11,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook can't wrap auto-width items in a wrapping row; give them a px width or flex-basis",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 11,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "extra space is left under the last line of this wrapping row",
+    "hint": "The row gap becomes bottom spacing on every item; a padding-bottom of 6px on the row absorbs it.",
+    "loc": {
+      "line": 21,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "items in this wrapping row sit up to 3px in from its edges",
+    "hint": "Email has no negative margins, so the row's side padding has to absorb half the gap at each edge. Add padding: 0 3px to the row.",
+    "loc": {
+      "line": 21,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook can't wrap auto-width items in a wrapping row; give them a px width or flex-basis",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 21,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch in a wrapping row",
+    "hint": "Wrapped items are separate inline blocks, so painted cards of different heights on one line stay ragged. Use align-items: flex-start to make that explicit.",
+    "loc": {
+      "line": 8,
+      "col": 1
+    }
+  }
+]

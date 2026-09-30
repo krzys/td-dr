@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I007",
+    "severity": "info",
+    "message": "<picture> sources dropped, the <img> is used",
+    "hint": "A <picture> compiles as its <img>; Gmail, Outlook and Yahoo ignore <source> anyway, so size the <img> for every client.",
+    "loc": {
+      "line": 7,
+      "col": 38
+    }
+  }
+]

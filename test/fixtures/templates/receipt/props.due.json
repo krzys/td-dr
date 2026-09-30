@@ -1,0 +1,12 @@
+{
+  "paid": false,
+  "brand": { "name": "Teahouse", "logo": "96x32.png" },
+  "user": { "name": "Grace" },
+  "order": {
+    "id": "A-2001", "date": "June 9, 2026", "total": "$9.00", "card": "", "payUrl": "https://shop.test/pay/A-2001",
+    "items": [ { "name": "Matcha", "qty": 1, "price": "$9.00", "discount": null } ]
+  },
+  "shipping": { "name": "Grace Holden", "street": "1 Navy Way", "city": "Arlington" },
+  "billing": { "name": "Grace Holden", "street": "1 Navy Way", "city": "Arlington" },
+  "support": { "email": "help@shop.test" }
+}

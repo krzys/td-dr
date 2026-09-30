@@ -1,0 +1,22 @@
+[
+  {
+    "code": "E007",
+    "severity": "error",
+    "message": "order: 2 is not supported",
+    "hint": "a repeated or conditional item can't be placed at compile time",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "E007",
+    "severity": "error",
+    "message": "order: 2 is not supported",
+    "hint": "a repeated or conditional item can't be placed at compile time",
+    "loc": {
+      "line": 4,
+      "col": 3
+    }
+  }
+]

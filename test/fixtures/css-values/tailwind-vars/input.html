@@ -1,0 +1,22 @@
+<style>
+  :root {
+    --spacing: 0.25rem;
+    --color-indigo-600: oklch(51.1% 0.262 276.966);
+    --color-slate-800: oklch(27.9% 0.041 260.031);
+    --color-slate-100: oklch(96.8% 0.007 247.896);
+    --text-sm: 0.875rem;
+    --text-sm--line-height: calc(1.25 / 0.875);
+  }
+  .wrap { max-width: 600px; margin: 0 auto; font-family: Helvetica, Arial, sans-serif; color: var(--color-slate-800); }
+  .card { background-color: var(--color-slate-100); padding: calc(var(--spacing) * 6); border: 2px solid color-mix(in oklab, var(--color-indigo-600) 50%, white); }
+  .title { margin: 0 0 calc(var(--spacing) * 3); font-size: calc(var(--text-sm) * 2); line-height: 1.2; color: var(--color-indigo-600); }
+  .body { margin: 0; font-size: var(--text-sm); line-height: var(--text-sm--line-height); }
+  .band { margin-top: calc(var(--spacing) * 4); padding: calc(var(--spacing) * 4) calc(var(--spacing) * 6); background-color: var(--color-indigo-600); color: white; font-size: var(--text-sm); }
+</style>
+<div class="wrap">
+  <div class="card">
+    <h1 class="title">Calc and colour lowering</h1>
+    <p class="body">Spacing comes from calc(var(--spacing) * n), colours from oklch() theme variables and a color-mix() border. All of it must come out as px and hex.</p>
+    <div class="band">Indigo band</div>
+  </div>
+</div>

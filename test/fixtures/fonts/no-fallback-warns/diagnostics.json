@@ -1,0 +1,18 @@
+[
+  {
+    "code": "W013",
+    "severity": "warning",
+    "message": "Web font without a fallback",
+    "hint": "List a web-safe font and a generic family after it, e.g. Inter, Arial, sans-serif.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "I008",
+    "severity": "info",
+    "message": "Web font kept: Inter",
+    "hint": "Apple Mail, iOS and Samsung load it; Gmail, Yahoo and Outlook show the next font in the stack."
+  }
+]

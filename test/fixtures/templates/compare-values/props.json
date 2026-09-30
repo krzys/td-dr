@@ -1,0 +1,1 @@
+{ "order": { "number": "A-1001", "taxExempt": "Yes", "taxExemptReason": "Resale certificate", "tax": "$0.00", "shipping": "$9.00", "partial": "Yes", "methods": [{ "name": "Ground", "code": "GND" }, { "name": "Two day", "code": "EXP" }] } }

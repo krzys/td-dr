@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "% and calc() columns with a gap stop sharing a line once the row is narrower than 420px in the source, but stay side by side in the output",
+    "hint": "The gap is fixed while the columns shrink with the line; use a smaller gap or percentages that leave more room.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  }
+]

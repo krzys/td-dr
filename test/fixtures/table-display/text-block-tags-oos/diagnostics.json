@@ -1,0 +1,32 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "margin is only partly supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (2 places)",
+    "hint": "Partial. Negative values are not supported.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "E001",
+    "severity": "error",
+    "message": "display: table on <ul> is not supported",
+    "hint": "Use display: table with display: table-cell children (or table-row of cells), or display: flex.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "E001",
+    "severity": "error",
+    "message": "display: table on <h1> is not supported",
+    "hint": "Use display: table with display: table-cell children (or table-row of cells), or display: flex.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  }
+]

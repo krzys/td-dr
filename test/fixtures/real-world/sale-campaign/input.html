@@ -1,0 +1,176 @@
+<style>
+  body { margin: 0; background: #64748b; }
+  .page { background: #64748b; padding: 16px 0; font-family: Inter, "Helvetica Neue", Arial, sans-serif; color: #111827; }
+  .email { max-width: 600px; margin: 0 auto; background: #ffffff; }
+  .display { font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .hero { background-color: #2f3f4a; background-image: url(https://img.example/600x620.png); background-size: cover; background-position: center; color: #ffffff; }
+  .header { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); }
+  .nav { display: flex; justify-content: center; gap: 24px; }
+  .nav a { color: #ffffff; font-size: 13px; text-decoration: none; }
+  .hero-top { display: flex; justify-content: space-between; align-items: center; padding: 28px 24px 0 32px; }
+  .big { font-size: 140px; line-height: 1; margin: 0; font-weight: 400; }
+  .terms { width: 180px; font-size: 11px; line-height: 1.4; margin: 0; }
+  .hero-off { display: flex; justify-content: flex-end; padding: 150px 96px 0 0; }
+  .hero-copy { padding: 24px 32px 40px; font-size: 15px; line-height: 1.5; max-width: 420px; }
+  .hero-copy strong { font-weight: 700; }
+  .code { color: #facc15; font-weight: 700; }
+
+  .products { padding: 40px 40px 48px; text-align: center; }
+  .products h2 { font-size: 32px; line-height: 1.05; margin: 0 0 16px; font-weight: 400; }
+  .lead { color: #4b5563; font-size: 13px; line-height: 1.5; margin: 0 auto 32px; max-width: 320px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 32px 20px; text-align: left; }
+  .card { flex: 1 1 calc(50% - 10px); }
+  .tile { background: #e5e5e5; border-radius: 8px; overflow: hidden; }
+  .tile img { display: block; width: 100%; height: auto; }
+  .card-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 16px; }
+  .card-row h3 { font-size: 20px; margin: 0; font-weight: 400; }
+  .price { color: #2563eb; font-size: 20px; }
+  .cat { color: #6b7280; font-size: 12px; margin: 4px 0 0; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; }
+  .btn-dark { background: #111111; color: #ffffff; margin-top: 40px; }
+  .btn-yellow { background: #facc15; color: #111111; }
+
+  .arrivals { background: #111111; color: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 40px 0; }
+  .arrivals img { display: block; border-radius: 10px; }
+  .arrivals .left { border-radius: 0 10px 10px 0; }
+  .arrivals .right { border-radius: 10px 0 0 10px; }
+  .arrivals-copy { text-align: center; }
+  .arrivals-copy h2 { font-size: 40px; margin: 0 0 12px; font-weight: 400; }
+  .eyebrow { font-size: 12px; letter-spacing: 2px; margin: 0 0 8px; }
+  .arrivals-copy p.sub { font-size: 12px; line-height: 1.5; margin: 0 0 20px; }
+
+  .benefits { background: #f3f4f6; padding: 32px 28px; margin: 4px; }
+  .benefits-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+  .benefits-head h2 { font-size: 30px; line-height: 1.05; margin: 0; font-weight: 400; max-width: 240px; }
+  .portraits { display: flex; gap: 6px; }
+  .portraits img { border-radius: 6px; display: block; }
+  .features { display: flex; gap: 8px; }
+  .feature { flex: 1; background: #ffffff; border-radius: 8px; padding: 14px 10px; }
+  .feature img { display: block; margin-bottom: 12px; }
+  .feature p { color: #4b5563; font-size: 11px; line-height: 1.5; margin: 0; }
+
+  .footer { background: linear-gradient(160deg, #6b5e4c 0%, #2d3a40 55%, #1e293b 100%); color: #ffffff; text-align: center; }
+  .strip { display: flex; align-items: center; gap: 12px; padding: 12px 0; overflow: hidden; white-space: nowrap; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
+  .strip span { font-size: 16px; }
+  .footer-body { padding: 8px 60px 32px; }
+  .footer .nav { padding: 12px 0 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+  .social { display: flex; justify-content: center; gap: 20px; margin: 20px 0 16px; }
+  .unsub { font-size: 10px; margin: 0 0 16px; }
+  .unsub a { color: #facc15; }
+</style>
+
+<div class="page">
+  <div class="email">
+    <section class="hero">
+      <div class="header">
+        <img src="https://img.example/96x24.png" width="96" height="24" alt="Linnet">
+        <nav class="nav">
+          <a href="https://linnet.example/">Home</a>
+          <a href="https://linnet.example/products">Products</a>
+          <a href="https://linnet.example/solutions">Solutions</a>
+          <a href="https://linnet.example/help">Help</a>
+          <a href="https://linnet.example/about">About</a>
+        </nav>
+      </div>
+      <div class="hero-top">
+        <h1 class="big display">40%</h1>
+        <p class="terms">Discount applies to the first month for new customers only. Not combinable with other promotions or discounts.</p>
+      </div>
+      <div class="hero-off">
+        <p class="big display">Off</p>
+      </div>
+      <p class="hero-copy">We are celebrating Black Friday with a <strong>40% discount</strong> on our site. Use promo code <span class="code">CLOTH40</span> on your checkout. Have a great weekend!</p>
+    </section>
+
+    <section class="products">
+      <h2 class="display">Fast sellers made for<br>casual everydays</h2>
+      <p class="lead">These are selling out for a reason. This absurd comfort you can almost feel through the screen</p>
+      <div class="grid">
+        <div class="card">
+          <div class="tile"><img src="https://img.example/250x200.png" width="250" height="200" alt="Thick Denim jacket"></div>
+          <div class="card-row"><h3 class="display">Thick Denim Jacket</h3><span class="price display">$113</span></div>
+          <p class="cat">Man's T-Shirt</p>
+        </div>
+        <div class="card">
+          <div class="tile"><img src="https://img.example/250x200.png" width="250" height="200" alt="Fine striped shirt"></div>
+          <div class="card-row"><h3 class="display">Fine Striped Shirt</h3><span class="price display">$153</span></div>
+          <p class="cat">Man's T-Shirt</p>
+        </div>
+        <div class="card">
+          <div class="tile"><img src="https://img.example/250x200.png" width="250" height="200" alt="Soft plain t-shirt"></div>
+          <div class="card-row"><h3 class="display">Soft Plain T-Shirt</h3><span class="price display">$183</span></div>
+          <p class="cat">Man's T-Shirt</p>
+        </div>
+        <div class="card">
+          <div class="tile"><img src="https://img.example/250x200.png" width="250" height="200" alt="Soft beach dress"></div>
+          <div class="card-row"><h3 class="display">Soft Beach Dress</h3><span class="price display">$123</span></div>
+          <p class="cat">Man's T-Shirt</p>
+        </div>
+      </div>
+      <a class="btn btn-dark" href="https://linnet.example/shop">Shop Now <img src="https://img.example/16x16.png" width="16" height="16" alt=""></a>
+    </section>
+
+    <section class="arrivals">
+      <img class="left" src="https://img.example/130x120.png" width="130" height="120" alt="">
+      <div class="arrivals-copy">
+        <h2 class="display">30% Off</h2>
+        <p class="eyebrow">NEW ARRIVALS</p>
+        <p class="sub">Get into the newest hotness<br>before it's all gone</p>
+        <a class="btn btn-yellow" href="https://linnet.example/new">Shop Now <img src="https://img.example/16x16.png" width="16" height="16" alt=""></a>
+      </div>
+      <img class="right" src="https://img.example/130x120.png" width="130" height="120" alt="">
+    </section>
+
+    <section class="benefits">
+      <div class="benefits-head">
+        <h2 class="display">The benefits you gain from our services</h2>
+        <div class="portraits">
+          <img src="https://img.example/80x80.png" width="80" height="80" alt="" style="background: #ecfccb;">
+          <img src="https://img.example/80x80.png" width="80" height="80" alt="" style="background: #c7d2fe;">
+        </div>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <img src="https://img.example/24x24.png" width="24" height="24" alt="">
+          <p>Earn points on every purchase and action</p>
+        </div>
+        <div class="feature">
+          <img src="https://img.example/24x24.png" width="24" height="24" alt="">
+          <p>Redeem points for Linnet vouchers</p>
+        </div>
+        <div class="feature">
+          <img src="https://img.example/24x24.png" width="24" height="24" alt="">
+          <p>Invite more friends, earn more rewards</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="strip">
+        <img src="https://img.example/20x20.png" width="20" height="20" alt=""><span class="display">Linnet</span>
+        <img src="https://img.example/20x20.png" width="20" height="20" alt=""><span class="display">Linnet</span>
+        <img src="https://img.example/20x20.png" width="20" height="20" alt=""><span class="display">Linnet</span>
+        <img src="https://img.example/20x20.png" width="20" height="20" alt=""><span class="display">Linnet</span>
+        <img src="https://img.example/20x20.png" width="20" height="20" alt=""><span class="display">Linnet</span>
+        <img src="https://img.example/20x20.png" width="20" height="20" alt=""><span class="display">Linnet</span>
+      </div>
+      <div class="footer-body">
+        <nav class="nav">
+          <a href="https://linnet.example/">Home</a>
+          <a href="https://linnet.example/products">Products</a>
+          <a href="https://linnet.example/solutions">Solutions</a>
+          <a href="https://linnet.example/help">Help</a>
+          <a href="https://linnet.example/about">About</a>
+        </nav>
+        <div class="social">
+          <a href="https://linnet.example/videos"><img src="https://img.example/24x24.png" width="24" height="24" alt="Videos"></a>
+          <a href="https://linnet.example/clips"><img src="https://img.example/24x24.png" width="24" height="24" alt="Clips"></a>
+          <a href="https://linnet.example/chat"><img src="https://img.example/24x24.png" width="24" height="24" alt="Chat"></a>
+        </div>
+        <p class="unsub">Don't want to receive this email? <a href="https://linnet.example/unsubscribe">Unsubscribe</a></p>
+        <img src="https://img.example/96x24.png" width="96" height="24" alt="Linnet">
+      </div>
+    </footer>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+<title></title>
+<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+<style>
+body { margin:0; padding:0; width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+table, td { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
+a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
+u + .body a { color:inherit; text-decoration:none; }
+</style>
+</head>
+<body id="body" class="body" style="margin:0;padding:0;">
+<div role="article" aria-roledescription="email" lang="en">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;">
+<tr><td align="center" style="padding:0;">
+<!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td width="600"><![endif]-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;table-layout:fixed;">
+<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="width:100%;max-width:600px;margin:0 auto;table-layout:fixed;">
+<tr>
+<td bgcolor="#f3f4f6" style="padding:20px 24px;background-color:#f3f4f6;"><h1 style="font-size:20px;font-family:Arial, Helvetica, sans-serif;color:#1f2937;line-height:26px;font-weight:bold;mso-line-height-rule:exactly;margin:0">Your order, {{ user.name | escape }}</h1></td>
+</tr>
+{% assign tddr-1 = false %}{% if order.ship.city == user.city %}{% unless order.pickup and order.pickup != 0 and order.pickup != "" %}{% assign tddr-1 = true %}{% endunless %}{% endif %}{% if tddr-1 %}
+<tr>
+<td bgcolor="#dcfce7" style="padding:12px 24px;background-color:#dcfce7;color:#166534;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Delivered to your door in {{ user.city | escape }}.</td>
+</tr>
+{% endif %}
+{% if order.coupon != "" or user.vip and user.vip != 0 and user.vip != "" %}
+<tr>
+<td bgcolor="#fef3c7" style="padding:12px 24px;background-color:#fef3c7;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">A discount was applied to this order.</td>
+</tr>
+{% endif %}
+{% if user.tier == "gold" and order.currency == user.currency %}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Gold members pay no fees.</td>
+</tr>
+{% elsif order.currency != user.currency %}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Charged in {{ order.currency | escape }}; your bank may add a fee.</td>
+</tr>
+{% else %}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">No fees on this order.</td>
+</tr>
+{% endif %}
+{% for line in order.lines %}
+<tr>
+<td style="padding:6px 24px;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">
+    {{ line.name | escape }}{% if line.sku == wish.sku and line.stock and line.stock != 0 and line.stock != "" %}<b style="color:#b45309;font-weight:bold"> (on your wish list)</b>{% endif %}
+  </td>
+</tr>
+{% endfor %}
+</table>
+</td>
+</tr>
+</table></td></tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td></tr>
+</table>
+</div>
+</body>
+</html>

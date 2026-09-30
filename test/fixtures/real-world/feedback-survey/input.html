@@ -1,0 +1,94 @@
+<style>
+  .email { max-width: 600px; margin: 0 auto; background: #ffffff; font-family: Helvetica, Arial, sans-serif; color: #0f172a; }
+  .browser-bar { background: #f4f4f8; border-radius: 0 0 8px 8px; padding: 6px 0; text-align: center; font-size: 11px; }
+  .browser-bar a { color: #334155; text-decoration: none; }
+  .header { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 40px 28px; text-align: center; }
+  .wordmark { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; background: linear-gradient(90deg, #2f3cff, #e86bb8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .headline { margin: 12px 0 0; font-size: 34px; line-height: 40px; font-weight: 700; letter-spacing: -1px; }
+  .intro { margin: 0; max-width: 300px; font-size: 13px; line-height: 18px; color: #64748b; }
+  .cta { display: inline-block; background: #1f3bff; color: #ffffff; text-decoration: none; font-size: 13px; padding: 8px 18px; border-radius: 999px; }
+  .rating-card { margin: 0 auto; width: 380px; height: 186px; border-radius: 12px; background: linear-gradient(135deg, #0b0b3d 0%, #1e2a9c 45%, #050522 60%, #4a63e8 100%); display: flex; align-items: center; justify-content: center; }
+  .rating-inner { width: 300px; height: 96px; border-radius: 12px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .star { color: #ffffff; font-size: 26px; line-height: 26px; }
+  .points { width: 380px; margin: 40px auto 0; }
+  .points h2 { margin: 0 0 28px; font-size: 15px; font-weight: 700; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; }
+  .point { border-top: 1px solid #94a3b8; padding-top: 14px; }
+  .point h3 { margin: 0 0 2px; font-size: 13px; font-weight: 700; }
+  .point p { margin: 0; font-size: 12px; line-height: 16px; color: #64748b; }
+  .team { width: 390px; margin: 64px auto 0; background: #f4f4f8; border-radius: 12px; padding: 28px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .avatars { display: flex; }
+  .avatars img { border-radius: 50%; border: 2px solid #ffffff; display: block; }
+  .avatars img + img { margin-left: -8px; }
+  .team p { margin: 0; font-size: 14px; line-height: 20px; color: #0f172a; }
+  .team .wordmark { font-size: 16px; }
+  .footer { position: relative; overflow: hidden; margin-top: 48px; background: #f4f4f8; border-radius: 12px 12px 0 0; padding: 32px 24px 150px; text-align: center; font-size: 10px; line-height: 18px; color: #475569; }
+  .footer p { margin: 0 0 14px; position: relative; z-index: 1; }
+  .footer a { color: #0f172a; font-weight: 700; text-decoration: none; }
+  .watermark { position: absolute; left: 0; right: 0; bottom: -40px; font-size: 180px; line-height: 180px; font-weight: 700; letter-spacing: -6px; background: linear-gradient(90deg, #c7cdfb, #f6cfe3); -webkit-background-clip: text; background-clip: text; color: transparent; opacity: 0.6; }
+</style>
+<div class="email">
+  <div class="browser-bar"><a href="https://velra.example/email/feedback">View this email in your browser</a></div>
+
+  <div class="header">
+    <span class="wordmark">Velra</span>
+    <h1 class="headline">We'd love<br>your feedback.</h1>
+    <p class="intro">You're using Velra, and we want to make sure it's working brilliantly for you. Mind answering a few quick questions?</p>
+    <a class="cta" href="https://velra.example/survey">Take 30 seconds</a>
+  </div>
+
+  <a href="https://velra.example/survey" style="display: block; text-decoration: none;">
+    <div class="rating-card">
+      <div class="rating-inner">
+        <span class="star">&#9733;</span>
+        <span class="star">&#9733;</span>
+        <span class="star">&#9733;</span>
+        <span class="star">&#9733;</span>
+        <span class="star">&#9733;</span>
+      </div>
+    </div>
+  </a>
+
+  <div class="points">
+    <h2>You're helping us to:</h2>
+    <div class="grid">
+      <div class="point">
+        <h3>Focus on what matters.</h3>
+        <p>Prioritize features you actually care about.</p>
+      </div>
+      <div class="point">
+        <h3>Work smarter together.</h3>
+        <p>Improve your daily workflow.</p>
+      </div>
+      <div class="point">
+        <h3>Design with intention.</h3>
+        <p>Build a better experience for everyone.</p>
+      </div>
+      <div class="point">
+        <h3>Move faster.</h3>
+        <p>Shape what we build next, sooner.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="team">
+    <div class="avatars">
+      <img src="https://img.example/32x32.png" width="32" height="32" alt="Maya">
+      <img src="https://img.example/32x32.png" width="32" height="32" alt="Daniel">
+      <img src="https://img.example/32x32.png" width="32" height="32" alt="Priya">
+      <img src="https://img.example/32x32.png" width="32" height="32" alt="Tom">
+      <img src="https://img.example/32x32.png" width="32" height="32" alt="Lena">
+    </div>
+    <p>Thanks from our team @</p>
+    <span class="wordmark">Velra</span>
+  </div>
+
+  <div class="footer">
+    <p>You received this email because you created an account or subscribed to updates from Velra.</p>
+    <p>Velra Technologies Inc.<br>2135 Alder Street, Suite 403<br>Vancouver, BC V6J 3R4, Canada</p>
+    <p style="margin-bottom: 0;">To update your communication settings or to unsubscribe, use the links below.<br>
+      <a href="https://velra.example/preferences">Manage Preferences</a> | <a href="https://velra.example/unsubscribe">Unsubscribe</a><br>
+      &copy; 2025 Velra Technologies Inc. All rights reserved.</p>
+    <div class="watermark" aria-hidden="true">Velra</div>
+  </div>
+</div>

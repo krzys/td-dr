@@ -1,0 +1,232 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Translucent colour kept as written (border-bottom-color: rgba(255, 255, 255, 0.25)): it sits over a gradient, photo or colour td;dr can't resolve",
+    "hint": "Outlook ignores rgba() and some Gmail and Yahoo clients drop it; use a solid colour here.",
+    "loc": {
+      "line": 66,
+      "col": 7
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Translucent colour kept as written (border-bottom-color: rgba(255, 255, 255, 0.15)): it sits over a gradient, photo or colour td;dr can't resolve",
+    "hint": "Outlook ignores rgba() and some Gmail and Yahoo clients drop it; use a solid colour here.",
+    "loc": {
+      "line": 150,
+      "col": 7
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Translucent colour kept as written (border-bottom-color: rgba(255, 255, 255, 0.2)): it sits over a gradient, photo or colour td;dr can't resolve",
+    "hint": "Outlook ignores rgba() and some Gmail and Yahoo clients drop it; use a solid colour here.",
+    "loc": {
+      "line": 159,
+      "col": 9
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "an rgba() colour isn't supported in Outlook Windows; partly in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (3 places)",
+    "hint": "Whitespace syntax is not supported (`rgb(0 128 0 / 1)`).",
+    "loc": {
+      "line": 66,
+      "col": 7
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (14 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 91,
+      "col": 11
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (2 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 111,
+      "col": 7
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "linear-gradient() isn't supported in Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Android",
+    "hint": "Gradients can be created in VML using `type=\"gradient\"` on a `<v:fill>`. See [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element#gradient-fill).",
+    "loc": {
+      "line": 149,
+      "col": 5
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 11px is very small (4 places)",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 78,
+      "col": 9
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 10px is very small (2 places)",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 171,
+      "col": 9
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: center can't center text by its content size; use text-align",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 68,
+      "col": 9
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 92,
+      "col": 11
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 97,
+      "col": 11
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 102,
+      "col": 11
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 107,
+      "col": 11
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow on a calc() flex-basis is ignored; the item keeps its calc() width",
+    "hint": "This only matters when its line has room left over; if the line is already full, flex: 0 0 calc(...) says the same thing. A px flex-basis lets an item grow.",
+    "loc": {
+      "line": 90,
+      "col": 9
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow on a calc() flex-basis is ignored; the item keeps its calc() width",
+    "hint": "This only matters when its line has room left over; if the line is already full, flex: 0 0 calc(...) says the same thing. A px flex-basis lets an item grow.",
+    "loc": {
+      "line": 95,
+      "col": 9
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow on a calc() flex-basis is ignored; the item keeps its calc() width",
+    "hint": "This only matters when its line has room left over; if the line is already full, flex: 0 0 calc(...) says the same thing. A px flex-basis lets an item grow.",
+    "loc": {
+      "line": 100,
+      "col": 9
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow on a calc() flex-basis is ignored; the item keeps its calc() width",
+    "hint": "This only matters when its line has room left over; if the line is already full, flex: 0 0 calc(...) says the same thing. A px flex-basis lets an item grow.",
+    "loc": {
+      "line": 105,
+      "col": 9
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch",
+    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
+    "loc": {
+      "line": 129,
+      "col": 11
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch",
+    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
+    "loc": {
+      "line": 130,
+      "col": 11
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Outlook shows the gradient's first colour, #6b5e4c",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 149,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "overflow: hidden cuts the line off in most clients; Outlook ignores it, so the line may wrap or stretch the table there",
+    "hint": "Outlook Windows has no overflow clipping. Keep the content within the width, or accept that Outlook shows all of it.",
+    "loc": {
+      "line": 150,
+      "col": 7
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Outlook shows the background colour; set a px min-height to get the photo in Outlook",
+    "hint": "Outlook draws a background photo through VML, which needs a px width and height.",
+    "loc": {
+      "line": 65,
+      "col": 5
+    }
+  }
+]

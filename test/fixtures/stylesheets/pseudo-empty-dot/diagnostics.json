@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Selector \"li::before\" draws a box with empty content, which can't be inserted, so it was skipped",
+    "hint": "Write the bar or dot as a real element (a <div> or <td> with the width, height and background).",
+    "loc": {
+      "line": 2,
+      "col": 16
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 6,
+      "col": 3
+    }
+  }
+]

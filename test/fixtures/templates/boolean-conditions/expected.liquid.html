@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+<title></title>
+<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+<style>
+body { margin:0; padding:0; width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+table, td { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
+a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
+u + .body a { color:inherit; text-decoration:none; }
+</style>
+</head>
+<body id="body" class="body" style="margin:0;padding:0;">
+<div role="article" aria-roledescription="email" lang="en">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;">
+<tr><td align="center" style="padding:0;">
+<!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td width="600"><![endif]-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;table-layout:fixed;">
+<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="width:100%;max-width:600px;margin:0 auto;table-layout:fixed;">
+<tr>
+<td bgcolor="#f3f4f6" style="padding:20px 24px;background-color:#f3f4f6;"><h1 style="font-size:20px;font-family:Arial, Helvetica, sans-serif;color:#1f2937;line-height:26px;font-weight:bold;mso-line-height-rule:exactly;margin:0">Hello {{ user.name | escape }}</h1></td>
+</tr>
+{% assign tddr-1 = false %}{% if user.vip and user.vip != 0 and user.vip != "" %}{% unless user.trial and user.trial != 0 and user.trial != "" %}{% assign tddr-1 = true %}{% endunless %}{% endif %}{% if tddr-1 %}
+<tr>
+<td bgcolor="#ede9fe" style="padding:12px 24px;background-color:#ede9fe;color:#5b21b6;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">You are a VIP member. Free shipping on everything.</td>
+</tr>
+{% endif %}
+{% assign tddr-2 = false %}{% if cart.empty and cart.empty != 0 and cart.empty != "" %}{% assign tddr-2 = true %}{% endif %}{% if cart.expired and cart.expired != 0 and cart.expired != "" %}{% assign tddr-2 = true %}{% endif %}{% if tddr-2 %}
+<tr>
+<td bgcolor="#fef3c7" style="padding:12px 24px;background-color:#fef3c7;color:#92400e;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Your cart is waiting. Pick up where you left off.</td>
+</tr>
+{% endif %}
+{% assign tddr-3 = false %}{% if promo.active and promo.active != 0 and promo.active != "" %}{% if user.vip and user.vip != 0 and user.vip != "" %}{% assign tddr-3 = true %}{% endif %}{% if user.staff and user.staff != 0 and user.staff != "" %}{% assign tddr-3 = true %}{% endif %}{% endif %}{% if tddr-3 %}
+<tr>
+<td bgcolor="#dcfce7" style="padding:12px 24px;background-color:#dcfce7;color:#166534;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Members' sale: {{ promo.code | escape }} takes 20% off.</td>
+</tr>
+{% endif %}
+{% assign tddr-4 = false %}{% if user.trial and user.trial != 0 and user.trial != "" %}{% assign tddr-4 = true %}{% endif %}{% unless user.verified and user.verified != 0 and user.verified != "" %}{% assign tddr-4 = true %}{% endunless %}{% if user.vip and user.vip != 0 and user.vip != "" and promo.active and promo.active != 0 and promo.active != "" %}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Early access starts tonight.</td>
+</tr>
+{% elsif tddr-4 %}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Finish setting up your account to get early access.</td>
+</tr>
+{% else %}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Early access opens for everyone on Friday.</td>
+</tr>
+{% endif %}
+{% assign tddr-5 = false %}{% unless user.optedOut and user.optedOut != 0 and user.optedOut != "" %}{% unless user.bounced and user.bounced != 0 and user.bounced != "" %}{% assign tddr-5 = true %}{% endunless %}{% endunless %}{% if tddr-5 %}
+<tr>
+<td style="padding:12px 24px;"><p style="font-size:13px;font-family:Arial, Helvetica, sans-serif;color:#6b7280;line-height:22px;mso-line-height-rule:exactly;margin:0">You get this newsletter every week.</p></td>
+</tr>
+{% endif %}
+</table>
+</td>
+</tr>
+</table></td></tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td></tr>
+</table>
+</div>
+</body>
+</html>

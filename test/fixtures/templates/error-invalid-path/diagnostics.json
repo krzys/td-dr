@@ -1,0 +1,42 @@
+[
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-if=\"order.items[0]\" is not a data path",
+    "hint": "Use a dotted name such as order.items, or for -if/-unless a comparison: status == 'paid'.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-as=\"my line\" is not a name",
+    "hint": "Use a plain identifier such as line or item that isn't a template keyword or helper.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-as without data-email-each",
+    "hint": "The alias names the loop variable of data-email-each; remove it or add the list.",
+    "loc": {
+      "line": 4,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-unless=\"a b\" is not a data path",
+    "hint": "Use a dotted name such as order.items, or for -if/-unless a comparison: status == 'paid'.",
+    "loc": {
+      "line": 5,
+      "col": 30
+    }
+  }
+]

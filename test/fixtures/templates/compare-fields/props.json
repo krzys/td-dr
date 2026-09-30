@@ -1,0 +1,1 @@
+{ "user": { "name": "Ada", "city": "Leeds", "store": "S2" }, "order": { "ship": { "city": "Leeds", "zip": "LS1" }, "bill": { "zip": "LS1" }, "stores": [{ "id": "S1", "name": "North" }, { "id": "S2", "name": "Central" }, { "id": "S3", "name": "South" }] } }

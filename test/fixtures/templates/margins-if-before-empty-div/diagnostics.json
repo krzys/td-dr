@@ -1,0 +1,22 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "a margin next to a repeated or conditional block adds to the margin beside it instead of collapsing",
+    "hint": "Put the spacing on one side only: padding on the container, or margin on just one of the two elements.",
+    "loc": {
+      "line": 4,
+      "col": 3
+    }
+  }
+]

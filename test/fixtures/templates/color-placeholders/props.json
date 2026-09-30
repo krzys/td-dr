@@ -1,0 +1,1 @@
+{ "brand": { "bg": "#1e3a8a", "fg": "#ffffff", "accent": "#f59e0b", "button": "#2563eb", "edge": "#1d4ed8" }, "user": { "name": "Ada" }, "order": { "tracking": "ZX-1001", "url": "https://shop.example/orders/1001" } }

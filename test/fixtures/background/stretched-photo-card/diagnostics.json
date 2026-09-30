@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Outlook shows the background colour in stretched columns, not the photo",
+    "hint": "VML needs a px height; a column that stretches to its row has none. Give the card its own row to get the photo.",
+    "loc": {
+      "line": 3,
+      "col": 5
+    }
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "overflow: hidden cuts the line off in most clients; Outlook ignores it, so the line may wrap or stretch the table there",
+    "hint": "Outlook Windows has no overflow clipping. Keep the content within the width, or accept that Outlook shows all of it.",
+    "loc": {
+      "line": 10,
+      "col": 5
+    }
+  }
+]

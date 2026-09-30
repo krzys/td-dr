@@ -1,0 +1,7 @@
+<div data-email="preheader" data-email-if="order.paid">Thanks for paying, {{user.name}}</div>
+<div style="font-family: Arial, Helvetica, sans-serif; font-size: 15px; padding: 16px;">
+  <div data-email-unless="order.paid">
+    <div data-email="preheader">Your order is waiting</div>
+    <p style="margin: 0;">Please pay.</p>
+  </div>
+</div>

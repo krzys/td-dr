@@ -1,0 +1,1 @@
+{ "user": { "name": "Cy", "vip": true, "trial": true, "staff": false, "verified": false, "optedOut": false, "bounced": true }, "cart": { "empty": true, "expired": false }, "promo": { "active": false, "code": "" } }

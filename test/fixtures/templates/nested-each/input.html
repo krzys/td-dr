@@ -1,0 +1,9 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 24px; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+  <div data-email-each="shipments" data-email-as="ship" style="padding: 12px 0; border-top: 1px solid #d1d5db;">
+    <h3 style="margin: 0 0 8px 0; font-size: 16px; line-height: 22px;">Shipment {{ship.id}} to {{ship.city}}</h3>
+    <div data-email-each="ship.parcels" data-email-as="parcel" style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; line-height: 20px;">
+      <span>{{parcel.label}}</span>
+      <span>{{parcel.weight}} {{units}}</span>
+    </div>
+  </div>
+</div>

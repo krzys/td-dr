@@ -1,0 +1,12 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+  <div style="padding: 20px 24px; background: #f3f4f6;">
+    <h1 style="margin: 0; font-size: 22px; line-height: 28px;">Invoice {{invoice.number}}</h1>
+  </div>
+  <div data-email-if="paid" style="padding: 16px 24px; background: #dcfce7; color: #166534; font-size: 15px; line-height: 22px;">
+    Paid in full on {{invoice.paidOn}}. Thank you!
+  </div>
+  <div data-email-else style="padding: 16px 24px; background: #fee2e2; color: #991b1b; font-size: 15px; line-height: 22px;">
+    <b>Payment due {{invoice.dueOn}}.</b> Amount outstanding: {{invoice.total}}.
+  </div>
+  <p style="margin: 0; padding: 20px 24px; font-size: 15px; line-height: 22px;">Total: {{invoice.total}}</p>
+</div>

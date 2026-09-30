@@ -1,0 +1,72 @@
+[
+  {
+    "code": "I010",
+    "severity": "info",
+    "message": "Link text \"Learn more\" doesn't say where it goes",
+    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook button size is estimated; give the button a px width",
+    "hint": "Outlook draws rounded buttons with a fixed-size shape, so td;dr guesses it from the text.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook button size is estimated; give the button a px width",
+    "hint": "Outlook draws rounded buttons with a fixed-size shape, so td;dr guesses it from the text.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch in a wrapping row",
+    "hint": "Wrapped items are separate inline blocks, so painted cards of different heights on one line stay ragged. Use align-items: flex-start to make that explicit.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "a button in a growing wrapping item keeps its basis width",
+    "hint": "The column grows but the button stays flex-basis wide; Outlook needs a px width for rounded corners.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "a button in a growing wrapping item keeps its basis width",
+    "hint": "The column grows but the button stays flex-basis wide; Outlook needs a px width for rounded corners.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow in a wrapping row is resolved at the design width (600px); below it, grown items keep that width as a cap",
+    "hint": "On a phone, stacked grow items fill the line only up to their grown width, and a line stacks earlier than in the browser.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  }
+]

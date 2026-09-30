@@ -1,0 +1,9 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 24px; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+  <p style="margin: 0 0 12px 0; font-size: 16px; line-height: 24px;">
+    Your order is <b data-email-if="paid" style="color: #15803d;">paid</b><b data-email-unless="paid" style="color: #b91c1c;">not paid yet</b>,
+    {{user.name}}.
+  </p>
+  <p style="margin: 0; font-size: 14px; line-height: 22px;">
+    Tags:<span data-email-each="tags" data-email-as="tag" style="margin-left: 6px; padding: 1px 6px; background: #e5e7eb; border-radius: 4px;">{{tag.name}}</span>
+  </p>
+</div>

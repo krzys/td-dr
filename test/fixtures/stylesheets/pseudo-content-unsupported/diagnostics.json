@@ -1,0 +1,52 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Selector \".hov:hover::before\" depends on state or pseudo-elements and was skipped",
+    "hint": "Styles are inlined, and Gmail and Outlook ignore :hover and ::before anyway; style the element itself.",
+    "loc": {
+      "line": 7,
+      "col": 3
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Selector \".q::before\" has a content value that isn't a plain string and was skipped",
+    "hint": "Only literal strings are inserted; write the text out as content: \"…\" or put it in the HTML.",
+    "loc": {
+      "line": 5,
+      "col": 16
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Selector \".none::before\" has a content value that isn't a plain string and was skipped",
+    "hint": "Only literal strings are inserted; write the text out as content: \"…\" or put it in the HTML.",
+    "loc": {
+      "line": 6,
+      "col": 19
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Selector \"a.link::after\" has a content value that isn't a plain string and was skipped",
+    "hint": "Only literal strings are inserted; write the text out as content: \"…\" or put it in the HTML.",
+    "loc": {
+      "line": 3,
+      "col": 19
+    }
+  },
+  {
+    "code": "I010",
+    "severity": "info",
+    "message": "Link text \"Link\" doesn't say where it goes",
+    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
+    "loc": {
+      "line": 10,
+      "col": 6
+    }
+  }
+]

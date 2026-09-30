@@ -1,0 +1,6 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #1f2937;">
+  <h2 style="margin: 0; font-size: 20px; line-height: 26px;">Hi {{user.name}}</h2>
+  <div data-email-if="banner" style="padding: 12px; background: #e0e7ff; border-radius: 6px;">{{banner}}</div>
+  <div data-email-each="tasks" data-email-as="task" style="padding: 8px 12px; background: #f3f4f6;">{{task.title}}</div>
+  <p style="margin: 0; font-size: 13px; color: #6b7280;">Sent by {{brand.name}}</p>
+</div>

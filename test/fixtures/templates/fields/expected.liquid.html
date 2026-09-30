@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+<title></title>
+<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+<style>
+body { margin:0; padding:0; width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+table, td { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
+a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
+u + .body a { color:inherit; text-decoration:none; }
+</style>
+</head>
+<body id="body" class="body" style="margin:0;padding:0;">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:transparent;opacity:0">Order {{ order.id | escape }} is on its way, {{ user.name | escape }}&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
+<div role="article" aria-roledescription="email" lang="en">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;">
+<tr><td align="center" style="padding:0;">
+<!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="648" align="center"><tr><td width="648"><![endif]-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:648px;table-layout:fixed;">
+<tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="width:100%;max-width:648px;margin:0 auto;table-layout:fixed;">
+<tr>
+<td style="padding:24px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td style="padding:0 0 16px 0;"><img src="https://img.test/{{ brand.logo | escape }}" alt="{{ brand.name | escape }} logo" width="120" height="40" style="display:block;border:0;outline:none;text-decoration:none;width:120px;height:40px;"></td>
+</tr>
+<tr>
+<td style="padding:0 0 8px 0;"><h1 style="font-family:Arial, Helvetica, sans-serif;color:#1f2937;font-size:24px;font-weight:bold;line-height:30px;mso-line-height-rule:exactly;margin:0">Hi {{ user.name | escape }},</h1></td>
+</tr>
+<tr>
+<td style="padding:0 0 16px 0;"><p style="font-family:Arial, Helvetica, sans-serif;color:#1f2937;font-size:15px;line-height:22px;mso-line-height-rule:exactly;margin:0">Order {{ order.id | escape }} comes to {{ order.total | escape }}. It ships to {{ shipping.city | escape }}.</p></td>
+</tr>
+<tr>
+<td style="padding:0 0 16px 0;"><!--[if mso]><v:roundrect href="{{ order.url | escape }}" xmlns:w="urn:schemas-microsoft-com:office:word" style="height:42px;v-text-anchor:middle;width:237px;" arcsize="14%" stroke="f" fillcolor="#1d4ed8"><w:anchorlock/><center style="color:#ffffff;font-family:Arial, Helvetica, sans-serif;font-size:15px;">View order {{ order.id | escape }}</center></v:roundrect><![endif]-->
+<!--[if !mso]><!--><table role="presentation" border="0" cellpadding="0" cellspacing="0" align="left" style="border-collapse:separate;">
+<tr>
+<td align="center" bgcolor="#1d4ed8" style="background-color:#1d4ed8;border-radius:6px;mso-padding-alt:12px 24px;">
+<a href="{{ order.url | escape }}" style="display:inline-block;padding:12px 24px;color:#ffffff;font-family:Arial, Helvetica, sans-serif;font-size:15px;text-decoration:none;text-align:left;">View order {{ order.id | escape }}</a>
+</td>
+</tr>
+</table><!--<![endif]--></td>
+</tr>
+<tr>
+<td><p style="font-family:Arial, Helvetica, sans-serif;color:#6b7280;font-size:13px;line-height:20px;mso-line-height-rule:exactly;margin:0">Questions? Write to <a href="mailto:{{ support.email | escape }}" style="color:#1d4ed8;text-decoration:underline">{{ support.email | escape }}</a>.</p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table></td></tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td></tr>
+</table>
+</div>
+</body>
+</html>

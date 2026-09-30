@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "adjacent cell borders are drawn twice in the browser (border-collapse: separate) and once in email",
+    "hint": "Set border-collapse: collapse on the table, or border on one side of the seam only.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  }
+]

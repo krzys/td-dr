@@ -1,0 +1,14 @@
+<style>
+  .card { font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 20px; max-width: 600px; margin: 0 auto; }
+  a.link::after { content: " (" attr(href) ")"; }
+  li::before { content: counter(item) ". "; }
+  .q::before { content: open-quote; }
+  .none::before { content: none; }
+  .hov:hover::before { content: "!"; }
+</style>
+<div class="card">
+  <p><a class="link" href="https://example.com">Link</a></p>
+  <p class="q">Quoted</p>
+  <p class="none">Nothing</p>
+  <p class="hov">Hover</p>
+</div>

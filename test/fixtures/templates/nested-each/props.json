@@ -1,0 +1,7 @@
+{
+  "units": "kg",
+  "shipments": [
+    { "id": "S1", "city": "Porto", "parcels": [ { "label": "Box A", "weight": "2.5" }, { "label": "Box B", "weight": "1.0" } ] },
+    { "id": "S2", "city": "Faro", "parcels": [ { "label": "Crate", "weight": "12.0" } ] }
+  ]
+}

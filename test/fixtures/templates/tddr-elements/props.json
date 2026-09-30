@@ -1,0 +1,1 @@
+{ "trip": { "cancelled": false, "changed": false, "accepted": false, "city": "Lisbon", "refund": "", "legs": [{ "from": "London", "to": "Paris", "time": "08:10", "late": false }, { "from": "Paris", "to": "Lisbon", "time": "13:45", "late": true }], "notes": [{ "text": "Bring your passport." }, { "text": "One bag included." }] } }

@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "min-width: 0 is dropped",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch in a wrapping row",
+    "hint": "Wrapped items are separate inline blocks, so painted cards of different heights on one line stay ragged. Use align-items: flex-start to make that explicit.",
+    "loc": {
+      "line": 4,
+      "col": 5
+    }
+  }
+]

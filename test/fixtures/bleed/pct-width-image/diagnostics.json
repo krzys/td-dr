@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-right: -24px is negative",
+    "hint": "A negative margin only works as a full-bleed band: it must exactly cancel the parent's padding, and a top or bottom bleed must be the parent's first or last child with its own padding on that edge.",
+    "loc": {
+      "line": 8,
+      "col": 3
+    }
+  }
+]

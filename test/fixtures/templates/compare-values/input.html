@@ -1,0 +1,15 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+  <div style="padding: 20px 24px; background: #f3f4f6;">
+    <h1 style="margin: 0; font-size: 22px; line-height: 28px;">Order {{order.number}}</h1>
+  </div>
+  <div data-email-if="order.taxExempt == 'Yes'" style="padding: 12px 24px; background: #e0f2fe; color: #075985; font-size: 14px; line-height: 20px;">
+    Tax exempt: {{order.taxExemptReason}}
+  </div>
+  <div data-email-unless="order.taxExempt == 'Yes'" style="padding: 12px 24px; font-size: 14px; line-height: 20px;">
+    Tax: {{order.tax}}
+  </div>
+  <p style="margin: 0; padding: 12px 24px; font-size: 14px; line-height: 20px;">Shipping: {{order.shipping}}<span data-email-if="order.partial != 'No'"> (may ship in parts)</span></p>
+  <div data-email-each="order.methods" data-email-as="m" style="padding: 4px 24px; font-size: 14px; line-height: 20px;">
+    {{m.name}}<b data-email-if="m.code == 'EXP'"> express</b>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "the cells without a width are split equally; the browser sizes them by their content",
+    "hint": "Set table-layout: fixed or give the cells widths.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  }
+]

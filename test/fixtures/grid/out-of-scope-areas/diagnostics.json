@@ -1,0 +1,22 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (3 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 6,
+      "col": 3
+    }
+  },
+  {
+    "code": "E001",
+    "severity": "error",
+    "message": "grid-template-areas is not supported",
+    "hint": "Use grid-template-columns and let items fill in source order.",
+    "loc": {
+      "line": 5,
+      "col": 1
+    }
+  }
+]

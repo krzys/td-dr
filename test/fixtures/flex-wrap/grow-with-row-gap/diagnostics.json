@@ -1,0 +1,32 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch in a wrapping row",
+    "hint": "Wrapped items are separate inline blocks, so painted cards of different heights on one line stay ragged. Use align-items: flex-start to make that explicit.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "extra space is left under the last line of this wrapping row",
+    "hint": "The row gap becomes bottom spacing on every item; a padding-bottom of 16px on the row absorbs it.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow in a wrapping row is resolved at the design width (588px); below it, grown items keep that width as a cap",
+    "hint": "On a phone, stacked grow items fill the line only up to their grown width, and a line stacks earlier than in the browser.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  }
+]

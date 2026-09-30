@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "MSO conditional opens and closes in different places",
+    "hint": "Keep each [if mso] … [endif] pair around one block, or use data-email=\"raw\".",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "MSO conditional opens and closes in different places",
+    "hint": "Keep each [if mso] … [endif] pair around one block, or use data-email=\"raw\".",
+    "loc": {
+      "line": 4,
+      "col": 3
+    }
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-if=\"i.show\" reads the loop variable of the same element's data-email-each",
+    "hint": "The condition is checked once, outside the loop. Put it on a child of the repeated element to test each item.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-unless=\"i.sub\" reads the loop variable of the same element's data-email-each",
+    "hint": "The condition is checked once, outside the loop. Put it on a child of the repeated element to test each item.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-if=\"item.show\" reads the loop variable of the same element's data-email-each",
+    "hint": "The condition is checked once, outside the loop. Put it on a child of the repeated element to test each item.",
+    "loc": {
+      "line": 4,
+      "col": 3
+    }
+  }
+]

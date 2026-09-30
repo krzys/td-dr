@@ -1,0 +1,22 @@
+[
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "\"{{#if user.vip}}\" is template syntax written by hand",
+    "hint": "td;dr writes the ESP's syntax for the dialect you compile to, and this only works in one. Use data-email-if / -else-if / -else and data-email-each on elements (or <tddr-if test> and friends), and fields for values.",
+    "loc": {
+      "line": 2,
+      "col": 52
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "\"{% if user.vip %}\" is template syntax written by hand",
+    "hint": "td;dr writes the ESP's syntax for the dialect you compile to, and this only works in one. Use data-email-if / -else-if / -else and data-email-each on elements (or <tddr-if test> and friends), and fields for values.",
+    "loc": {
+      "line": 3,
+      "col": 25
+    }
+  }
+]
