@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E017",
+    "severity": "error",
+    "message": "The max-width 480px rules change the generated text (::before / ::after) of the element at line 10, column 3: \"Desktop offer: \" on the base, \"Mobile offer: \" on this screen",
+    "hint": "Head rules can only change styles: the text, images, links, attributes and order of elements must be the same on every screen. Put each version in the markup and hide the others with display: none per screen.",
+    "loc": {
+      "line": 10,
+      "col": 3
+    }
+  }
+]

@@ -1,18 +1,27 @@
 // parse before sanitize keeps source locations intact (docs/decisions.md §3).
 import { analyze } from "./analyze/analyze.ts";
-import type { Ctx, WidthDecision } from "./ctx.ts";
+import type { Ctx, OtherScreens, WidthDecision } from "./ctx.ts";
 import { emit } from "./emit/emit.ts";
+import { locKey } from "./ir/index.ts";
+import { parse, type ParsedDoc } from "./parse/html.ts";
 import { runPasses } from "./passes/index.ts";
-import { parse } from "./parse/html.ts";
 import { post } from "./post/post.ts";
-import { readTrace, type TraceEntry } from "./post/trace.ts";
 import { markTree } from "./emit/trace.ts";
+import { readTrace, stripMarkers, type TraceEntry } from "./post/trace.ts";
 import { sanitize } from "./sanitize/sanitize.ts";
 import { fontHead } from "./shell/fonts.ts";
 import { shell } from "./shell/shell.ts";
 import { computeStyles } from "./style/computed.ts";
 import { widthDecision } from "./analyze/design-width.ts";
-import { createSink } from "./diagnostics/diagnostic.ts";
+import { get } from "./style/props.ts";
+import { DESKTOP, type StyledElement, type Unstack } from "./style/types.ts";
+import type { Code } from "./diagnostics/codes.ts";
+import { createSink, type Diagnostic } from "./diagnostics/diagnostic.ts";
+import { diffVariant, tokenize, type Compiled } from "./responsive/diff.ts";
+import { shownElsewhere } from "./responsive/keep.ts";
+import { layoutNotes, stackedElsewhere, stackNotes } from "./responsive/stack.ts";
+import { buildHead, type Found, type Head } from "./responsive/rules.ts";
+import { variantsOf, type Variant } from "./responsive/variants.ts";
 import { lintDropped, lintPlaceholders, reportTemplate } from "./template/lint.ts";
 import { hasTemplate } from "./template/tokens.ts";
 import { writeTemplate } from "./template/write.ts";
@@ -36,6 +45,32 @@ const withWidth = (ctx: Ctx, decision: WidthDecision): Ctx => ({
   widthDecision: decision,
 });
 
+// The layout props a narrower screen may change about an element and its place in a row.
+const LAYOUT = ["display", "flex-direction", "flex-wrap", "flex-basis", "flex-grow", "flex-shrink", "width", "min-width", "max-width", "grid-template-columns", "column-gap", "row-gap"] as const;
+
+const sideBorder = (el: StyledElement): boolean =>
+  (["left", "right"] as const).some((s) => (Number.parseFloat(get(el.style, `border-${s}-width`) ?? "0") || 0) > 0 && (get(el.style, `border-${s}-style`) ?? "none") !== "none");
+
+// What the other screens do differently (ctx.otherScreens).
+const otherScreens = (desktop: StyledElement, screens: readonly Screen[]): OtherScreens => {
+  const index = (el: StyledElement, out = new Map<string, StyledElement>()): Map<string, StyledElement> => {
+    // a ::before / ::after shares its host's loc: the host is the element
+    if (el.loc && !out.has(locKey(el.loc))) out.set(locKey(el.loc), el);
+    for (const c of el.children) if (c.type === "element") index(c, out);
+    return out;
+  };
+  const base = index(desktop);
+  const relaidBelow = new Map<string, number>();
+  const sideBorders = new Set([...base].filter(([, el]) => sideBorder(el)).map(([key]) => key));
+  for (const { variant, styled } of screens) {
+    for (const [key, el] of index(styled)) {
+      const was = base.get(key);
+      if (variant.kind === "width" && was && LAYOUT.some((p) => get(was.style, p) !== get(el.style, p))) relaidBelow.set(key, Math.max(relaidBelow.get(key) ?? 0, variant.env.viewport));
+    }
+  }
+  return { relaidBelow, sideBorders };
+};
+
 // Gmail drops the rules past 16 KB of head <style>, the reset included.
 const headStyleCheck = (html: string, ctx: Ctx): void => {
   const head = /<head>([\s\S]*?)<\/head>/.exec(html)?.[1] ?? "";
@@ -43,25 +78,86 @@ const headStyleCheck = (html: string, ctx: Ctx): void => {
   if (bytes > HEAD_STYLE_BYTES) ctx.diagnostics.report("W012", { message: `Head styles are ${formatKB(bytes)}; Gmail drops the rules past ${formatBytes(HEAD_STYLE_BYTES)}` });
 };
 
+const sameDiagnostic = (a: Diagnostic, b: Diagnostic): boolean =>
+  a.code === b.code && a.message === b.message && a.loc?.line === b.loc?.line && a.loc?.col === b.loc?.col && a.loc?.file === b.loc?.file;
+
+// What every compile shares so they all emit one structure: elements shown elsewhere, rows stacked elsewhere.
+type Shared = { keep: ReadonlyMap<string, string>; stacked: ReadonlyMap<string, Unstack> };
+
+// A screen other than the desktop one, with what the author's rules alone make of it there.
+type Screen = { variant: Variant; styled: StyledElement };
+
+// The compiles tell elements apart by their trace markers, so each tag says which author element it came from.
+const tracing = (ctx: Ctx): Ctx => (ctx.options.trace ? ctx : { ...ctx, options: { ...ctx.options, trace: true } });
+
+// The desktop compile, with what the author's rules alone make of that screen (as `Screen.styled`).
+type Base = Compiled & { styled: StyledElement };
+
+// One other screen, compiled from the shared parse on a quiet ctx.
+const compileScreen = (doc: ParsedDoc, given: Ctx, screen: Screen, shared: Shared): Compiled & { diagnostics: Diagnostic[] } => {
+  const ctx = tracing(quiet(given));
+  const { body } = computeStyles(doc, ctx, screen.variant.env, shared.keep, shared.stacked);
+  const marked = markTree(body);
+  const html = emit(runPasses(analyze(marked.tree, ctx), ctx), ctx).html;
+  return { html, elements: marked.found, diagnostics: ctx.diagnostics.list() };
+};
+
+// The base's html with a class on every element a screen changes, and the head rules for them.
+const responsive = (doc: ParsedDoc, ctx: Ctx, base: Base, screens: readonly Screen[], shared: Shared): Head | undefined => {
+  const found: Found[] = [];
+  const reported = [...ctx.diagnostics.list()];
+  for (const screen of screens) {
+    const compiled = compileScreen(doc, ctx, screen, shared);
+    const diff = diffVariant(base, compiled, screen.variant.label);
+    if ("error" in diff) {
+      // a dropped screen is never emitted, so what it says on the way is not the author's to read
+      const notes = layoutNotes(base.styled, screen.styled);
+      ctx.diagnostics.report("E017", { message: [diff.error, ...notes].join("; "), hint: diff.hint, loc: diff.loc });
+      continue;
+    }
+    found.push({ variant: screen.variant, overrides: diff.overrides });
+    // what only this screen says: once, however many screens say it
+    for (const d of compiled.diagnostics) {
+      if (reported.some((r) => sameDiagnostic(r, d))) continue;
+      reported.push(d);
+      ctx.diagnostics.report(d.code as Code, { message: d.message, hint: d.hint, loc: d.loc });
+    }
+  }
+  return buildHead(base.html, tokenize(base.html), found);
+};
+
 export const runPipeline = (input: string, given: Ctx): string => runTraced(input, given).html;
 
 export const runTraced = (input: string, given: Ctx): { html: string; trace?: TraceEntry[] } => {
   lintPlaceholders(input, given);
+  // parsed once: the style stage only reads it, so every environment cascades the same doc
   const parsed = sanitize(parse(input, given), given);
-  const probe = computeStyles(parsed, quiet(given));
-  const ctx = withWidth(given, widthDecision(probe.body, given));
-  const { body: styled, fonts, conditions } = computeStyles(parsed, ctx);
+  const q = quiet(given);
+  const probe = computeStyles(parsed, q);
+  const decided = withWidth(given, widthDecision(probe.body, given));
+  // elements shown on some screens only stay in every compile, so they all have one structure (docs/head-styles.md)
+  const screens: Screen[] = variantsOf(probe.conditions).map((variant) => ({ variant, styled: computeStyles(parsed, q, variant.env).body }));
+  const ctx: Ctx = screens.length > 0 ? { ...decided, otherScreens: otherScreens(probe.body, screens) } : decided;
+  const others = screens.map((s) => s.styled);
+  const shared: Shared | undefined = screens.length > 0 ? { keep: shownElsewhere([probe.body, ...others]), stacked: stackedElsewhere(probe.body, others) } : undefined;
+  const { body: styled, fonts, conditions } = computeStyles(parsed, ctx, DESKTOP, shared?.keep, shared?.stacked);
+  // the screens that stack are compiled quietly, so what they can't carry is said here
+  if (shared) for (const n of stackNotes(probe.body, others)) ctx.diagnostics.report("W003", n);
   lintInput(styled, ctx, { lang: parsed.meta.lang ?? ctx.options.lang, dark: conditions.dark });
-  const marked = ctx.options.trace ? markTree(styled) : undefined;
-  const emitted = emit(runPasses(analyze(marked?.tree ?? styled, ctx), ctx), ctx);
-  const page = shell(emitted, parsed.meta, ctx, fontHead(fonts, parsed.meta.fontLinks ?? [], styled, ctx));
+  const marked = ctx.options.trace || shared ? markTree(styled) : undefined;
+  const traced = marked ? tracing(ctx) : ctx;
+  const emitted = emit(runPasses(analyze(marked?.tree ?? styled, traced), traced), traced);
+  const head = shared && marked ? responsive(parsed, ctx, { html: emitted.html, elements: marked.found, styled: probe.body }, screens, shared) : undefined;
+  // markers reach the output only when the caller asked for a trace
+  const body = head?.html ?? emitted.html;
+  const page = shell({ ...emitted, html: marked && !ctx.options.trace ? stripMarkers(body) : body }, parsed.meta, ctx, fontHead(fonts, parsed.meta.fontLinks ?? [], styled, ctx), head);
   headStyleCheck(page, ctx);
   const html = post(page, ctx);
   lintDropped(parsed.body, html, ctx);
   let out = html;
   if (ctx.options.template) out = writeTemplate(html, ctx.options.template, reportTemplate(input, ctx));
   else if (hasTemplate(html)) ctx.diagnostics.report("E014");
-  if (!marked) return { html: clipCheck(out, ctx) };
+  if (!ctx.options.trace || !marked) return { html: clipCheck(out, ctx) };
   const read = readTrace(out, marked.found);
   return { html: clipCheck(read.html, ctx), trace: read.trace };
 };

@@ -1,0 +1,15 @@
+<style>
+  .wrap { max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #111827; }
+  .row { display: flex; }
+  .col { box-sizing: border-box; width: 50%; padding: 8px; }
+  .mobile-only { display: none; }
+  .note { padding: 12px 16px; background-color: #dbeafe; color: #1e3a8a; }
+  @media (max-width: 480px) { .mobile-only { display: block; } }
+</style>
+<div class="wrap">
+  <div class="note mobile-only">Open the attachment in your wallet app.</div>
+  <div class="row">
+    <div class="col">Left</div>
+    <div class="col mobile-only">Right</div>
+  </div>
+</div>

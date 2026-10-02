@@ -1,0 +1,32 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "extra space is left under the last line of this wrapping row",
+    "hint": "The row gap becomes bottom spacing on every item; a padding-bottom of 12px on the row absorbs it.",
+    "loc": {
+      "line": 12,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "items in this wrapping row sit up to 6px in from its edges, and a line that fills the row loses that from its first and last item",
+    "hint": "Email has no negative margins, so the row's side padding has to absorb half the gap at each edge. Add padding: 0 6px to the row.",
+    "loc": {
+      "line": 12,
+      "col": 3
+    }
+  },
+  {
+    "code": "E017",
+    "severity": "error",
+    "message": "The max-width 480px rules change the layout structure: the base has \"<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing...\" where this screen has \"</td>\"",
+    "hint": "Head rules can change padding, sizes, colours, show or hide blocks and stack a flex row or grid (flex-direction: column, display: block, one grid track) on narrow screens, but not change the column count, reverse the order or turn a column into a row; fluid rows already wrap on phones.",
+    "loc": {
+      "line": 14,
+      "col": 7
+    }
+  }
+]

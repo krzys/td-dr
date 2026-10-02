@@ -1,0 +1,32 @@
+[
+  {
+    "code": "I006",
+    "severity": "info",
+    "message": "4vw resolved to 24px at the design width (600px)",
+    "hint": "vw, vmin and vmax were turned into px at the design width (the width option, else the email's root container width, else 600). Text sizes (font-size, line-height, letter-spacing...) stay live on phones that read media queries; layout values (width, padding, margin, gap) are fixed at the design width, so use % or px where they should flex.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "I006",
+    "severity": "info",
+    "message": "1.5vw resolved to 9px at the design width (600px)",
+    "hint": "vw, vmin and vmax were turned into px at the design width (the width option, else the email's root container width, else 600). Text sizes (font-size, line-height, letter-spacing...) stay live on phones that read media queries; layout values (width, padding, margin, gap) are fixed at the design width, so use % or px where they should flex.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "I006",
+    "severity": "info",
+    "message": "2vw resolved to 12px at the design width (600px)",
+    "hint": "vw, vmin and vmax were turned into px at the design width (the width option, else the email's root container width, else 600). Text sizes (font-size, line-height, letter-spacing...) stay live on phones that read media queries; layout values (width, padding, margin, gap) are fixed at the design width, so use % or px where they should flex.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  }
+]

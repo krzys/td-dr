@@ -1,0 +1,32 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-basis: 120px is a height where this row stacks, and is dropped there",
+    "hint": "The stacked block is as tall as its content. Give the item a height or min-height if it needs one.",
+    "loc": {
+      "line": 12,
+      "col": 5
+    }
+  },
+  {
+    "code": "I012",
+    "severity": "info",
+    "message": "Alt text \"Photo\" looks like a placeholder",
+    "hint": "A file name or a word like \"image\" tells the reader nothing. Describe what the image shows, or use alt=\"\" if it's decoration.",
+    "loc": {
+      "line": 12,
+      "col": 5
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Outlook needs a width attribute; give the image a width",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 12,
+      "col": 5
+    }
+  }
+]
