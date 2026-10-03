@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check": "tsc --noEmit && vitest run",
+    "test:visual": "vitest run --config vitest.visual.config.ts",
     "caniemail": "node --experimental-strip-types scripts/caniemail.ts"
   },
   "packageManager": "pnpm@10.28.0",
@@ -24,8 +25,12 @@
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
+    "@types/pngjs": "^6.0.5",
     "handlebars": "4.7.10",
     "liquidjs": "10.30.0",
+    "pixelmatch": "^8.0.0",
+    "playwright": "1.56.1",
+    "pngjs": "^7.0.0",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   }
