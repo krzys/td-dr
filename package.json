@@ -23,6 +23,14 @@
     "parse5-htmlparser2-tree-adapter": "^8.0.1",
     "postcss": "^8.5.30"
   },
+  "peerDependencies": {
+    "vite": "^8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@types/node": "^26.6.5",
     "@types/pngjs": "^6.0.5",
@@ -32,6 +40,7 @@
     "playwright": "1.56.1",
     "pngjs": "^7.0.0",
     "typescript": "^7.0.2",
+    "vite": "8.3.4",
     "vitest": "^5.0.5"
   }
 }
