@@ -1,0 +1,8 @@
+{
+  "show": true,
+  "user": { "name": "Ada" },
+  "deals": [
+    { "title": "Green tea", "price": "$9" },
+    { "title": "Teapot", "price": "$30" }
+  ]
+}

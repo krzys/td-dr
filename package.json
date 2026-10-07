@@ -27,7 +27,9 @@
     "vite": "^8.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "vue": "^3.5.0"
+    "vue": "^3.5.0",
+    "handlebars": "^4.7.0",
+    "liquidjs": "^10.0.0"
   },
   "peerDependenciesMeta": {
     "vite": {
@@ -41,13 +43,22 @@
     },
     "vue": {
       "optional": true
+    },
+    "handlebars": {
+      "optional": true
+    },
+    "liquidjs": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@tailwindcss/node": "4.3.3",
+    "@tailwindcss/vite": "4.3.3",
     "@types/node": "^26.6.5",
     "@types/pngjs": "^6.0.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-vue": "6.0.9",
     "handlebars": "4.7.10",
     "liquidjs": "10.30.0",
     "pixelmatch": "^8.0.0",
@@ -55,6 +66,7 @@
     "pngjs": "^7.0.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+    "tailwindcss": "4.3.3",
     "typescript": "^7.0.2",
     "vite": "8.3.4",
     "vitest": "^5.0.5",
