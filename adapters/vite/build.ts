@@ -2,8 +2,9 @@ import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import type { CompileOptions, Diagnostic, DialectName } from "../../src/index.ts";
 import type { EmailEntry } from "./types.ts";
+import { verifyEmail } from "./equivalence.ts";
 import { findEmails } from "./find.ts";
-import { compileTemplate } from "./render.ts";
+import { compileTemplate, type CompiledTemplate } from "./render.ts";
 import { createEmailServer } from "./server.ts";
 
 export type BuildOptions = {
@@ -13,6 +14,7 @@ export type BuildOptions = {
   baseUrl?: string | undefined; // where <out>/assets is uploaded
   fileName?: string | undefined; // pattern with [name] and [dialect], relative to out
   compile?: CompileOptions;
+  verify?: boolean; // default true: compare each template with the HTML render (docs/templates.md#the-equivalence-check)
 };
 
 // one per written file, or per email that wasn't built
@@ -64,15 +66,29 @@ export const buildEmails = async (o: BuildOptions): Promise<BuildResult[]> => {
         results.push({ email: email.name, skipped: PLAIN, diagnostics: [] });
         continue;
       }
+      let checked: Diagnostic[] = [];
+      let templates = new Map<DialectName, CompiledTemplate>();
+      if (o.verify !== false) {
+        try {
+          ({ diagnostics: checked, templates } = await verifyEmail(vite, email, o));
+        } catch (err) {
+          results.push({ email: email.name, error: (err as Error).message, diagnostics: [] });
+          continue;
+        }
+        if (checked.some((d) => d.code === "E016")) {
+          results.push({ email: email.name, error: "its templates don't match the HTML render; nothing written", diagnostics: checked });
+          continue;
+        }
+      }
       for (const dialect of email.template) {
         try {
-          const t = await compileTemplate(vite, email, dialect, o);
+          const t = templates.get(dialect) ?? (await compileTemplate(vite, email, dialect, o));
           const file = files.get(`${email.name}\0${dialect}`)!;
           mkdirSync(dirname(file), { recursive: true });
           writeFileSync(file, t.template);
           if (t.assets.length) mkdirSync(join(out, "assets"), { recursive: true });
           for (const a of t.assets) copyFileSync(a.from, join(out, "assets", a.name));
-          results.push({ email: email.name, dialect, file, assets: t.assets.map((a) => a.name), diagnostics: t.diagnostics });
+          results.push({ email: email.name, dialect, file, assets: t.assets.map((a) => a.name), diagnostics: [...checked.splice(0), ...t.diagnostics] });
         } catch (err) {
           results.push({ email: email.name, dialect, error: (err as Error).message, diagnostics: [] });
           break; // the other dialects render the same component
