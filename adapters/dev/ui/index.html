@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>td;dr dev</title>
+    <link rel="icon" href="/__tddr/ui/icon.svg" />
+    <link rel="stylesheet" href="/__tddr/ui/style.css" />
+    <script type="module" src="/__tddr/ui/app.js"></script>
+  </head>
+  <body>
+    <header class="top">
+      <button type="button" class="icon" id="list-toggle" aria-pressed="true" aria-label="Email list" title="Email list">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.75 3h10.5a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2.75a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1ZM6 3v10" /></svg>
+      </button>
+      <div class="brand">td;dr <span>dev</span></div>
+      <button type="button" class="switcher" id="switcher" aria-label="Switch email" title="Switch email (⌘K)">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 12.25a5.25 5.25 0 1 0 0-10.5 5.25 5.25 0 0 0 0 10.5ZM10.9 10.9 14 14" /></svg>
+        <span class="title" id="title">No emails</span>
+        <span class="tagtxt" id="title-fw"></span>
+        <span class="tpl-tag" id="title-tpl" hidden>template</span>
+        <kbd>⌘K</kbd>
+      </button>
+      <div class="top-right">
+        <div class="seg icons" id="dockpos" role="group" aria-label="Panel position">
+          <button type="button" data-pos="right" aria-label="Dock panel on the right" title="Dock right">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.75 3h10.5a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2.75a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1ZM10 3v10" /></svg>
+          </button>
+          <button type="button" data-pos="bottom" aria-label="Dock panel at the bottom" title="Dock bottom">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.75 3h10.5a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2.75a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1ZM1.75 9.5h12.5" /></svg>
+          </button>
+        </div>
+        <button type="button" class="icon" id="code-toggle" aria-pressed="true" aria-controls="dock" aria-label="Code panel" title="Code panel ( ` )">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4M9 2.75 7 13.25" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar" aria-label="Emails">
+      <div class="side-head">
+        <span>Emails <span class="muted" id="email-count"></span></span>
+        <button type="button" class="icon drawer-close" id="list-close" aria-label="Close list">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+        </button>
+      </div>
+      <label class="search">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 12.25a5.25 5.25 0 1 0 0-10.5 5.25 5.25 0 0 0 0 10.5ZM10.9 10.9 14 14" /></svg>
+        <input type="text" id="filter" placeholder="Filter emails" aria-label="Filter emails" autocomplete="off" />
+        <kbd>/</kbd>
+      </label>
+      <ul class="emails" id="emails"></ul>
+      <div class="dir muted" id="dir"></div>
+    </aside>
+    <button type="button" class="scrim" id="scrim" aria-label="Close email list" hidden></button>
+
+    <section class="empty-state" id="empty">
+      <h2>No emails yet</h2>
+      <p>
+        td;dr looks for a folder with <code>index.tsx</code> (React) or <code>App.vue</code> (Vue) in the emails folder, or a
+        single such file. JSON files next to it become data sets. This page picks them up as soon as they are saved.
+      </p>
+      <pre><code>emails/welcome/index.tsx
+emails/welcome/standard.json</code></pre>
+    </section>
+
+    <main class="main" id="workspace">
+      <div class="toolbar">
+        <div class="seg" id="views" role="group" aria-label="View">
+          <button type="button" data-view="source">Source<kbd>1</kbd></button>
+          <button type="button" data-view="compiled">Compiled<kbd>2</kbd></button>
+          <button type="button" data-view="compare"><span class="long">Compare</span><span class="short">Diff</span><kbd>3</kbd></button>
+        </div>
+        <div class="seg" id="widths" role="group" aria-label="Width">
+          <button type="button" data-width="600">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 3h11a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1ZM5.5 13.5h5M8 11.5v2" /></svg>600<kbd>D</kbd>
+          </button>
+          <button type="button" data-width="375">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 1.75h6a1 1 0 0 1 1 1v10.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2.75a1 1 0 0 1 1-1ZM7 12.5h2" /></svg>375<kbd>M</kbd>
+          </button>
+        </div>
+        <label class="numf" id="width-field">
+          <input type="number" id="width-custom" min="200" max="2400" step="1" inputmode="numeric" aria-label="Custom width in pixels" title="Custom width (px)" />px
+        </label>
+        <span class="spacer"></span>
+        <div class="seg" id="modes" role="group" aria-label="Template dialect"></div>
+        <div class="seg" id="fields" role="group" aria-label="Template data" hidden>
+          <button type="button" data-fields="0">Filled</button>
+          <button type="button" data-fields="1">Fields {{ }}</button>
+        </div>
+        <label class="selwrap">
+          <span class="lbl">Data</span>
+          <select id="data-set" aria-label="Data set"></select>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" /></svg>
+        </label>
+      </div>
+
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <div class="inbox" id="inbox" hidden>
+            <span class="inbox-label">Inbox</span>
+            <span class="inbox-text"><b id="inbox-subject"></b> <span id="inbox-pre"></span></span>
+            <span class="plan" title="The inbox line is planned: subject and preheader come from the email's own markup">Planned</span>
+          </div>
+          <div class="render-error" id="render-error" role="alert" hidden></div>
+          <div class="frames" id="frames">
+            <figure class="pane" id="pane-source">
+              <figcaption>Source</figcaption>
+              <iframe title="Source render"></iframe>
+              <button type="button" class="handle l" aria-label="Drag to resize preview width" title="Drag to resize"></button>
+              <button type="button" class="handle r" aria-label="Drag to resize preview width" title="Drag to resize"></button>
+            </figure>
+            <figure class="pane" id="pane-compiled">
+              <figcaption>Compiled</figcaption>
+              <iframe title="Compiled email"></iframe>
+              <button type="button" class="handle l" aria-label="Drag to resize preview width" title="Drag to resize"></button>
+              <button type="button" class="handle r" aria-label="Drag to resize preview width" title="Drag to resize"></button>
+            </figure>
+          </div>
+        </div>
+        <div class="hud" id="hud" hidden>
+          <div class="seg" id="compare-modes" role="group" aria-label="Compare mode">
+            <button type="button" data-cmp="side">Side by side</button>
+            <button type="button" data-cmp="overlay">Difference</button>
+          </div>
+          <label class="overlay-ctl" id="overlay-ctl" hidden>
+            <span>Opacity</span>
+            <input type="range" id="overlay-opacity" min="0" max="1" step="0.05" value="1" aria-label="Compiled layer opacity" />
+          </label>
+          <span id="fit" hidden></span>
+        </div>
+      </div>
+    </main>
+
+    <section class="dock" id="dock" aria-label="Code, data and problems">
+      <button type="button" class="resizer" id="resizer" aria-label="Resize panel" title="Drag to resize"></button>
+      <div class="dock-main">
+        <div class="dock-tabs" id="dock-tabs" role="tablist">
+          <button type="button" role="tab" data-dock="code">Code</button>
+          <button type="button" role="tab" data-dock="data">Data<i class="dirty-dot" id="data-dot" hidden title="Unsaved edits"></i></button>
+        </div>
+
+        <section class="code pane-code">
+          <div class="code-head">
+            <div class="tabs" id="code-tabs" role="tablist">
+              <button type="button" role="tab" data-tab="compiled">HTML</button>
+              <button type="button" role="tab" data-tab="template">Template</button>
+              <button type="button" role="tab" data-tab="source">Source</button>
+            </div>
+            <span class="muted" id="code-meta"></span>
+            <span class="spacer"></span>
+            <button type="button" class="icon" id="code-format" aria-pressed="true" aria-label="Format code" title="Format code. Display only: Copy and Download give the real output">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M5.5 8h8M8.5 12h5" /></svg>
+            </button>
+            <button type="button" class="icon" id="code-copy" aria-label="Copy" title="Copy">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.75 5.75h6.5a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-6.5a1 1 0 0 1-1-1v-6.5a1 1 0 0 1 1-1ZM3.25 10.25h-.5a1 1 0 0 1-1-1v-6.5a1 1 0 0 1 1-1h6.5a1 1 0 0 1 1 1v.5" /></svg>
+            </button>
+            <button type="button" class="icon" id="code-download" aria-label="Download" title="Download">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v7.5M4.75 7 8 10.25 11.25 7M3 13h10" /></svg>
+            </button>
+          </div>
+          <div class="stale-note" id="stale-note" hidden>Stale: showing the last successful compile</div>
+          <div class="code-body" id="code-body">
+            <pre class="gutter" id="code-gutter" aria-hidden="true"></pre>
+            <pre class="text" id="code-text"></pre>
+          </div>
+        </section>
+
+        <section class="data pane-data">
+          <div class="data-head">
+            <span class="file mono" id="data-file"></span>
+            <span class="spacer"></span>
+            <span class="pill" id="data-pill"></span>
+          </div>
+          <div class="notice" id="data-notice" role="status" hidden>
+            <p id="data-notice-text"></p>
+            <div class="notice-actions">
+              <button type="button" id="notice-load">Load from disk</button>
+              <button type="button" id="notice-keep">Keep my edits</button>
+            </div>
+          </div>
+          <div class="json-edit">
+            <pre id="data-back" aria-hidden="true"></pre>
+            <textarea id="data-text" spellcheck="false" wrap="off" aria-label="Data JSON" aria-describedby="data-status"></textarea>
+          </div>
+          <div class="status" id="data-status" aria-live="polite"></div>
+          <div class="actions">
+            <button type="button" id="data-save-as">Save as new set…</button>
+            <span class="spacer"></span>
+            <button type="button" id="data-revert">Revert</button>
+            <button type="button" class="primary" id="data-save" title="Write the file (Ctrl/⌘ S)">Save <kbd>⌘S</kbd></button>
+          </div>
+        </section>
+      </div>
+
+      <section class="problems" id="diags-section">
+        <div class="prob-head">
+          <button type="button" class="icon" id="prob-toggle" aria-expanded="true" aria-controls="diags" aria-label="Toggle problems list">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" /></svg>
+          </button>
+          <span class="prob-title">Problems</span>
+          <div class="chips" id="chips"></div>
+        </div>
+        <ul class="diags" id="diags"></ul>
+      </section>
+    </section>
+
+    <footer class="strip">
+      <span class="size" id="size" hidden>
+        <span class="slabel">Compiled</span>
+        <b id="size-text"></b>
+        <span class="meter" id="meter" role="img"><i></i><u></u></span>
+        <span class="smax" id="size-max"></span>
+        <span class="snote" id="size-note"></span>
+      </span>
+      <span class="pill" id="filled" hidden></span>
+      <span class="sep"></span>
+      <button type="button" class="counts" id="counts" title="Show problems">
+        <span class="c error" title="Errors"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14.25a6.25 6.25 0 1 0 0-12.5 6.25 6.25 0 0 0 0 12.5ZM5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2" /></svg><b id="count-error">0</b></span>
+        <span class="c warning" title="Warnings"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7.2 2.9 1.8 12.2a.9.9 0 0 0 .8 1.3h10.8a.9.9 0 0 0 .8-1.3L8.8 2.9a.9.9 0 0 0-1.6 0ZM8 6.6v2.8M8 11.4v.01" /></svg><b id="count-warning">0</b></span>
+        <span class="c info" title="Info"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14.25a6.25 6.25 0 1 0 0-12.5 6.25 6.25 0 0 0 0 12.5ZM8 7.4v3.6M8 5.2v.01" /></svg><b id="count-info">0</b></span>
+      </button>
+      <span class="spacer"></span>
+      <span class="unsaved" id="unsaved" hidden><i class="dirty-dot"></i>Unsaved data edits</span>
+      <span class="reload muted" id="reload"></span>
+      <span class="host mono muted" id="host"></span>
+      <span class="live" id="live" role="status"><i></i><span id="live-text">Connecting</span></span>
+    </footer>
+
+    <dialog class="palette" id="palette" aria-label="Switch email">
+      <label class="search">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 12.25a5.25 5.25 0 1 0 0-10.5 5.25 5.25 0 0 0 0 10.5ZM10.9 10.9 14 14" /></svg>
+        <input type="text" id="palette-input" placeholder="Switch to email…" aria-label="Switch to email" autocomplete="off" />
+        <kbd>esc</kbd>
+      </label>
+      <ul id="palette-list" role="listbox"></ul>
+    </dialog>
+
+    <nav class="mobile-tabs" id="mobile-tabs" aria-label="Panels">
+      <button type="button" data-panel="emails">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 3.75h11a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-6.5a1 1 0 0 1 1-1ZM2 4.5l6 4.25L14 4.5" /></svg>
+        <span>Emails</span>
+      </button>
+      <button type="button" data-panel="preview">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8S3.75 3.5 8 3.5 14.5 8 14.5 8 12.25 12.5 8 12.5 1.5 8 1.5 8ZM8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" /></svg>
+        <span>Preview</span>
+      </button>
+      <button type="button" data-panel="code">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4M9 2.75 7 13.25" /></svg>
+        <span>Code</span>
+      </button>
+      <button type="button" data-panel="data">
+        <span class="ticon">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 2.5c-1.5 0-2 .75-2 2v1.5c0 1-.5 1.75-1.5 2 1 .25 1.5 1 1.5 2v1.5c0 1.25.5 2 2 2M10.5 2.5c1.5 0 2 .75 2 2v1.5c0 1 .5 1.75 1.5 2-1 .25-1.5 1-1.5 2v1.5c0 1.25-.5 2-2 2" /></svg>
+          <b class="tab-issues" id="tab-issues" hidden></b>
+        </span>
+        <span>Data</span>
+      </button>
+    </nav>
+  </body>
+</html>
