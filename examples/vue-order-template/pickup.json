@@ -1,0 +1,53 @@
+{
+  "customer": {
+    "firstName": "Jonas"
+  },
+  "store": {
+    "code": "eu",
+    "helpUrl": "https://example.com/help",
+    "unsubscribeUrl": "https://example.com/preferences"
+  },
+  "order": {
+    "number": "OL-58266",
+    "placedOn": "16 Oct 2026",
+    "url": "https://example.com/account/orders/OL-58266",
+    "delivery": {
+      "method": "pickup",
+      "free": true,
+      "store": {
+        "name": "Oakline Berlin Mitte",
+        "line1": "Torstraße 140",
+        "city": "Berlin",
+        "postcode": "10119",
+        "country": "Germany"
+      }
+    },
+    "taxExempt": false,
+    "subscription": null,
+    "billingSameAsShipping": true,
+    "items": [
+      {
+        "sku": "THR-012",
+        "name": "Merino Throw",
+        "variant": "Charcoal",
+        "qty": 1,
+        "price": "€89,00",
+        "listPrice": "€89,00",
+        "image": "https://img.example/144x144/fff7ed/c2410c.png?text=Throw"
+      }
+    ],
+    "shipping": {
+      "name": "Jonas Weber",
+      "line1": "Kastanienallee 21",
+      "city": "Berlin",
+      "postcode": "10435",
+      "country": "Germany"
+    },
+    "totals": {
+      "subtotal": "€89,00",
+      "delivery": "€0,00",
+      "tax": "€14,21",
+      "total": "€89,00"
+    }
+  }
+}

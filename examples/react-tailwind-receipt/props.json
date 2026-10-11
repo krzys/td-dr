@@ -1,0 +1,19 @@
+{
+  "orderNo": "NW-20418",
+  "placed": "14 October 2026",
+  "customer": "Priya Raman",
+  "currency": "USD",
+  "items": [
+    { "sku": "MUG-12", "name": "Stoneware mug, oat", "variant": "12 oz", "qty": 2, "price": 18 },
+    { "sku": "KTL-01", "name": "Gooseneck kettle", "variant": "Matte black, 1 L", "qty": 1, "price": 74.5 },
+    { "sku": "FLT-40", "name": "Paper filters", "variant": "Pack of 100", "qty": 3, "price": 6.25 },
+    { "sku": "BNS-HB", "name": "House blend beans", "variant": "Whole bean, 500 g", "qty": 1, "price": 21 }
+  ],
+  "shipping": 6.95,
+  "discount": { "code": "AUTUMN10", "amount": 13.74 },
+  "taxRate": 0.0825,
+  "shipTo": { "name": "Priya Raman", "lines": ["418 Larkspur Avenue", "Apt 3B", "Austin, TX 78704"] },
+  "billTo": { "name": "Priya Raman", "lines": ["Card ending 4417", "418 Larkspur Avenue", "Austin, TX 78704"] },
+  "trackUrl": "https://example.com/orders/NW-20418/track",
+  "helpUrl": "https://example.com/help"
+}

@@ -1,0 +1,20 @@
+{
+  "team": "Platform Team",
+  "weekStart": "7 Oct",
+  "weekEnd": "13 Oct 2026",
+  "kpis": [
+    { "label": "Deploys", "value": 42, "delta": 12 },
+    { "label": "Open bugs", "value": 17, "delta": -5, "lowerIsBetter": true },
+    { "label": "PRs merged", "value": 63, "delta": 8 },
+    { "label": "Uptime %", "value": 99.98, "delta": -0.01 }
+  ],
+  "tasks": [
+    { "id": 1, "title": "Migrate billing cron to queue", "status": "done", "owner": "Priya Nair", "points": 5 },
+    { "id": 2, "title": "Fix flaky checkout test", "status": "done", "owner": "Tom Becker", "points": 2 },
+    { "id": 3, "title": "Rate limiting for public API", "status": "in-progress", "owner": "Ana Souza", "points": 8 },
+    { "id": 4, "title": "Rotate staging credentials", "status": "in-progress", "owner": "Tom Becker", "points": 1 },
+    { "id": 5, "title": "Audit log export", "status": "blocked", "owner": "Priya Nair", "points": 3 }
+  ],
+  "members": ["Priya Nair", "Tom Becker", "Ana Souza", "Li Wei", "Marco"],
+  "top": { "name": "Priya Nair", "role": "Staff engineer", "merged": 19, "quote": "Moved billing off cron and cut p95 by a third." }
+}

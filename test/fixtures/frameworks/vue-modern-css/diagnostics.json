@@ -1,0 +1,112 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "letter-spacing is only partly supported in Outlook Windows (5 places)",
+    "hint": "Partial. Big negative values are rendered differently from CSS standards.",
+    "loc": {
+      "line": 157,
+      "col": 91
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (10 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 157,
+      "col": 221
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (4 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 157,
+      "col": 280
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #6a756c on #efeedf: found 4.1:1, needs 4.5:1 (5 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 157,
+      "col": 150
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #6a756c on #dcf7e1: found 4.2:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 157,
+      "col": 416
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #298646 on #dcf7e1: found 4.0:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 157,
+      "col": 617
+    }
+  },
+  {
+    "code": "I010",
+    "severity": "info",
+    "message": "Link text \"Read more →\" doesn't say where it goes",
+    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
+    "loc": {
+      "line": 157,
+      "col": 1043
+    }
+  },
+  {
+    "code": "I010",
+    "severity": "info",
+    "message": "Link text \"Read more →\" doesn't say where it goes",
+    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
+    "loc": {
+      "line": 157,
+      "col": 1400
+    }
+  },
+  {
+    "code": "I010",
+    "severity": "info",
+    "message": "Link text \"Read more →\" doesn't say where it goes",
+    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
+    "loc": {
+      "line": 157,
+      "col": 1753
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 11.2px is very small (6 places)",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 157,
+      "col": 280
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 157,
+      "col": 37
+    }
+  }
+]

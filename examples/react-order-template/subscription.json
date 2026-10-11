@@ -1,0 +1,60 @@
+{
+  "customer": {
+    "firstName": "Jordan"
+  },
+  "store": {
+    "code": "us",
+    "helpUrl": "https://example.com/help",
+    "unsubscribeUrl": "https://example.com/preferences"
+  },
+  "order": {
+    "number": "FW-20502",
+    "placedOn": "16 October 2026",
+    "url": "https://example.com/orders/FW-20502",
+    "delivery": {
+      "method": "express",
+      "free": true
+    },
+    "taxExempt": true,
+    "subscription": {
+      "plan": "Monthly Brew",
+      "interval": "4 weeks",
+      "nextDate": "13 November 2026"
+    },
+    "billingSameAsShipping": false,
+    "items": [
+      {
+        "sku": "BOX-M",
+        "name": "Monthly Brew Box",
+        "variant": "3 single-origin teas",
+        "qty": 1,
+        "price": "$32.00",
+        "listPrice": "$32.00",
+        "image": "https://img.example/128x128/ecfccb/3f6212.png?text=Box"
+      }
+    ],
+    "shipping": {
+      "name": "Jordan Reyes",
+      "line1": "Riverside Elementary",
+      "line2": "Attn: Staff Room",
+      "city": "Portland, OR",
+      "postcode": "97214",
+      "country": "USA"
+    },
+    "totals": {
+      "subtotal": "$32.00",
+      "delivery": "$0.00",
+      "tax": "$0.00",
+      "total": "$32.00"
+    },
+    "taxExemptId": "EX-55-01928",
+    "billing": {
+      "name": "Riverside School District",
+      "line1": "Accounts Payable",
+      "line2": "PO Box 3310",
+      "city": "Portland, OR",
+      "postcode": "97208",
+      "country": "USA"
+    }
+  }
+}

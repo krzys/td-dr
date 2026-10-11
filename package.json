@@ -12,6 +12,8 @@
     "test": "vitest run",
     "check": "tsc --noEmit && vitest run",
     "test:visual": "vitest run --config vitest.visual.config.ts",
+    "gallery": "node --experimental-strip-types scripts/gallery.ts",
+    "capture": "node scripts/capture.ts",
     "caniemail": "node --experimental-strip-types scripts/caniemail.ts"
   },
   "packageManager": "pnpm@10.28.0",

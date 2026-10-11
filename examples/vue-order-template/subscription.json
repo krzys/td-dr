@@ -1,0 +1,60 @@
+{
+  "customer": {
+    "firstName": "Marcus"
+  },
+  "store": {
+    "code": "us",
+    "helpUrl": "https://example.com/help",
+    "unsubscribeUrl": "https://example.com/preferences"
+  },
+  "order": {
+    "number": "OL-58240",
+    "placedOn": "Oct 16, 2026",
+    "url": "https://example.com/account/orders/OL-58240",
+    "delivery": {
+      "method": "express",
+      "free": true,
+      "eta": "tomorrow by 8pm"
+    },
+    "taxExempt": true,
+    "subscription": {
+      "plan": "Fresh Linens",
+      "interval": "3 months",
+      "nextDate": "Jan 15, 2027"
+    },
+    "billingSameAsShipping": false,
+    "items": [
+      {
+        "sku": "TWL-100",
+        "name": "Turkish Cotton Towel Set",
+        "variant": "Bath, Sage",
+        "qty": 2,
+        "price": "$64.00",
+        "listPrice": "$64.00",
+        "image": "https://img.example/144x144/fff7ed/c2410c.png?text=Towels"
+      }
+    ],
+    "shipping": {
+      "name": "Marcus Bell",
+      "line1": "Bell Street Shelter",
+      "line2": "Receiving, Door 2",
+      "city": "Oakland, CA",
+      "postcode": "94607",
+      "country": "United States"
+    },
+    "totals": {
+      "subtotal": "$128.00",
+      "delivery": "$0.00",
+      "tax": "$0.00",
+      "total": "$128.00"
+    },
+    "taxExemptId": "CA-RES-0047712",
+    "billing": {
+      "name": "Bell Street Shelter Inc.",
+      "line1": "Accounts",
+      "city": "Oakland, CA",
+      "postcode": "94612",
+      "country": "United States"
+    }
+  }
+}
