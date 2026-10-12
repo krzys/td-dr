@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "allowJs": false,
+    "checkJs": false,
+    "rootDir": ".",
+    "outDir": "dist/types"
+  },
+  // the exported entry points; tsc follows their imports
+  "include": ["src/index.ts", "adapters/react/index.ts", "adapters/vue/index.ts", "adapters/vite/index.ts"]
+}
