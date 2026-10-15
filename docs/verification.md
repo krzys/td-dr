@@ -16,7 +16,10 @@ What the test suite checks, how, and what it can't tell you.
 Targeted runs: `npx vitest run test/unit/<file>.test.ts`,
 `npx vitest run test/harness/fixtures.test.ts -t "<feature>/<case>"`,
 `npx vitest run --config vitest.visual.config.ts -t "<feature>/<case>"`. The visual tests need a
-Chromium for the installed Playwright (`pnpm exec playwright install chromium`).
+Chromium for the installed Playwright (`pnpm exec playwright install chromium`) and the Inter font
+(`fonts-inter` on Debian and Ubuntu). The harness starts Chromium with its own font setup,
+`test/harness/fonts.conf`: Inter for the system and generic sans-serif names, grayscale
+antialiasing and no hinting, so a render doesn't depend on the machine's font configuration.
 
 ## What is checked
 

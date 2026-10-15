@@ -32,6 +32,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # the playwright version the lockfile pins; locally PLAYWRIGHT_BROWSERS_PATH may point at a preinstalled one
       - run: pnpm exec playwright install --with-deps chromium
+      # the font test/harness/fonts.conf sets up
+      - run: sudo apt-get install -y --no-install-recommends fonts-inter
       - run: pnpm test:visual
       - if: failure()
         uses: actions/upload-artifact@v4

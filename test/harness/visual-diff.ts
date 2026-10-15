@@ -1,5 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium, type Browser } from "playwright";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
@@ -22,7 +23,43 @@ export type DiffResult = {
 const HEIGHT = 800;
 const RESET = "<style>body{margin:0}</style>";
 
-export const launchBrowser = (): Promise<Browser> => chromium.launch();
+const FONTS_CONF = fileURLToPath(new URL("fonts.conf", import.meta.url));
+
+// Text is most of what differs between machines, so the browser gets the harness's font setup
+// (fonts.conf) and grayscale text, and refuses to run without Inter rather than fail on metrics.
+export const launchBrowser = async (): Promise<Browser> => {
+  const browser = await chromium.launch({
+    env: { ...process.env, FONTCONFIG_FILE: FONTS_CONF },
+    args: ["--disable-lcd-text"],
+  });
+  try {
+    await requireInter(browser);
+  } catch (e) {
+    await browser.close();
+    throw e;
+  }
+  return browser;
+};
+
+const requireInter = async (browser: Browser): Promise<void> => {
+  const page = await browser.newPage();
+  try {
+    const [inter, missing] = await page.evaluate(() =>
+      ["Inter", "tddr-no-such-font"].map((family) => {
+        const span = document.createElement("span");
+        span.style.cssText = `position:absolute;white-space:nowrap;font:16px ${family}`;
+        span.textContent = "The quick brown fox jumps over the lazy dog";
+        document.body.append(span);
+        return span.getBoundingClientRect().width;
+      }),
+    );
+    if (inter === missing) {
+      throw new Error("the visual tests need the Inter font installed (fonts-inter on Debian and Ubuntu)");
+    }
+  } finally {
+    await page.close();
+  }
+};
 
 // Anything without an <html> tag is treated as a body fragment.
 const wrap = (html: string): string =>
