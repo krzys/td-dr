@@ -39,3 +39,4 @@ jobs:
           name: visual-diffs
           path: test/.visual/
           if-no-files-found: ignore
+          include-hidden-files: true
