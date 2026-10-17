@@ -132,9 +132,11 @@ export const runTraced = (input: string, given: Ctx): { html: string; trace?: Tr
   lintPlaceholders(input, given);
   // parsed once: the style stage only reads it, so every environment cascades the same doc
   const parsed = sanitize(parse(input, given), given);
-  const q = quiet(given);
-  const probe = computeStyles(parsed, q);
-  const decided = withWidth(given, widthDecision(probe.body, given));
+  const first = computeStyles(parsed, quiet(given));
+  const decided = withWidth(given, widthDecision(first.body, given));
+  // the design width splits vw text and resolves vw, so the screens come from a cascade at that width
+  const q = quiet(decided);
+  const probe = decided.options.width === given.options.width ? first : computeStyles(parsed, q);
   // elements shown on some screens only stay in every compile, so they all have one structure (docs/head-styles.md)
   const screens: Screen[] = variantsOf(probe.conditions).map((variant) => ({ variant, styled: computeStyles(parsed, q, variant.env).body }));
   const ctx: Ctx = screens.length > 0 ? { ...decided, otherScreens: otherScreens(probe.body, screens) } : decided;
