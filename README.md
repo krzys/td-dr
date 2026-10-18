@@ -1,4 +1,9 @@
-# td;dr
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.png">
+    <img src="docs/assets/logo.png" alt="td;dr" width="420">
+  </picture>
+</h1>
 
 **too divvy; didn't render** — a compiler from ordinary HTML and CSS to email-safe HTML.
 
