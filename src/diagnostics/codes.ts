@@ -1,4 +1,4 @@
-// Never renumber; propose new codes in your report.
+// Codes are never renumbered.
 
 export type Severity = "error" | "warning" | "info";
 export type CodeInfo = { severity: Severity; title: string; hint: string };
