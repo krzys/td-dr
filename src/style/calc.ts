@@ -1,5 +1,5 @@
 // Static arithmetic for calc() / min() / max() / clamp(). A value is a number or a length;
-// a length is linear, P% + Npx, so calc(50% - 0.5rem) folds to calc(50% - 8px) (docs/decisions.md §4).
+// a length is linear, P% + Npx, so calc(50% - 0.5rem) folds to calc(50% - 8px) (docs/support.md#flex-rows).
 
 export type Val = { d: "num"; n: number } | { d: "len"; pct: number; px: number };
 // px for a unit, undefined if it isn't a resolvable length

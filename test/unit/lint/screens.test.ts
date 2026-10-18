@@ -4,7 +4,7 @@ import { png } from "./run.ts";
 
 const codes = (html: string, code: string) => compile(html).diagnostics.filter((d) => d.code === code);
 
-// copies shown on one screen or scheme only are still in the desktop tree (docs/head-styles.md)
+// copies shown on one screen or scheme only are still in the desktop tree (docs/support.md#screens)
 describe("lint across screens", () => {
   it("counts a desktop and a mobile copy of the h1 once", () => {
     const html = `<style>.m{display:none}@media (max-width:480px){.d{display:none}.m{display:block}}</style>

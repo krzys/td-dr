@@ -11,10 +11,10 @@ export type Decl = {
   important: boolean;
   vw: Array<[string, string]>; // viewport tokens and the px they resolved to
   usesVw: boolean;
-  textVw: boolean; // a text size written in vw: it can stay vw on phones (docs/decisions.md §9)
+  textVw: boolean; // a text size written in vw: it can stay vw on phones (docs/support.md#design-width)
 };
 
-// vw on these stays live on phones (docs/decisions.md §9)
+// vw on these stays live on phones (docs/support.md#design-width)
 const TEXT_PROPS = new Set(["font-size", "line-height", "letter-spacing", "word-spacing", "text-indent"]);
 
 // `width`: the design width vw resolves against. `narrow`: the env is below it, where text

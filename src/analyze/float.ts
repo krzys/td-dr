@@ -3,7 +3,7 @@ import { get } from "../style/props.ts";
 import type { StyledElement, StyledNode } from "../style/types.ts";
 import { isHidden, isInlineLevel, isTextBlock } from "./classify.ts";
 
-// A float on an image is its align attribute (docs/images-and-fonts.md#floated-images). A flex or grid item
+// A float on an image is its align attribute (docs/support.md#images). A flex or grid item
 // ignores float in a browser, so there is nothing to carry over.
 export const floatOf = (el: StyledElement): "left" | "right" | undefined => {
   if (el.tag !== "img" || /flex|grid/.test(el.parentStyle?.["display"] ?? "")) return undefined;

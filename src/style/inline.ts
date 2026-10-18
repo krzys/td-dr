@@ -7,7 +7,7 @@ import type { Decl, Declare, ViewportNotes } from "./declarations.ts";
 
 export type InlineDecls = { el: DomElement; decls: Decl[] };
 
-// In document order. `liveText`: one of them is vw text (docs/decisions.md §9).
+// In document order. `liveText`: one of them is vw text (docs/support.md#design-width).
 export const styleAttributes = (doc: ParsedDoc, declare: Declare, notes: ViewportNotes, ctx: Ctx): { found: InlineDecls[]; liveText: boolean } => {
   const found: InlineDecls[] = [];
   let liveText = false;

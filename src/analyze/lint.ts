@@ -189,7 +189,7 @@ const problems = (el: StyledElement, allowSvg = false, lowered = true): Problem[
   const transform = get(el.style, "transform");
   if (transform !== undefined && transform !== "none") add("E003", `transform: ${transform} is not supported`);
 
-  // float on an image becomes its align attribute (docs/images-and-fonts.md#floated-images); anything else floating is out
+  // float on an image becomes its align attribute (docs/support.md#images); anything else floating is out
   const float = get(el.style, "float");
   if ((float === "left" || float === "right") && el.tag !== "img") add("E004", `float: ${float} is not supported`);
 

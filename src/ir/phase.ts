@@ -1,4 +1,4 @@
-// Layout phases (docs/architecture.md, IR phases). The IR is one Node type from analyze to emit; a brand on the root says
+// Layout phases (docs/architecture.md#ir-phases). The IR is one Node type from analyze to emit; a brand on the root says
 // which pass contracts hold for the whole tree, so each stage states the phase it needs:
 //   Node       analyzed: margins and gaps as authored, no geometry
 //   Padded     margin-to-padding ran: every margin is 0

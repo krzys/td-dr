@@ -73,7 +73,7 @@ const reportLineMismatch = (row: RowNode, lines: number[][], out: number[], cont
 // (one wider than the line shrinks to it, like flex-shrink does for a lone item). The lines
 // are cut at the design width as the browser cuts them; grow items then fill their own line's
 // leftover, a px-basis one on top of its basis. Below the design width the emitter caps
-// each column at this width (docs/layout.md#fluid-hybrid-columns-wrapping-rows).
+// each column at this width (docs/support.md#wrapping-rows).
 const resolveWrap = (row: RowNode, content: number, ctx: Ctx, screen: Fluid): ResolvedColumns => {
   const specs: WidthSpec[] = row.cols.map((c) => c.width);
   const hasAuto = specs.some((s) => "auto" in s);
@@ -174,7 +174,7 @@ const resolveWrap = (row: RowNode, content: number, ctx: Ctx, screen: Fluid): Re
   });
 };
 
-// Fixed-width arithmetic for rows (docs/decisions.md §1): px/% columns are exact, grow columns share
+// Fixed-width arithmetic for rows (docs/architecture.md#design-decisions): px/% columns are exact, grow columns share
 // what is left, auto columns stay unresolved and the table decides.
 export const arithmeticResolver: WidthResolver = {
   resolve(row: RowNode, available: number, ctx: Ctx, screen: Fluid = SCREEN): ResolvedColumns {

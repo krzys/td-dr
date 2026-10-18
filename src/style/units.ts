@@ -72,7 +72,7 @@ export const splitTokens = (value: string): string[] => {
 // vmin and vmax read the width too. Heights (vh, vb) have no meaning and stay unsupported.
 const VIEWPORT = /(?<![\w#.-])([+-]?(?:\d+\.?\d*|\.\d+))([sld]?v(?:w|min|max))(?![\w.])/gi;
 
-// The cascade tags a text value that stays vw on phones (docs/decisions.md §9); toPx drops the tag and
+// The cascade tags a text value that stays vw on phones (docs/support.md#design-width); toPx drops the tag and
 // leaves the value as written instead of calling it unsupported.
 export const LIVE = "\u0001";
 
@@ -131,7 +131,7 @@ const LENGTH = /(?<![\w#.-])([+-]?(?:\d+\.?\d*|\.\d+))([a-z]+)(?![\w.])/gi;
 
 const round = (n: number) => Math.round(n * 1e4) / 1e4;
 
-// calc(P% ± Npx) is the one mixed form the flex rule reads (docs/decisions.md §4)
+// calc(P% ± Npx) is the one mixed form the flex rule reads (docs/support.md#flex-rows)
 const formatVal = (v: Val): string => {
   if (v.d === "num") return String(round(v.n));
   const pct = round(v.pct);

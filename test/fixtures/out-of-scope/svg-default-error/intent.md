@@ -6,4 +6,4 @@ expect: diagnostic
 codes: [E008]
 status: active
 ---
-Inline <svg> in default mode. Gmail and Outlook don't show it, so it is an error (docs/images-and-fonts.md#svg).
+Inline <svg> in default mode. Gmail and Outlook don't show it, so it is an error (docs/support.md#images).

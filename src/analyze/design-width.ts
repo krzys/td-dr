@@ -1,4 +1,4 @@
-// The email's own root container decides the design width (docs/layout.md#design-width).
+// The email's own root container decides the design width (docs/support.md#design-width).
 import { transparentColour } from "./box.ts";
 import { INLINE_TAGS, isTextBlock } from "./classify.ts";
 import type { Ctx, WidthDecision } from "../ctx.ts";

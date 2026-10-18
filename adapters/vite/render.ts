@@ -62,7 +62,7 @@ const renderMarkup = async (email: EmailEntry, component: unknown, props: Props 
   }
 };
 
-// docs/decisions.md §11: the props are symbolic, so the markup holds fields and <tddr-*> blocks for every branch
+// docs/templates.md#native-component-code: the props are symbolic, so the markup holds fields and <tddr-*> blocks for every branch
 // and loop the component writes natively (field() and data-email-* hints keep working).
 export const templateMarkup = (email: EmailEntry, component: unknown): Promise<string> => renderMarkup(email, component, undefined);
 

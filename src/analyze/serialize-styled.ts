@@ -74,7 +74,7 @@ export const ownStyle = (el: StyledElement, parent: ComputedStyle | undefined): 
 };
 
 // Shown on some screens only and hidden here: the cascade gave it the display of the screens where it
-// shows, so the hide is written back. Same hide as the preheader's (docs/email-shell.md#preheader).
+// shows, so the hide is written back. Same hide as the preheader's (docs/support.md#preheader).
 const HIDDEN_INLINE = { display: "none", "mso-hide": "all" };
 const HIDDEN_BLOCK = { display: "none", "max-height": "0", overflow: "hidden", "mso-hide": "all" };
 

@@ -8,7 +8,7 @@ import { FIELD_CLOSE, FIELD_OPEN } from "../../../src/template/tokens.ts";
 
 const repo = resolve(import.meta.dirname, "../../..");
 
-// Statement control flow in components (docs/decisions.md §11): each email is filled by the real Handlebars and
+// Statement control flow in components (docs/templates.md#native-component-code): each email is filled by the real Handlebars and
 // Liquid engines and must read like the html render of the same data.
 const EMAILS: Record<string, string> = {
   "guard.jsx": `

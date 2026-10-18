@@ -1,5 +1,5 @@
-// flex-wrap rows as fluid-hybrid columns (docs/layout.md#fluid-hybrid-columns-wrapping-rows) with an Outlook
-// ghost table per line (docs/outlook.md#ghost-tables).
+// flex-wrap rows as fluid-hybrid columns (docs/support.md#wrapping-rows) with an Outlook
+// ghost table per line (docs/support.md#ghost-tables).
 import { columnCap, contentWidth, floorPct, isOutlookOnlyCol, resolvedWidthOf, type Align, type Column, type ConditionalNode, type Node, type RowNode } from "../ir/index.ts";
 import { HIDE_DECLS, paddingValue, styleString } from "./attrs.ts";
 import { ghostCell, ghostCellOpen, ghostClose, ghostRowOpen, ifNotMso, msoOnly, shownCols } from "./mso.ts";
@@ -58,7 +58,7 @@ const column = (s: TraceScope, c: Column, emitChild: (n: Node) => string, inner:
         ["vertical-align", c.valign],
         ["width", pct !== undefined ? `${pct}%` : fixed ? "100%" : undefined],
         ["max-width", fixed && (pct === undefined || capped) ? `${px}px` : undefined],
-        // docs/email-shell.md#preheader: hidden on some screens only; Outlook gets neither the content nor the box
+        // docs/support.md#preheader: hidden on some screens only; Outlook gets neither the content nor the box
         ...(c.hidden ? HIDE_DECLS.filter(([p]) => p !== "display") : []),
       ]),
     ],

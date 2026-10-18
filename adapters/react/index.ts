@@ -11,7 +11,7 @@ const IMAGE_PRELOAD = /<link rel="preload" as="image"[^>]*\/>/g;
 export const render = <P extends object>(Component: ComponentType<P>, props: P): string =>
   renderToStaticMarkup(createElement(Component, props)).replace(IMAGE_PRELOAD, "");
 
-// Rendered with symbolic props (docs/decisions.md §11): `({ order })` reads the field `order`. jsx(), unlike
+// Rendered with symbolic props (docs/templates.md#native-component-code): `({ order })` reads the field `order`. jsx(), unlike
 // createElement, keeps the props object it is given, so the component gets the symbolic one.
 export const renderTemplate = (Component: ComponentType<any>): Promise<string> =>
   renderSymbolic((r) => {

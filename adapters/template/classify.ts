@@ -1,4 +1,4 @@
-// What the rewrite does with each statement `if` and `switch` (docs/decisions.md §11): a plan when the
+// What the rewrite does with each statement `if` and `switch` (docs/templates.md#native-component-code): a plan when the
 // statement can become one branch value, else the reason it stays a statement. A statement that
 // stays is still guarded at run time (`test(x, reason)`), so a template field deciding it throws
 // with the reason's wording (ops.ts); on plain values it runs as written.

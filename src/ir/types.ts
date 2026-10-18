@@ -1,5 +1,5 @@
-// Layout IR (docs/architecture.md). No CSS syntax, no tables. Changing a field's meaning needs an
-// entry in docs/decisions.md §4.
+// Layout IR (docs/architecture.md#layout-ir). No CSS syntax, no tables. Changing a field's meaning
+// needs a stated reason there.
 // Lengths are px numbers. Column widths are outer (margin-box) widths, maxWidth/width
 // are border-box, image width/height are the rendered image size. Margins are >= 0 after the bleed pass (the analyzer lets through only negatives that cancel the parent's padding),
 // `auto` margins become `align`, and after margin-to-padding every margin is 0.
@@ -119,7 +119,7 @@ export type ButtonNode = {
   href: string;
   content: string; // inner html of the link
   style: Style; // text styles of the link
-  attrs?: Record<string, string>; // non-style attributes kept on the <a> (docs/decisions.md §4)
+  attrs?: Record<string, string>; // non-style attributes kept on the <a> (docs/architecture.md#layout-ir)
   loc?: SrcLoc;
 };
 

@@ -228,7 +228,7 @@ const autoMarginAlign = (cols: readonly Column[], items: readonly Item[], line: 
   });
 };
 
-// Outlook's own cells go back where they stood; passes and emitters skip them (docs/outlook.md#outlook-only-content-data-emailoutlook-only)
+// Outlook's own cells go back where they stood; passes and emitters skip them (docs/support.md#outlook-only-content)
 const msoColumnOf = (it: Item & { node: ConditionalNode }, line: Line, ctx: Ctx): Column => {
   const inner: Item = { ...it, node: it.node.child };
   const v = selfAlign(inner, ctx) ?? line.align;

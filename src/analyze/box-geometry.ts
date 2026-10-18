@@ -175,7 +175,7 @@ export const widthsOf = (el: StyledElement, ctx: Ctx, frame: Frame): Pick<Box, "
     const len = parseLen(w);
     if (len && "px" in len) out.width = { px: outer(len.px) };
     else if (/^calc\(/i.test(w)) {
-      // a flex item's calc() width is the flex rule's (docs/decisions.md §4); anywhere else it has nothing to resolve against
+      // a flex item's calc() width is the flex rule's (docs/support.md#flex-rows); anywhere else it has nothing to resolve against
       if (!/flex/.test(el.parentStyle?.["display"] ?? "")) report(`width: ${w} is only supported on flex items`);
     } else if (len) {
       if (!frame.borderBox && extraX > 0) report(`width: ${w} plus padding/border (content-box) is not supported`);

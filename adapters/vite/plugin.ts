@@ -39,7 +39,7 @@ const isEmailModule = (id: string): boolean => {
   return !file.endsWith(".vue") || query === "" || /\btype=(?:script|template)\b/.test(query);
 };
 
-// docs/decisions.md §11: email modules get symbolic-aware operators and the frameworks' renderers through
+// docs/templates.md#native-component-code: email modules get symbolic-aware operators and the frameworks' renderers through
 // shims, so the same code renders real data or a template.
 export const nativeTemplates = (): Plugin => ({
   name: "tddr:native-templates",

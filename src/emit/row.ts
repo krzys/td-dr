@@ -19,7 +19,7 @@ type RowCtx = { hasPx: boolean; growTotal: number; nowrapAuto: boolean };
 // Which gutter halves of a column go because the item beside them is hidden (see gutters()).
 type Drop = { left?: boolean; right?: boolean };
 
-// Where a column of a stacked row sits on a screen that stacks it (docs/head-styles.md): a block
+// Where a column of a stacked row sits on a screen that stacks it (docs/support.md#what-a-screen-may-change): a block
 // `top` px under the one before, or no block at all. Absent: the column is not stacked.
 type StackAt = { top: number; item: StackItem } | "gone";
 

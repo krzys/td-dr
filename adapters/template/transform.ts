@@ -1,4 +1,4 @@
-// The operator rewrite (docs/decisions.md §11). JS can't intercept `&&`, `?:`, `===` or a statement `if`, so
+// The operator rewrite (docs/templates.md#native-component-code). JS can't intercept `&&`, `?:`, `===` or a statement `if`, so
 // email modules call the runtime instead; on plain values every call is the operator itself.
 // parse (ast.ts) -> walk the tree with each node's site (scope.ts) -> decide per node what can be
 // rewritten (classify.ts) -> plan its edits (lower.ts) -> apply them with a source map (edits.ts).

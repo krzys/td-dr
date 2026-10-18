@@ -36,7 +36,7 @@ export const slotAlign = (n: Node): Align | undefined => {
   return undefined;
 };
 
-// docs/images-and-fonts.md#images-on-a-text-line: a bare image that sat on a text line stays inline in a cell with that line's text styles.
+// docs/support.md#images: a bare image that sat on a text line stays inline in a cell with that line's text styles.
 export const onLine = (n: Node): n is ImageNode & { line: NonNullable<ImageNode["line"]> } =>
   n.kind === "image" && n.line !== undefined && paddingValue(n.box.padding) === undefined && !n.box.background;
 

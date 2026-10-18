@@ -120,7 +120,7 @@ export const computeValues = (
     if (p === "line-height" && /^[+-]?(?:\d+\.?\d*|\.\d+)$/.test(t)) next = t;
     else if (p === "line-height" && t.endsWith("%") && parsePx(t.slice(0, -1)) !== undefined) next = formatPx((parsePx(t.slice(0, -1))! * fontSize) / 100);
     else if (/^border-(?:top|right|bottom|left)-width$/.test(p) && BORDER_WIDTH_KW[t.toLowerCase()]) next = BORDER_WIDTH_KW[t.toLowerCase()]!;
-    // the flex rule parses calc(P% ± Npx) itself (docs/decisions.md §4) and gives anything else its own E006 + hint
+    // the flex rule parses calc(P% ± Npx) itself (docs/support.md#flex-rows) and gives anything else its own E006 + hint
     else if ((p === "flex-basis" || p === "width") && /^calc\(/i.test(t)) next = t;
     else next = toPx(t, sizes);
     if (next === null) report("E006", `${p}: unsupported length "${t}"`);

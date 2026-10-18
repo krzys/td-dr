@@ -12,7 +12,7 @@ const propNames = (c: Component): string[] => {
   return Array.isArray(props) ? props : Object.keys(props ?? {});
 };
 
-// Rendered with symbolic props (docs/decisions.md §11): each declared prop is a top-level field. Their type
+// Rendered with symbolic props (docs/templates.md#native-component-code): each declared prop is a top-level field. Their type
 // checks can't pass on a placeholder, so those warnings are dropped.
 export const renderTemplate = (Component: Component): Promise<string> => {
   const names = propNames(Component);

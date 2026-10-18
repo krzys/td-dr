@@ -171,7 +171,7 @@ export const add = (a: unknown, b: unknown): unknown => {
   return ai ? textOf(ai) + other : other + textOf(bi!);
 };
 
-// What the rewrite couldn't turn into a branch value, and what to do instead (docs/decisions.md §11).
+// What the rewrite couldn't turn into a branch value, and what to do instead (docs/templates.md#native-component-code).
 const GUARD_HINT = "return from every branch (if (x) return a; return b), assign a let in every branch (let v; if (x) v = a; else v = b), or branch in the markup: cond ? <A/> : <B/>";
 const STATEMENT: Record<string, [why: string, hint: string]> = {
   loop: ["is the test of a loop; a template can't repeat code until a field changes.", "loop over a list with .map, or send the list ready to use in the data"],

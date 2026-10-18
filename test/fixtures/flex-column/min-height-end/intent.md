@@ -8,4 +8,4 @@ status: active
 ---
 A 320px min-height painted column with three items and justify-content: flex-end.
 Must stay true: the items sit where flex-end puts them in the spare height, at both widths
-(docs/layout.md#vertical-distribution-inside-a-min-height).
+(docs/support.md#height-and-vertical-distribution).

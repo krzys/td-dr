@@ -13,7 +13,7 @@ const screenSlot = (box: Box, f: Fluid): Fluid => {
   return within(w && "px" in w ? fixedSlot(w.px) : w && "pct" in w ? within(f, w.pct / 100) : f, 1, insetX(box));
 };
 
-// A column's slot on a narrow screen. A wrapping row stacks its px and grow items there (docs/layout.md#fluid-hybrid-columns-wrapping-rows),
+// A column's slot on a narrow screen. A wrapping row stacks its px and grow items there (docs/support.md#wrapping-rows),
 // so they fill the line; a % or calc share stays a share; elsewhere a px column is fixed.
 const columnSlot = (col: Column, r: ResolvedWidth | null, row: Fluid, wrap: boolean): Fluid => {
   const w = col.width;

@@ -1,4 +1,4 @@
-// Bulletproof button, docs/outlook.md#bulletproof-buttons (a padded cell, plus VML for rounded corners).
+// Bulletproof button, docs/support.md#bulletproof-buttons (a padded cell, plus VML for rounded corners).
 import { insetX, insetY, type ButtonNode } from "../ir/index.ts";
 import { borderDecls, legacyColor, paddingValue, radiusValue, styleString } from "./attrs.ts";
 import { ghostClose, ghostOpen, ifNotMso, vmlButton } from "./mso.ts";

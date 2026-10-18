@@ -1,4 +1,4 @@
-// The only place MSO conditional markup lives. See docs/outlook.md.
+// The only place MSO conditional markup lives. See docs/support.md#outlook-and-mso.
 import { isOutlookOnlyCol, OUTLOOK_ONLY_CLOSE, OUTLOOK_ONLY_OPEN, type Align, type Column, type VAlign } from "../ir/index.ts";
 
 export const ifMso = (html: string): string => `<!--[if mso]>${html}<![endif]-->`;
@@ -128,7 +128,7 @@ export type VmlButton = {
   label: string;
 };
 
-// Rounded button for Outlook classic; pair with ifNotMso(<html button>). See docs/outlook.md#bulletproof-buttons.
+// Rounded button for Outlook classic; pair with ifNotMso(<html button>). See docs/support.md#bulletproof-buttons.
 export const vmlButton = (b: VmlButton): string => {
   const attrs = [
     `href="${b.href.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}"`,
@@ -151,7 +151,7 @@ export type VmlBackground = {
 
 const attr = (v: string): string => v.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 
-// Photo behind a cell's content for Outlook classic, docs/outlook.md#vml-background-images. The content goes between
+// Photo behind a cell's content for Outlook classic, docs/support.md#vml-background-images. The content goes between
 // the two halves; the cell carries no padding itself (an inner table does), so the rect covers all of it.
 export const vmlBackgroundOpen = (v: VmlBackground): string =>
   ifMso(

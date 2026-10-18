@@ -29,7 +29,7 @@ const trackCount = (template: string | undefined): number => {
 const layoutOf = (style: ComputedStyle): Layout => {
   const display = get(style, "display");
   if (display === "flex") {
-    if (get(style, "flex-wrap") !== "nowrap") return "other"; // a wrapping row stacks by itself (docs/layout.md#fluid-hybrid-columns-wrapping-rows)
+    if (get(style, "flex-wrap") !== "nowrap") return "other"; // a wrapping row stacks by itself (docs/support.md#wrapping-rows)
     return get(style, "flex-direction") as Layout;
   }
   if (display === "grid") {
@@ -68,7 +68,7 @@ const unstackTo = (base: ComputedStyle, kind: string): Unstack => (style) => {
 
 const layouts = (body: StyledElement): Map<string, Seen> => {
   const out = new Map<string, Seen>();
-  // a wrapping row stacks by itself; what is inside it keeps today's behaviour (docs/layout.md#fluid-hybrid-columns-wrapping-rows)
+  // a wrapping row stacks by itself; what is inside it keeps today's behaviour (docs/support.md#wrapping-rows)
   const walk = (el: StyledElement, wrapped: boolean): void => {
     const key = elementKey(el.loc);
     if (key !== undefined) out.set(key, { layout: layoutOf(el.style), el, loc: el.loc, wrapped });

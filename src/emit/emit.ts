@@ -1,4 +1,4 @@
-// The IR as tables (docs/architecture.md, The emitter): emit() writes one compile's body markup.
+// The IR as tables (docs/architecture.md#the-emitter): emit() writes one compile's body markup.
 import type { Ctx } from "../ctx.ts";
 import type { EmitReady, Node } from "../ir/index.ts";
 import { emitButton } from "./button.ts";

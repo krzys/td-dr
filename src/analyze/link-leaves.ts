@@ -20,7 +20,7 @@ const anchor = (link: StyledElement, parent: StyledElement, children: StyledNode
 };
 
 // A link can't wrap the tables a box becomes (Outlook classic drops it), so each run of text
-// inside gets its own copy (docs/layout.md#linked-blocks-clickable-cards). Flex items keep their element.
+// inside gets its own copy (docs/support.md#links-around-blocks). Flex items keep their element.
 export const linkLeaves = (link: StyledElement): { el: StyledElement; anchors: number } => {
   let anchors = 0;
   const wrap = (parent: StyledElement, nodes: StyledNode[]): StyledElement => {

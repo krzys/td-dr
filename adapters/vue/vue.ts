@@ -1,4 +1,4 @@
-// vue for email modules in the email environment (docs/decisions.md §11): class and style bindings take
+// vue for email modules in the email environment (docs/templates.md#native-component-code): class and style bindings take
 // template values before Vue normalizes them (it would drop a field, or keep a class a field
 // switches as if it were on). Everything else is Vue's own.
 import * as vue from "vue";

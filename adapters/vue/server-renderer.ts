@@ -1,4 +1,4 @@
-// vue/server-renderer for email modules in the email environment (docs/decisions.md §11): the helpers Vue's
+// vue/server-renderer for email modules in the email environment (docs/templates.md#native-component-code): the helpers Vue's
 // SSR templates call, taking template values. Everything else is Vue's own.
 import * as vue from "vue/server-renderer";
 import { isSymbolic, isTemplateValue, templateError } from "../template/index.ts";

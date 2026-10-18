@@ -20,7 +20,7 @@ export interface DiagnosticSink {
   list(): Diagnostic[];
 }
 
-// Not strict = errors become warnings (docs/decisions.md §2).
+// Not strict = errors become warnings (docs/architecture.md#design-decisions).
 export const createSink = (strict: boolean): DiagnosticSink => {
   const items: Diagnostic[] = [];
   return {

@@ -62,5 +62,5 @@ export const borderDecls = (b: Border | undefined): Array<[string, string]> =>
     return s ? [[`border-${side}`, `${s.width}px ${s.style} ${s.color}`] as [string, string]] : [];
   });
 
-// The preheader's hide (docs/email-shell.md#preheader), for a node that is hidden on some screens only.
+// The preheader's hide (docs/support.md#preheader), for a node that is hidden on some screens only.
 export const HIDE_DECLS: ReadonlyArray<readonly [string, string]> = [["display", "none"], ["max-height", "0"], ["overflow", "hidden"], ["mso-hide", "all"]];

@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-// Size gains stay (docs/decisions.md §7): a golden may shrink freely, growing past its budget needs a reason.
+// Size gains stay (docs/architecture.md#design-decisions): a golden may shrink freely, growing past its budget needs a reason.
 // After an intended change, rewrite the budget with UPDATE_SIZE_BUDGET=1 pnpm test output-size.
 const ROOT = "test/fixtures";
 const GROUPS = ["real-world", "frameworks", "complex"];

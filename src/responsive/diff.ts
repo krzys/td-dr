@@ -1,4 +1,4 @@
-// Emitted body html of the base and of one variant, compared tag by tag (docs/head-styles.md). Pure.
+// Emitted body html of the base and of one variant, compared tag by tag (docs/support.md#screens). Pure.
 // Both are compiled with trace markers, so each tag says which author element it came from.
 import type { SrcLoc } from "../loc.ts";
 import { TRACE_ATTR } from "../emit/trace.ts";

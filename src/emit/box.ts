@@ -64,7 +64,7 @@ export const boxCell = (e: EmitContext, n: StackNode | RowNode, content: CellCon
   const body = b.hide === "hidden" ? ifNotMso(content.html) : content.html;
   let inner = body;
   let extra = content.decls;
-  // docs/layout.md#clipping-overflow-hidden-and-rounded-corners: a fixed-layout table gives the inner cell the box's width whatever
+  // docs/support.md#clipping-and-rounded-corners: a fixed-layout table gives the inner cell the box's width whatever
   // its content, and that cell cuts off what is wider. The text styles move in with the content.
   if (b.clip) {
     const cell = wrap(e, "td", [["style", styleString([["overflow", "hidden"], ["white-space", "nowrap"], ...content.decls.filter(([p]) => p !== "white-space")])]], body);
@@ -81,7 +81,7 @@ export const boxCell = (e: EmitContext, n: StackNode | RowNode, content: CellCon
     ["valign", b.minHeight ? place : undefined],
     ["style", styleString(decls)],
   ];
-  // VML needs a px box: a rect without a height is a guess (docs/outlook.md#vml-background-images says to skip it)
+  // VML needs a px box: a rect without a height is a guess (docs/support.md#vml-background-images says to skip it)
   if (url === undefined || !b.minHeight) {
     if (url !== undefined) {
       e.ctx.diagnostics.report("W001", {
@@ -110,7 +110,7 @@ export const boxCell = (e: EmitContext, n: StackNode | RowNode, content: CellCon
   return wrap(e, "td", attrs(bare, boxDecls(bare, px)), `${vmlBackgroundOpen(vml)}\n${table}\n${vmlBackgroundClose()}`);
 };
 
-// docs/outlook.md#ghost-tables: Outlook ignores max-width, so a capped box gets a fixed-width ghost table.
+// docs/support.md#ghost-tables: Outlook ignores max-width, so a capped box gets a fixed-width ghost table.
 // `skip`: the shell's own ghost already holds it.
 export const ghosted = (e: EmitContext, n: StackNode | RowNode, table: string, skip: boolean): string => {
   const b = n.box;

@@ -1,5 +1,5 @@
 // One table for both input lint and output self-lint, backed by
-// the vendored caniemail data (docs/decisions.md §6). Never fetched at runtime.
+// the vendored caniemail data (docs/support.md#targets-and-client-data). Never fetched at runtime.
 import data from "./data/caniemail.json" with { type: "json" };
 import { PRESETS, type Pair } from "./presets.ts";
 

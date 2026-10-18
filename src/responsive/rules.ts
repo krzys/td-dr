@@ -1,4 +1,4 @@
-// Overrides become classes on the base html and flat rules for one head <style> (docs/head-styles.md).
+// Overrides become classes on the base html and flat rules for one head <style> (docs/support.md#screens).
 import type { Decls, Override, Tag } from "./diff.ts";
 import type { Variant } from "./variants.ts";
 
@@ -11,7 +11,7 @@ export const className = (n: number): string => `t-${n.toString(36)}`;
 const decl = ([p, v]: readonly [string, string]): string => `${p}:${v.replaceAll("<", "\\3c ")} !important;`;
 const rule = (selector: string, decls: Decls): string => `${selector} { ${decls.map(decl).join(" ")} }`;
 
-// Outlook.com marks the elements it recolours with these (docs/head-styles.md)
+// Outlook.com marks the elements it recolours with these (docs/support.md#dark-mode)
 const MIRRORS: ReadonlyArray<readonly [string, string]> = [["[data-ogsc]", "color"], ["[data-ogsb]", "background-color"]];
 
 type Made = { name: string; decls: Decls };

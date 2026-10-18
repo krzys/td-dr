@@ -1,4 +1,4 @@
-// parse before sanitize keeps source locations intact (docs/decisions.md §3).
+// parse before sanitize keeps source locations intact (docs/architecture.md#stage-contracts).
 import { analyze } from "./analyze/analyze.ts";
 import type { Ctx, OtherScreens, WidthDecision } from "./ctx.ts";
 import { emit } from "./emit/emit.ts";
@@ -137,7 +137,7 @@ export const runTraced = (input: string, given: Ctx): { html: string; trace?: Tr
   // the design width splits vw text and resolves vw, so the screens come from a cascade at that width
   const q = quiet(decided);
   const probe = decided.options.width === given.options.width ? first : computeStyles(parsed, q);
-  // elements shown on some screens only stay in every compile, so they all have one structure (docs/head-styles.md)
+  // elements shown on some screens only stay in every compile, so they all have one structure (docs/architecture.md#several-screens-one-structure)
   const screens: Screen[] = variantsOf(probe.conditions).map((variant) => ({ variant, styled: computeStyles(parsed, q, variant.env).body }));
   const ctx: Ctx = screens.length > 0 ? { ...decided, otherScreens: otherScreens(probe.body, screens) } : decided;
   const others = screens.map((s) => s.styled);

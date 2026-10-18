@@ -55,7 +55,7 @@ for (const d of diagnostics) console.log(d.severity, d.code, d.message, d.loc);
 A `Diagnostic` is `{ code, severity: "error" | "warning" | "info", message, hint?, loc?: { line, col, file? } }`.
 `E…` codes are errors (input td;dr can't lower faithfully; with `strict: false` they become
 warnings), `W…` warnings (approximations, client-support gaps, size limits) and `I…` notes; the
-table is in [docs/css-support.md](docs/css-support.md#diagnostic-codes).
+table is in [docs/support.md](docs/support.md#diagnostic-codes).
 The package also exports `preview(html, props)` (evaluate template hints against sample data),
 `field(path)` (a placeholder for a data field) and `writeString(text, dialect)` (write a subject or
 preheader string for a dialect). See [docs/templates.md](docs/templates.md).
@@ -158,7 +158,7 @@ HTML. `tddr/vite` exposes the Vite plugin and the programmatic API (`buildEmails
 - **ESP templates:** Handlebars and Liquid output from hints, `<tddr-*>` elements or native
   component code, checked against the HTML render with the real engines.
 
-Details and every diagnostic code: [docs/css-support.md](docs/css-support.md).
+Details and every diagnostic code: [docs/support.md](docs/support.md).
 
 ## Limitations
 
@@ -194,16 +194,9 @@ cache allows, otherwise it fetches only metadata (`--prefer-offline`).
 
 ## Documentation
 
-- [Architecture](docs/architecture.md): pipeline, stage contracts, Layout IR and its phases, the emitter.
-- [CSS and HTML support](docs/css-support.md): what is lowered and how, approximations, client data, every diagnostic code.
-- [Layout](docs/layout.md): design width, block flow, flex rows, cards, wrapping rows, grids, clipping, author tables.
-- [Outlook](docs/outlook.md): ghost tables, Outlook-only content, bulletproof buttons, VML backgrounds.
-- [Head styles](docs/head-styles.md): responsive, hover and dark-mode rules compiled per screen, E017.
-- [Images and fonts](docs/images-and-fonts.md): inline, floated and hosted images, `<picture>`, SVG, web fonts.
-- [The email shell](docs/email-shell.md): document, preheader, text defaults, accessibility, right-to-left text.
+- [Support and limits](docs/support.md): HTML and CSS support, layout, head styles and dark mode, images, fonts, the email shell, Outlook and MSO, size limits, every diagnostic code.
 - [Templates](docs/templates.md): ESP templates, native authoring, dialects, condition semantics, the equivalence check.
-- [Verification](docs/verification.md): what the test suite guarantees, and what it doesn't.
-- [Decisions](docs/decisions.md): design decisions and their consequences.
+- [Architecture](docs/architecture.md): pipeline, stage contracts, the Layout IR, design decisions, verification.
 
 ## License
 

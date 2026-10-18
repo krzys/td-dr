@@ -1,4 +1,4 @@
-// react/jsx-runtime for email modules in the email environment (docs/decisions.md §11)
+// react/jsx-runtime for email modules in the email environment (docs/templates.md#native-component-code)
 import { Fragment, jsx as reactJsx, jsxs as reactJsxs } from "react/jsx-runtime";
 import { prepare, type Make } from "./blocks.ts";
 

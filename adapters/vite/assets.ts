@@ -7,7 +7,7 @@ import { DEFAULT_TARGETS, loadCapabilities } from "../../src/targets/capabilitie
 import { FIELD_CLOSE, FIELD_OPEN } from "../../src/template/tokens.ts";
 import { formatBytes, formatKB } from "../../src/limits.ts";
 
-// docs/images-and-fonts.md#hosted-and-embedded-images: inline an image only where every target shows data: images,
+// docs/support.md#hosted-and-embedded-images: inline an image only where every target shows data: images,
 // else it needs a hosted URL. A relative URL is a project file (what Vite gives an imported asset
 // or a public file) or, with a base URL, a path hosted under it; an email can't load it as is.
 

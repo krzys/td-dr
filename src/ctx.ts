@@ -5,9 +5,9 @@ import { DEFAULT_TARGETS, loadCapabilities, type Capabilities } from "./targets/
 export type CompileOptions = {
   css?: string[]; // extra stylesheets, applied after <style> blocks
   targets?: string[]; // default ["broad"]
-  width?: number; // design width; without it, the email's root container decides (docs/layout.md#design-width)
+  width?: number; // design width; without it, the email's root container decides (docs/support.md#design-width)
   strict?: boolean; // default true: unsupported input is an error
-  allowSvg?: boolean; // keep inline <svg> with W010 instead of E008 (docs/images-and-fonts.md#svg)
+  allowSvg?: boolean; // keep inline <svg> with W010 instead of E008 (docs/support.md#images)
   lang?: string; // the email's language when the source has no <html lang>; else "en" with I009
   template?: DialectName; // write placeholders and each/if blocks for an ESP (docs/templates.md)
   trace?: boolean; // also return which input element each output start tag came from (dev UI)
@@ -25,7 +25,7 @@ export type ResolvedOptions = {
   readonly trace?: boolean;
 };
 
-// The design-width decision (analyze/design-width.ts, docs/layout.md#design-width): the width, and the root containers it
+// The design-width decision (analyze/design-width.ts, docs/support.md#design-width): the width, and the root containers it
 // reported (W011) as wider than a given width option, by identityKey. The analyzer marks their nodes
 // (`reportedWide`), so later stages read that, not the diagnostics.
 export type WidthDecision = { readonly width: number; readonly reportedWide: ReadonlySet<string> };

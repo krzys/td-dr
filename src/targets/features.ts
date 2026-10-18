@@ -1,5 +1,5 @@
 // CSS longhand/value/at-rule/selector -> caniemail slugs. Explicit on purpose:
-// slugs don't line up 1:1 with property names (see docs/css-support.md#targets-and-client-data).
+// slugs don't line up 1:1 with property names (see docs/support.md#targets-and-client-data).
 
 const alias = (slug: string, props: string[]): Array<[string, string[]]> => props.map((p) => [p, [slug]]);
 

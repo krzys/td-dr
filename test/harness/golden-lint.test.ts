@@ -37,7 +37,7 @@ export const lintEmail = (html: string): string[] => {
       break;
     }
   }
-  // Outlook drops a link around a table (docs/layout.md#linked-blocks-clickable-cards)
+  // Outlook drops a link around a table (docs/support.md#links-around-blocks)
   let inLink = 0;
   for (const m of html.matchAll(/<(\/?)(a|table)\b/gi)) {
     if (m[2]!.toLowerCase() === "a") inLink = Math.max(0, inLink + (m[1] ? -1 : 1));

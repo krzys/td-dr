@@ -8,7 +8,7 @@ import { FIELD_CLOSE, FIELD_OPEN } from "../../../src/template/tokens.ts";
 
 const repo = resolve(import.meta.dirname, "../../..");
 
-// Fixes to statement control flow (docs/decisions.md §11): each email is filled by the real Handlebars and Liquid
+// Fixes to statement control flow (docs/templates.md#native-component-code): each email is filled by the real Handlebars and Liquid
 // engines and must read like the html render of the same data.
 const EMAILS: Record<string, string> = {
   "braced.jsx": `

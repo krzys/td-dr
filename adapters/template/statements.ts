@@ -1,4 +1,4 @@
-// The shapes of statement control flow the rewrite can turn into branch values (docs/decisions.md §11): which
+// The shapes of statement control flow the rewrite can turn into branch values (docs/templates.md#native-component-code): which
 // statements return, which may sit in an arm, how a switch's cases and an else-if chain split up.
 // Only reads the syntax tree.
 import { children, isFunction, nameOf, type Expression, type IfStatement, type Node, type Statement } from "./ast.ts";

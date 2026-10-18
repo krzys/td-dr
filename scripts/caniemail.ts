@@ -1,4 +1,4 @@
-// Refreshes the vendored caniemail data (docs/decisions.md §6). Run: pnpm caniemail
+// Refreshes the vendored caniemail data (docs/support.md#targets-and-client-data). Run: pnpm caniemail
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

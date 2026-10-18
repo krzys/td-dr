@@ -1,5 +1,5 @@
 // Where in the environment space a rule applies, and which environments the author's rules
-// tell apart (docs/head-styles.md). The cascade evaluates against one Env; the variants come from here.
+// tell apart (docs/support.md#screens). The cascade evaluates against one Env; the variants come from here.
 import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
 import { canMatch, matchesList, parseMedia, rangesOf, wantsDark, type MediaQuery } from "./media.ts";

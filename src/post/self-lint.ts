@@ -178,7 +178,7 @@ export const selfLint = (html: string, ctx: Ctx): void => {
     }
   };
 
-  // our phone rules keep a live text size (vw, clamp(), its calc() line height) on purpose (docs/decisions.md §9)
+  // our phone rules keep a live text size (vw, clamp(), its calc() line height) on purpose (docs/support.md#design-width)
   const withoutLive = (css: string): string =>
     topLevelRules(css)
       .filter(({ prelude, body }) => !(prelude.startsWith("@media") && topLevelRules(body).every((r) => r.prelude.split(",").every((x) => OURS.test(x.trim().replace(/\s+/g, " "))))))

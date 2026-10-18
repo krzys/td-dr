@@ -1,4 +1,4 @@
-// @media preludes, parsed once and evaluated against an Env (docs/head-styles.md).
+// @media preludes, parsed once and evaluated against an Env (docs/support.md#screens).
 import type { Env } from "./types.ts";
 import { INITIAL_FONT_SIZE } from "./units.ts";
 

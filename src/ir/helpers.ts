@@ -61,5 +61,5 @@ export const templateChildren = (n: TemplateNode): Node[] =>
 export const OUTLOOK_ONLY_OPEN = "<!--tddr:outlook-only-->";
 export const OUTLOOK_ONLY_CLOSE = "<!--/tddr:outlook-only-->";
 
-// A data-email="outlook-only" row item: its whole cell exists in Outlook only (docs/outlook.md#outlook-only-content-data-emailoutlook-only).
+// A data-email="outlook-only" row item: its whole cell exists in Outlook only (docs/support.md#outlook-only-content).
 export const isOutlookOnlyCol = (c: Column): boolean => c.child.kind === "conditional" && c.child.target === "mso";

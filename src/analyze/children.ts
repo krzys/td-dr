@@ -80,7 +80,7 @@ const edgeChain = (el: StyledElement, side: "top" | "bottom"): StyledElement[] =
 
 // Box properties Outlook ignores on p/h1/li…; they move to the enclosing cell.
 export const BOX_PROP = /^(margin|padding|border|background|width$|max-width$|min-height$|box-sizing$)/;
-// Lists keep their indent (docs/layout.md#lists-and-dividers); tables are already cells.
+// Lists keep their indent (docs/support.md#lists-dividers-and-author-tables); tables are already cells.
 export const KEEPS_BOX: ReadonlySet<string> = new Set(["ul", "ol", "dl", "table"]);
 
 const CLIP_PROPS = /^(-webkit-)?background-(clip|image|size|position|repeat)$|^-webkit-text-fill-color$/;

@@ -29,7 +29,7 @@ export const boxContent = (e: EmitContext, n: StackNode | RowNode): CellContent 
   return { decls: [], html: `\n${withBody(tableOpen(e, "100%", [["width", "100%"], ...blockLayout(e)]), rows(e, n.children))}\n` };
 };
 
-// docs/layout.md#vertical-distribution-inside-a-min-height: a table as tall as the cell's content box, with
+// docs/support.md#height-and-vertical-distribution: a table as tall as the cell's content box, with
 // spacer rows whose % heights share the spare height the way justify-content does.
 const SPREAD: Readonly<Record<NonNullable<StackNode["justify"]>, (n: number) => number[]>> = {
   end: (n) => [100, ...Array<number>(n).fill(0)],
