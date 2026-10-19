@@ -1,6 +1,6 @@
 // A stack: one outer table for sizing and alignment, the box (if any) in a single cell around an
 // inner table of rows, one row per child.
-import { borderX, locKey, roundPct, type Node, type RowNode, type Sides, type StackNode, type VAlign } from "../ir/index.ts";
+import { borderX, locKey, type Node, type RowNode, type Sides, type StackNode, type VAlign } from "../ir/index.ts";
 import { paddingValue, styleString, type Decls } from "./attrs.ts";
 import { blockLayout, boxCell, cellHeight, ghosted, tableTag, type CellContent } from "./box.ts";
 import { conditional, templated } from "./conditional.ts";
@@ -30,14 +30,17 @@ export const boxContent = (e: EmitContext, n: StackNode | RowNode): CellContent 
 };
 
 // docs/support.md#height-and-vertical-distribution: a table as tall as the cell's content box. Center
-// and end put the rows in one cell placed by valign; the others get spacer rows whose % heights share
-// the spare height the way justify-content does.
+// and end, and the space-* values with one item, put the rows in one cell placed by valign. The others give each item a 1px row, which
+// the table never grows, and put empty rows around them: every engine shares spare height equally
+// between empty rows (% rows it doesn't: Gecko and WebKit fill those first to last), so a gap of N
+// rows takes N shares.
 const PLACE: Partial<Record<NonNullable<StackNode["justify"]>, VAlign>> = { center: "middle", end: "bottom" };
 
-const SPREAD: Readonly<Record<"between" | "around" | "evenly", (n: number) => number[]>> = {
-  between: (n) => (n < 2 ? [0, 0] : [0, ...Array<number>(n - 1).fill(100 / (n - 1)), 0]),
-  around: (n) => [50 / n, ...Array<number>(n - 1).fill(100 / n), 50 / n],
-  evenly: (n) => Array<number>(n + 1).fill(100 / (n + 1)),
+// empty rows before item i of n (i = n: after the last)
+const SPREAD: Readonly<Record<"between" | "around" | "evenly", (i: number, n: number) => number>> = {
+  between: (i, n) => (i > 0 && i < n ? 1 : 0),
+  around: (i, n) => (i === 0 || i === n ? 1 : 2),
+  evenly: () => 1,
 };
 
 const justified = (e: EmitContext, n: StackNode, height: number): string => {
@@ -50,26 +53,27 @@ const justified = (e: EmitContext, n: StackNode, height: number): string => {
     ["border", "0"],
     ["style", styleString([["width", "100%"], ["height", `${height}px`], ...blockLayout(e)])],
   ]);
-  const place = PLACE[n.justify!];
+  const items = n.children.filter((c) => !isNothing(c));
+  // an Outlook-only item isn't there in the browsers that share the height, so it adds no gap
+  const shown = items.filter((c) => !outlookOnlyChild(c));
+  // one item: space-between puts it at the start, space-around and space-evenly in the middle
+  const place = PLACE[n.justify!] ?? (shown.length === 1 ? (n.justify === "between" ? "top" : "middle") : undefined);
   // Word honours a cell's height and valign, so Outlook places these too
   if (place) return withBody(head, tr(wrap(e, "td", [["height", String(height)], ["valign", place]], `\n${withBody(tableOpen(e, "100%", [["width", "100%"], ...blockLayout(e)]), rows(e, n.children))}\n`)));
-  const spread = SPREAD[n.justify as keyof typeof SPREAD](n.children.length);
-  const shares = spread.length === n.children.length + 1 ? spread : [spread[0]!, ...Array<number>(n.children.length - 1).fill(0), spread.at(-1)!];
-  const spacer = (pct: number): string => {
-    const h = `${roundPct(pct)}%`;
-    return pct > 0 ? `${tr(wrap(e, "td", [["height", h], ["style", styleString([["height", h], ...EMPTY_TEXT])]], "&nbsp;"))}\n` : "";
-  };
-  const body = n.children.map((c, i) => spacer(shares[i]!) + row(e, c)).join("\n") + "\n" + spacer(shares.at(-1)!);
-  return withBody(head, body.trimEnd());
+  const spread = SPREAD[n.justify as keyof typeof SPREAD];
+  const spacers = (k: number): string[] => Array<string>(k).fill(tr(wrap(e, "td", [["style", styleString(EMPTY_TEXT)]], "&nbsp;")));
+  const body = items.flatMap((c) => (outlookOnlyChild(c) ? [row(e, c)] : [...spacers(spread(shown.indexOf(c), shown.length)), row(e, c, true)]));
+  return withBody(head, [...body, ...spacers(spread(shown.length, shown.length))].join("\n"));
 };
 
 // One cell per child. Wrappers that only add padding (margins turned into padding)
 // fold into that cell, and a full-width box shares it, so nesting stays shallow.
-const row = (e: EmitContext, child: Node): string => {
-  if (child.kind === "conditional") return conditional(e, child, row(e, child.child));
-  if (child.kind === "template") return templated(child, (c) => row(e, c));
+// `fixed`: a 1px cell, whose row a table gives none of its spare height (justified).
+const row = (e: EmitContext, child: Node, fixed = false): string => {
+  if (child.kind === "conditional") return conditional(e, child, row(e, child.child, fixed));
+  if (child.kind === "template") return templated(child, (c) => row(e, c, fixed));
   const { node, pad, loc } = foldWrappers(child, (s) => sideBordered(e, s) && !wraps(s));
-  return tr(slot(traced(e, loc), node, pad));
+  return tr(slot(traced(e, loc), node, pad, fixed ? 1 : undefined));
 };
 
 // With other screens, the base screen's border decides for all of them, so every compile has one structure
@@ -86,14 +90,14 @@ const wraps = (s: StackNode): boolean => {
 };
 
 // the cell a child sits in
-const slot = (e: EmitContext, n: Slotted, pad: Sides): string => {
+const slot = (e: EmitContext, n: Slotted, pad: Sides, height?: number): string => {
   const padding: Decls = [["padding", paddingValue(pad)]];
-  if (n.kind === "inline") return wrap(e, "td", [["style", styleString([...padding, ...cellTextDecls(n)]) || undefined]], n.html);
-  if ((n.kind === "stack" || n.kind === "row") && sharesSlotCell(n, !!paddingValue(pad), sideBordered(e, n))) return boxCell(e, n, boxContent(e, n), rowPlace(n));
+  if (n.kind === "inline") return wrap(e, "td", [["height", height], ["style", styleString([...padding, ...cellTextDecls(n)]) || undefined]], n.html);
+  if ((n.kind === "stack" || n.kind === "row") && sharesSlotCell(n, !!paddingValue(pad), sideBordered(e, n))) return boxCell(e, n, boxContent(e, n), rowPlace(n), height);
   const content = emitNode(e, n);
   const nested = n.kind === "stack" || n.kind === "row";
   const line = onLine(n) ? textDecls(n.line) : [];
-  return wrap(e, "td", [["align", slotAlign(n)], ["style", styleString([...padding, ...line]) || undefined]], nested ? `\n${content}\n` : content);
+  return wrap(e, "td", [["height", height], ["align", slotAlign(n)], ["style", styleString([...padding, ...line]) || undefined]], nested ? `\n${content}\n` : content);
 };
 
 export const rows = (e: EmitContext, children: Node[]): string => children.filter((c) => !isNothing(c)).map((c) => row(e, c)).join("\n");

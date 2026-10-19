@@ -55,8 +55,8 @@ const boxDecls = (b: Box, px?: number): Decls => [
 
 // Cell that carries the box: padding, background, borders, radius (and the px width, like any fixed-width cell).
 // A background photo also gets Outlook's VML: the cell then holds a padded inner table instead of the padding itself.
-// `place`: where a min-height box puts its content.
-export const boxCell = (e: EmitContext, n: StackNode | RowNode, content: CellContent, place: VAlign = "top"): string => {
+// `place`: where a min-height box puts its content; `height`: the cell's height when the box sets none.
+export const boxCell = (e: EmitContext, n: StackNode | RowNode, content: CellContent, place: VAlign = "top", height?: number): string => {
   const b = n.box;
   const px = b.width && "px" in b.width ? b.width.px : undefined;
   const width = px ?? resolvedWidthOf(n);
@@ -77,7 +77,7 @@ export const boxCell = (e: EmitContext, n: StackNode | RowNode, content: CellCon
     ["width", px],
     ["bgcolor", legacyColor(b.background)],
     ["background", url],
-    ["height", cellHeight(cell)],
+    ["height", cellHeight(cell) ?? height],
     ["valign", b.minHeight ? place : undefined],
     ["style", styleString(decls)],
   ];

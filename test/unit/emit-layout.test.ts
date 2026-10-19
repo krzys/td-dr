@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { emit } from "../../src/emit/emit.ts";
-import { checkEmitReady, emptyBox, sides, type Box, type Column, type ImageNode, type Node } from "../../src/ir/index.ts";
+import { checkEmitReady, emptyBox, sides, type Box, type Column, type ImageNode, type Node, type StackNode } from "../../src/ir/index.ts";
 import { testCtx } from "../helpers/index.ts";
 import { lintEmail } from "../harness/golden-lint.test.ts";
 
@@ -56,6 +56,23 @@ describe("emit rows", () => {
     expect(tall(["middle", "middle"])).toMatch(/<td bgcolor="#000000" height="186" valign="middle"/);
     expect(tall(["bottom"])).toMatch(/height="186" valign="bottom"/);
     expect(tall(["middle", "top"])).toMatch(/height="186" valign="top"/);
+  });
+
+  test("a min-height column places center, end and one item by valign, the space-* values over empty rows", () => {
+    const column = (justify: NonNullable<StackNode["justify"]>, n: number) =>
+      run({ ...stack(["a", "b", "c"].slice(0, n).map((t) => inline(t)), { background: "#000000", minHeight: 200 }), justify } as Node);
+    expect(column("center", 2)).toMatch(/<td height="200" valign="middle">/);
+    expect(column("end", 1)).toMatch(/<td height="200" valign="bottom">/);
+    // x: an item's 1px cell, s: an empty row taking one share of the spare height
+    const shares = (justify: NonNullable<StackNode["justify"]>, n: number) =>
+      [...column(justify, n).matchAll(/<td (height="1"|style="font-size:0)/g)].map((m) => (m[1] === 'height="1"' ? "x" : "s")).join("");
+    // one item is placed like flex-start or center
+    expect(column("between", 1)).toMatch(/<td height="200" valign="top">/);
+    expect(column("around", 1)).toMatch(/<td height="200" valign="middle">/);
+    expect(column("evenly", 1)).toMatch(/<td height="200" valign="middle">/);
+    expect(shares("between", 3)).toBe("xsxsx");
+    expect(shares("around", 2)).toBe("sxssxs");
+    expect(shares("evenly", 2)).toBe("sxsxs");
   });
 
   test("2 cols: px, pct, valign, align, padding", () => {

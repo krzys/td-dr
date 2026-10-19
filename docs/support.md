@@ -144,15 +144,19 @@ filled in source order. Grid areas, spans, `auto-fill`, row templates and `subgr
 ### Height and vertical distribution
 
 A flex column with `min-height` and `justify-content: flex-end | center | space-between |
-space-around | space-evenly` gets a table exactly as tall as the cell. For `center` and `flex-end`
-its one cell holds the rows with `valign="middle"` / `"bottom"`, which Word honours too. The
-`space-*` values get spacer rows (`%` heights, `font-size:0;line-height:0;mso-line-height-rule:exactly`)
-taking the spare height in CSS proportions. Taller content grows the table. A one-line flex row with
-`align-items: center | flex-end` gives its box cell the same `valign`.
+space-around | space-evenly` gets a table exactly as tall as the cell. For `center` and `flex-end`,
+and for a lone item of the `space-*` values, its one cell holds the rows with `valign="middle"` /
+`"bottom"` (`"top"` for one `space-between` item), which Word honours too. Otherwise each item's
+cell is `height="1"`, which the table never grows, and empty spacer rows
+(`font-size:0;line-height:0;mso-line-height-rule:exactly`) sit around the items, one per share of
+the spare height (two between items for `space-around`). Every engine shares spare height equally
+between empty rows; `%` rows it doesn't (Gecko and WebKit fill them first to last). Taller content
+grows the table. A one-line flex row with `align-items: center | flex-end` gives its box cell the
+same `valign`.
 
 A px `height` on a box that doesn't clip is its `min-height` (taller content grows the cell, with no
-diagnostic). Over a VML background Outlook lays content out from the top (W003). Outlook ignoring
-the `%` spacer rows is **unverified**.
+diagnostic). Over a VML background Outlook lays content out from the top (W003). How Word shares a
+table's spare height between the spacer rows is **unverified**.
 
 ### Clipping and rounded corners
 
