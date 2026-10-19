@@ -5,6 +5,7 @@ import { blockRule } from "../../../src/analyze/rules/block.ts";
 import { reorder } from "../../../src/analyze/order.ts";
 import { flexRule } from "../../../src/analyze/rules/flex.ts";
 import { inlineRule } from "../../../src/analyze/rules/inline.ts";
+import { compile } from "../../../src/index.ts";
 import type { Node, RowNode, StackNode } from "../../../src/ir/index.ts";
 import { codesOf, el, testCtx, text } from "../../helpers/index.ts";
 
@@ -617,5 +618,26 @@ describe("item margins", () => {
     expect((row.cols[0]?.child as StackNode).box.margin).toMatchObject({ left: 0, right: 0 });
     expect(row.cols.map((c) => c.stretch)).toEqual([true, true]);
     expect(codesOf(ctx)).toEqual([]);
+  });
+});
+
+describe("min-height column spacing", () => {
+  const column = (jc: string, kids: string, css = "") =>
+    `<style>${css}</style><div style="display:flex;flex-direction:column;justify-content:${jc};min-height:300px"><p class="a">A</p>${kids}<p>C</p></div>`;
+  const w003 = (html: string, template?: "handlebars") =>
+    compile(html, { strict: true, ...(template ? { template } : {}) }).diagnostics.filter((d) => d.code === "W003").map((d) => d.message);
+
+  test("space-* with an item hidden on some screen, or a loop or lone if among the items, is W003", () => {
+    const hidden = "@media (max-width:480px){.a{display:none}}";
+    expect(w003(column("space-evenly", "<p>B</p>", hidden))).toEqual([expect.stringContaining("where one is hidden")]);
+    expect(w003(column("space-between", '<p data-email-each="xs">B</p>'), "handlebars")).toEqual([expect.stringContaining("where a template repeats")]);
+    expect(w003(column("space-around", '<p data-email-if="x">B</p>'), "handlebars")).toHaveLength(1);
+  });
+
+  test("a fixed number of items, or center and flex-end, which place the items as one group, are exact", () => {
+    expect(w003(column("space-between", "<p>B</p>"))).toEqual([]);
+    expect(w003(column("space-evenly", '<p data-email-if="x">B</p><p data-email-else>D</p>'), "handlebars")).toEqual([]);
+    expect(w003(column("center", "<p>B</p>", "@media (max-width:480px){.a{display:none}}"))).toEqual([]);
+    expect(w003(column("flex-end", '<p data-email-each="xs">B</p>'), "handlebars")).toEqual([]);
   });
 });

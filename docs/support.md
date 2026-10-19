@@ -150,9 +150,10 @@ and for a lone item of the `space-*` values, its one cell holds the rows with `v
 cell is `height="1"`, which the table never grows, and empty spacer rows
 (`font-size:0;line-height:0;mso-line-height-rule:exactly`) sit around the items, one per share of
 the spare height (two between items for `space-around`). Every engine shares spare height equally
-between empty rows; `%` rows it doesn't (Gecko and WebKit fill them first to last). Taller content
-grows the table. A one-line flex row with `align-items: center | flex-end` gives its box cell the
-same `valign`.
+between empty rows; `%` rows it doesn't (Gecko and WebKit fill them first to last). The rows are
+counted for the items as written: an item hidden on some screen, or a loop or an `if` without
+`else` among them, leaves gaps that aren't spread again (W003). Taller content grows the table. A
+one-line flex row with `align-items: center | flex-end` gives its box cell the same `valign`.
 
 A px `height` on a box that doesn't clip is its `min-height` (taller content grows the cell, with no
 diagnostic). Over a VML background Outlook lays content out from the top (W003). How Word shares a

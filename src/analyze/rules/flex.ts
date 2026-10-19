@@ -1,5 +1,5 @@
 import type { Ctx } from "../../ctx.ts";
-import { withLoc, type Box, type StackNode } from "../../ir/index.ts";
+import { withLoc, type Box, type Node, type StackNode } from "../../ir/index.ts";
 import { get } from "../../style/props.ts";
 import type { StyledElement } from "../../style/types.ts";
 import { buildBox, reportDropped, reportRtlRow, withBox } from "../box.ts";
@@ -74,7 +74,18 @@ const stackOf = (el: StyledElement, items: Item[], ctx: Ctx): StackNode => {
     return it;
   });
   // only a min-height leaves a column spare height to place its items in
-  const justify = box.minHeight ? JUSTIFY_COLUMN[get(el.style, "justify-content") ?? "normal"] : undefined;
+  const jc = get(el.style, "justify-content") ?? "normal";
+  const justify = box.minHeight ? JUSTIFY_COLUMN[jc] : undefined;
+  // docs/support.md#height-and-vertical-distribution: the space-* spacer rows are counted for the items as written
+  const counted = (n: Node): boolean => n.kind !== "template" || (n.op === "if" && n.otherwise !== undefined);
+  const varies = justify && justify !== "center" && justify !== "end" ? placed.find((it) => it.hide || !counted(it.node)) : undefined;
+  if (varies) {
+    ctx.diagnostics.report("W003", {
+      message: `justify-content: ${jc} spaces the items as written: ${varies.hide ? "where one is hidden" : "where a template repeats an item or leaves one out"}, the gaps aren't spread again`,
+      hint: "The spacer rows are counted when the email is compiled. Keep the number of items fixed, or use center or flex-end, which place the items as one group.",
+      loc: varies.el?.loc ?? el.loc,
+    });
+  }
   const stack: StackNode = { kind: "stack", box, children: placed.map(itemNode), gap: gapPx(el, ctx, "row-gap"), collapse: false };
   return withLoc(justify ? { ...stack, justify } : stack, el.loc);
 };
