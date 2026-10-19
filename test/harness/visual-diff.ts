@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium, firefox, webkit, type Browser } from "playwright";
+import { chromium, firefox, webkit, type Browser, type Page } from "playwright";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import { ENGINE, type Engine } from "./engines.ts";
@@ -100,6 +100,20 @@ const sizeFromUrl = (url: string): [number, number] => {
   return m ? [clamp(Number(m[1])), clamp(Number(m[2]))] : [100, 100];
 };
 
+// In full runs WebKit now and then shot an image-backed box before its image was painted, at
+// random and never alone; Firefox gets the same check as a precaution. A shot that matches the
+// one before it is done.
+const settledShot = async (page: Page, recheck: boolean): Promise<Buffer> => {
+  let shot = await page.screenshot({ fullPage: true });
+  if (!recheck) return shot;
+  for (let i = 0; i < 5; i++) {
+    const next = await page.screenshot({ fullPage: true });
+    if (next.equals(shot)) break;
+    shot = next;
+  }
+  return shot;
+};
+
 const shoot = async (browser: Browser, html: string, width: number): Promise<PNG> => {
   const ctx = await browser.newContext({ viewport: { width, height: HEIGHT } });
   try {
@@ -116,7 +130,7 @@ const shoot = async (browser: Browser, html: string, width: number): Promise<PNG
     await page.setContent(withReset(html), { waitUntil: "load" });
     // WebKit can fire load before the placeholders are decoded, and the shot then has holes
     await page.evaluate(() => Promise.all([...document.images].map((img) => img.decode().catch(() => {}))));
-    return PNG.sync.read(await page.screenshot({ fullPage: true }));
+    return PNG.sync.read(await settledShot(page, browser.browserType().name() !== "chromium"));
   } finally {
     await ctx.close();
   }
