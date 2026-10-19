@@ -24,6 +24,10 @@ describe("shell", () => {
     expect(shell(emit(), { dir: "rtl" }, testCtx(), "")).toContain('<tr><td style="text-align:right;"><p>hi</p></td></tr>');
   });
 
+  it("gives the wrapper a normal line height for text that has none of its own", () => {
+    expect(shell(emit(), {}, testCtx(), "")).toContain('width="100%" style="width:100%;line-height:normal;">');
+  });
+
   it("escapes the title", () => {
     const out = shell(emit(), { title: 'A & "B" <c>' }, testCtx(), "");
     expect(out).toContain("<title>A &amp; &quot;B&quot; &lt;c&gt;</title>");

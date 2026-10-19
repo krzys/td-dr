@@ -156,6 +156,12 @@ describe("emit", () => {
     expect(h.match(/mso-line-height-rule/g)).toHaveLength(1);
   });
 
+  test("a heading states a normal line height, which clients' own h1–h6 rules would replace", () => {
+    const body = (h: string) => h.slice(h.indexOf("<body"));
+    expect(body(compile("<h1>Hi</h1><p>text</p>", { lang: "en" }).html)).toMatch(/<h1 style="[^"]*line-height:normal;[^"]*">Hi<\/h1>[\s\S]*<p style="(?![^"]*line-height)[^"]*">text/);
+    expect(body(compile('<div style="line-height:20px"><h2>Hi</h2></div>', { lang: "en" }).html)).toMatch(/<h2 style="[^"]*line-height:20px;[^"]*mso-line-height-rule:exactly;[^"]*">Hi/);
+  });
+
   test("attribute values escape & and <", () => {
     const { html } = run(stack([inline("t", { "font-family": "A&B<C" })], { padding: sides(1), background: "a&b<c" }));
     expect(html).toContain('font-family:A&amp;B&lt;C;"');

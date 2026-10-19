@@ -86,7 +86,8 @@ describe("contracts", () => {
   test("ownStyle keeps UA/authored values, drops what is inherited anyway", () => {
     const parent = { color: "#111111", "font-size": "16px" };
     const h1 = el("h1", { color: "#111111", "font-size": "32px", "margin-top": "21.44px", display: "block" }, [], { declared: {} });
-    expect(ownStyle(h1, parent)).toEqual({ "font-size": "32px", "margin-top": "21.44px" });
+    // a heading's line height is stated even when normal: clients style h1–h6 directly
+    expect(ownStyle(h1, parent)).toEqual({ "font-size": "32px", "margin-top": "21.44px", "line-height": "normal" });
   });
 
   test("ownStyle drops zero resets the browser already has, keeps them where it doesn't", () => {
@@ -123,7 +124,7 @@ describe("contracts", () => {
     const ctx = testCtx();
     const h1 = el("h1", { display: "block", "font-size": "32px", "margin-top": "21.44px", "margin-bottom": "-4px" }, [text("Hi")], { declared: {} });
     const n = passThrough(h1, ctx) as InlineNode;
-    expect(n.html).toBe('<h1 style="font-size:32px;margin:0">Hi</h1>');
+    expect(n.html).toBe('<h1 style="font-size:32px;line-height:normal;margin:0">Hi</h1>');
     expect(n.margin).toEqual({ top: 21.44, right: 0, bottom: 0, left: 0 });
     expect(codesOf(ctx)).toEqual(["E005"]);
   });

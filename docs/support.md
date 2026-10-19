@@ -397,7 +397,7 @@ u + #body a { color:inherit; text-decoration:none; }
 <body id="body" style="margin:0;padding:0;background-color:#f4f4f4;">
 <div style="display:none;…">Preview text&zwnj;&nbsp;…</div>
 <div role="article" aria-roledescription="email" lang="en">
-<table role="presentation" width="100%" bgcolor="#f4f4f4" …><tr><td align="center">
+<table role="presentation" width="100%" bgcolor="#f4f4f4" style="width:100%;line-height:normal;background-color:#f4f4f4;" …><tr><td align="center">
 <!--[if mso]><table role="presentation" width="600" align="center" …><tr><td><![endif]-->
 <table role="presentation" width="100%" style="width:100%;max-width:600px;table-layout:fixed;" …><tr><td style="text-align:left;">…content…</td></tr></table>
 <!--[if mso]></td></tr></table><![endif]-->
@@ -437,10 +437,13 @@ W007; a template block on or in it is E012 (send its text as a field).
 
 ### Text styles
 
-Every element that directly holds text (`td`, `p`, `h1`–`h6`) carries `font-family`, `font-size`,
-`line-height`, `color`, and `mso-line-height-rule:exactly` next to a px `line-height`; a cell whose
-only content is one text block leaves out what that block restates. `margin:0` stays on `p` and
-`h*` (Word adds its own paragraph spacing).
+Every element that directly holds text (`td`, `p`, `h1`–`h6`) carries the text styles the source
+gives it (`font-family`, `font-size`, `line-height`, `color`, …), and `mso-line-height-rule:exactly`
+next to a px `line-height`; a cell whose only content is one text block leaves out what that block
+restates. A `line-height` left at `normal` comes from the shell's wrapper table
+(`line-height:normal`, against a client's base line height such as Roundcube's 1.5) and is written
+on `h1`–`h6`, which clients style directly. Font and colour defaults stay the client's. `margin:0`
+stays on `p` and `h*` (Word adds its own paragraph spacing).
 
 ### Accessibility
 

@@ -9,6 +9,7 @@ const FLOAT_ATTRS: ReadonlySet<string> = new Set(["align", "hspace", "vspace"]);
 import { isInherited, lineHeightPx, textAlignOf } from "../style/props.ts";
 import type { ComputedStyle, StyledElement, StyledNode } from "../style/types.ts";
 
+const HEADING = /^h[1-6]$/;
 const VOID = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
 
 const escapeText = (s: string): string => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /g, "&nbsp;");
@@ -71,6 +72,8 @@ export const ownStyle = (el: StyledElement, parent: ComputedStyle | undefined): 
   // The shell's reset collapses every table's borders (Outlook seams). An author table on the separate
   // model says so where the two differ: cell spacing, or a border attribute.
   if (el.tag === "table" && out["border-collapse"] === undefined && (el.style["border-collapse"] ?? "separate") === "separate" && separates(el)) out["border-collapse"] = "separate";
+  // clients style headings directly (Roundcube's Elastic: h1–h6 { line-height:1.2 }), past what they inherit (docs/support.md#text-styles)
+  if (HEADING.test(el.tag)) out["line-height"] ??= el.style["line-height"] ?? "normal";
   if (out["line-height"] !== undefined) {
     const px = lineHeightPx(el.style);
     if (px !== undefined) out["line-height"] = px;

@@ -33,7 +33,8 @@ export const shell = (emitted: Emitted, meta: DocMeta, ctx: Ctx, fontHead: strin
 
   const bodyStyle = `margin:0;padding:0;${bg ? `background-color:${bg};` : ""}`;
   const outerBg = bg ? ` bgcolor="${bg}"` : "";
-  const outerStyle = `width:100%;${bg ? `background-color:${bg};` : ""}`;
+  // what every cell inherits where the client sets a base line height (docs/support.md#text-styles)
+  const outerStyle = `width:100%;line-height:normal;${bg ? `background-color:${bg};` : ""}`;
 
   const head = [
     '<meta charset="utf-8">',
