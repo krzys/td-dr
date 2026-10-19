@@ -144,9 +144,10 @@ filled in source order. Grid areas, spans, `auto-fill`, row templates and `subgr
 ### Height and vertical distribution
 
 A flex column with `min-height` and `justify-content: flex-end | center | space-between |
-space-around | space-evenly` gets a table exactly as tall as the cell, with spacer rows
-(`height="100%"`, `font-size:0;line-height:0;mso-line-height-rule:exactly`) taking the spare
-height in CSS proportions. Taller content grows the table. A one-line flex row with
+space-around | space-evenly` gets a table exactly as tall as the cell. For `center` and `flex-end`
+its one cell holds the rows with `valign="middle"` / `"bottom"`, which Word honours too. The
+`space-*` values get spacer rows (`%` heights, `font-size:0;line-height:0;mso-line-height-rule:exactly`)
+taking the spare height in CSS proportions. Taller content grows the table. A one-line flex row with
 `align-items: center | flex-end` gives its box cell the same `valign`.
 
 A px `height` on a box that doesn't clip is its `min-height` (taller content grows the cell, with no

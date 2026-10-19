@@ -1,6 +1,6 @@
 // A stack: one outer table for sizing and alignment, the box (if any) in a single cell around an
 // inner table of rows, one row per child.
-import { borderX, locKey, roundPct, type Node, type RowNode, type Sides, type StackNode } from "../ir/index.ts";
+import { borderX, locKey, roundPct, type Node, type RowNode, type Sides, type StackNode, type VAlign } from "../ir/index.ts";
 import { paddingValue, styleString, type Decls } from "./attrs.ts";
 import { blockLayout, boxCell, cellHeight, ghosted, tableTag, type CellContent } from "./box.ts";
 import { conditional, templated } from "./conditional.ts";
@@ -29,24 +29,18 @@ export const boxContent = (e: EmitContext, n: StackNode | RowNode): CellContent 
   return { decls: [], html: `\n${withBody(tableOpen(e, "100%", [["width", "100%"], ...blockLayout(e)]), rows(e, n.children))}\n` };
 };
 
-// docs/support.md#height-and-vertical-distribution: a table as tall as the cell's content box, with
-// spacer rows whose % heights share the spare height the way justify-content does.
-const SPREAD: Readonly<Record<NonNullable<StackNode["justify"]>, (n: number) => number[]>> = {
-  end: (n) => [100, ...Array<number>(n).fill(0)],
-  center: (n) => [50, ...Array<number>(n - 1).fill(0), 50],
+// docs/support.md#height-and-vertical-distribution: a table as tall as the cell's content box. Center
+// and end put the rows in one cell placed by valign; the others get spacer rows whose % heights share
+// the spare height the way justify-content does.
+const PLACE: Partial<Record<NonNullable<StackNode["justify"]>, VAlign>> = { center: "middle", end: "bottom" };
+
+const SPREAD: Readonly<Record<"between" | "around" | "evenly", (n: number) => number[]>> = {
   between: (n) => (n < 2 ? [0, 0] : [0, ...Array<number>(n - 1).fill(100 / (n - 1)), 0]),
   around: (n) => [50 / n, ...Array<number>(n - 1).fill(100 / n), 50 / n],
   evenly: (n) => Array<number>(n + 1).fill(100 / (n + 1)),
 };
 
 const justified = (e: EmitContext, n: StackNode, height: number): string => {
-  const spread = SPREAD[n.justify!](n.children.length);
-  const shares = spread.length === n.children.length + 1 ? spread : [spread[0]!, ...Array<number>(n.children.length - 1).fill(0), spread.at(-1)!];
-  const spacer = (pct: number): string => {
-    const h = `${roundPct(pct)}%`;
-    return pct > 0 ? `${tr(wrap(e, "td", [["height", h], ["style", styleString([["height", h], ...EMPTY_TEXT])]], "&nbsp;"))}\n` : "";
-  };
-  const body = n.children.map((c, i) => spacer(shares[i]!) + row(e, c)).join("\n") + "\n" + spacer(shares.at(-1)!);
   const head = open(e, "table", [
     ["role", "presentation"],
     ["width", "100%"],
@@ -56,6 +50,16 @@ const justified = (e: EmitContext, n: StackNode, height: number): string => {
     ["border", "0"],
     ["style", styleString([["width", "100%"], ["height", `${height}px`], ...blockLayout(e)])],
   ]);
+  const place = PLACE[n.justify!];
+  // Word honours a cell's height and valign, so Outlook places these too
+  if (place) return withBody(head, tr(wrap(e, "td", [["height", String(height)], ["valign", place]], `\n${withBody(tableOpen(e, "100%", [["width", "100%"], ...blockLayout(e)]), rows(e, n.children))}\n`)));
+  const spread = SPREAD[n.justify as keyof typeof SPREAD](n.children.length);
+  const shares = spread.length === n.children.length + 1 ? spread : [spread[0]!, ...Array<number>(n.children.length - 1).fill(0), spread.at(-1)!];
+  const spacer = (pct: number): string => {
+    const h = `${roundPct(pct)}%`;
+    return pct > 0 ? `${tr(wrap(e, "td", [["height", h], ["style", styleString([["height", h], ...EMPTY_TEXT])]], "&nbsp;"))}\n` : "";
+  };
+  const body = n.children.map((c, i) => spacer(shares[i]!) + row(e, c)).join("\n") + "\n" + spacer(shares.at(-1)!);
   return withBody(head, body.trimEnd());
 };
 
