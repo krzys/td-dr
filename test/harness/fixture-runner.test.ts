@@ -62,6 +62,34 @@ describe("parseIntent", () => {
   });
 });
 
+describe("skipEngines", () => {
+  const intent = (line: string) => parseIntent(`---\nstatus: active\n${line}\n---\n`);
+
+  test("lists engines, the comment stays out of the data", () => {
+    expect(intent("skipEngines: [webkit] # WebKit supports margin-trim, the source renders differently").skipEngines).toEqual(["webkit"]);
+    expect(intent("skipEngines: [firefox, webkit] # a reason").skipEngines).toEqual(["firefox", "webkit"]);
+  });
+
+  test("without a reason it throws", () => {
+    expect(() => intent("skipEngines: [webkit]")).toThrow(/needs a "# reason"/);
+    expect(() => intent("skipEngines: [webkit] #  ")).toThrow(/needs a "# reason"/);
+  });
+
+  test("a reason is a comment, not a hash inside quotes", () => {
+    expect(() => intent("skipEngines: ['webkit#x']")).toThrow(/must be a list/);
+  });
+
+  test("unknown engines, a bare word and an empty list throw", () => {
+    expect(() => intent("skipEngines: [safari] # no such engine")).toThrow(/must be a list of chromium, firefox, webkit/);
+    expect(() => intent("skipEngines: webkit # not a list")).toThrow(/must be a list/);
+    expect(() => intent("skipEngines: [] # nothing")).toThrow(/must be a list/);
+  });
+
+  test("a fixture without it skips nothing", () => {
+    expect(intent("viewports: [600]").skipEngines).toBeUndefined();
+  });
+});
+
 describe("loadFixtures", () => {
   const root = mkdtempSync(join(tmpdir(), "tddr-fx-"));
   afterAll(() => rmSync(root, { recursive: true, force: true }));
@@ -104,6 +132,11 @@ describe("loadFixtures", () => {
 
   test("unknown expect throws", () => {
     expect(() => loadFixtures(bad("x", "---\nexpect: diagnostics\n---\n"))).toThrow(/expect must be/);
+  });
+
+  test("skipEngines is read from the file", () => {
+    const fx = loadFixtures(bad("z", "---\nexpect: compile\nskipEngines: [webkit] # engine property\n---\n"));
+    expect(fx[0]!.intent.skipEngines).toEqual(["webkit"]);
   });
 
   test("active without expect throws", () => {

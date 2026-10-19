@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ENGINES, isEngine, type Engine } from "./engines.ts";
 
 export type Intent = {
   status?: string;
@@ -9,6 +10,7 @@ export type Intent = {
   codes?: string[];
   viewports?: number[];
   maxDiffRatio?: number; // maxDiffRatio<width> (e.g. maxDiffRatio375) overrides one viewport
+  skipEngines?: Engine[]; // engines whose visual check is skipped; the line's "# reason" is required
   allowSvg?: boolean; // compile with the allowSvg option
   lang?: string; // default en, so I009 shows only where a fixture asks with `lang: none`
   description: string;
@@ -48,6 +50,16 @@ const value = (raw: string): unknown => {
   return scalar(v);
 };
 
+// A skipped engine must be an engine property, not a td;dr defect, and the comment is where that gets argued.
+const checkSkipEngines = (line: string, code: string, v: unknown): void => {
+  if (!Array.isArray(v) || v.length === 0 || !v.every(isEngine)) {
+    throw new Error(`intent.md: skipEngines must be a list of ${ENGINES.join(", ")}, got "${line.trim()}"`);
+  }
+  if (line.slice(code.length).replace(/^\s*#\s*/, "") === "") {
+    throw new Error(`intent.md: skipEngines needs a "# reason" saying why it is the engine and not td;dr: "${line.trim()}"`);
+  }
+};
+
 export const parseIntent = (text: string): Intent => {
   const lines = text.replace(/\r\n/g, "\n").split("\n");
   const data: Record<string, unknown> = {};
@@ -61,7 +73,10 @@ export const parseIntent = (text: string): Intent => {
       if (l.trim() === "") continue;
       const colon = l.indexOf(":");
       if (colon === -1) throw new Error(`intent.md: can't read line "${line}"`);
-      data[l.slice(0, colon).trim()] = value(l.slice(colon + 1));
+      const key = l.slice(0, colon).trim();
+      const v = value(l.slice(colon + 1));
+      if (key === "skipEngines") checkSkipEngines(line, l, v);
+      data[key] = v;
     }
     body = lines.slice(end + 1);
   }
