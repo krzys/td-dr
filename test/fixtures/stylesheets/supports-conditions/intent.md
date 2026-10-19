@@ -2,6 +2,7 @@
 feature: stylesheets
 viewports: [600, 375]
 maxDiffRatio: 0.002
+skipEngines: [webkit] # WebKit supports margin-trim, so the source's @supports (margin-trim: block) block applies there and moves the note 24px; td;dr skips it by design (W001)
 expect: compile
 codes: [W001, I003]
 status: active

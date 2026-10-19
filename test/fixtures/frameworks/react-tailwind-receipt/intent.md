@@ -2,6 +2,7 @@
 feature: frameworks
 viewports: [600, 375]
 maxDiffRatio: 0.002
+skipEngines: [webkit] # WebKit antialiases text in an alpha colour differently from the same colour flattened to hex; glyph edges only, 0.0028 at 375
 expect: compile
 codes: [W003, W005]
 status: active

@@ -2,6 +2,7 @@
 feature: image
 viewports: [600, 375]
 maxDiffRatio: 0.002
+skipEngines: [webkit] # WebKit lays the source's width:100%;height:auto image out 552x239 in a column flex, where the 552x220 file's own ratio gives the 220 the output has
 expect: compile
 codes: []
 status: active
