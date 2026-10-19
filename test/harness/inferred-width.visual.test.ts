@@ -29,7 +29,9 @@ const measure = async (html: string, viewport: number): Promise<Measured> => {
       const el = [...document.querySelectorAll("p")].find((p) => p.textContent?.trim() === text);
       if (!el) throw new Error(`no element holds "${text}"`);
       const r = el.getBoundingClientRect();
-      return { fontSize: getComputedStyle(el).fontSize, width: r.width, height: r.height };
+      // WebKit prints a computed size as a float32: 39.949997px for 39.95px
+      const fontSize = `${Math.round(parseFloat(getComputedStyle(el).fontSize) * 100) / 100}px`;
+      return { fontSize, width: r.width, height: r.height };
     }, TEXT);
   } finally {
     await ctx.close();

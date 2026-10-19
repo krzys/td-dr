@@ -183,7 +183,7 @@ a fixture or unit test.
 | Command | Runs |
 |---|---|
 | `pnpm check` | `tsc --noEmit`, then `vitest run` (`test/unit/`, `test/harness/`, without visual tests). |
-| `pnpm test:visual` | Every `test/harness/*.visual.test.ts` in Playwright Chromium. |
+| `pnpm test:visual` | Every `test/harness/*.visual.test.ts` in Playwright Chromium; `TDDR_ENGINE=firefox` or `webkit` runs it in that engine ([Engines](#engines)). |
 | `pnpm build` | `tsup`, declarations and `scripts/dts-extensions.ts`. |
 | `pnpm smoke` | Builds, packs and installs the tarball in a scratch project (`KEEP=1` keeps it). |
 | `pnpm gallery` | A static page of every compiled fixture, for test sends to real clients. |
@@ -193,10 +193,29 @@ Targeted runs: `npx vitest run test/unit/<file>.test.ts`,
 `npx vitest run test/harness/fixtures.test.ts -t "<feature>/<case>"`,
 `npx vitest run --config vitest.visual.config.ts -t "<feature>/<case>"`.
 
-The visual tests need Chromium for the installed Playwright (`pnpm exec playwright install
-chromium`) and the **Inter** font (`fonts-inter` on Debian and Ubuntu). The harness starts Chromium
-with `test/harness/fonts.conf`: Inter for the system and generic sans-serif names, grayscale
-antialiasing, no hinting, so renders don't depend on the machine's font setup.
+The visual tests need the engine for the installed Playwright (`pnpm exec playwright install
+chromium`, `firefox` or `webkit`) and the **Inter** font (`fonts-inter` on Debian and Ubuntu). The
+harness starts each engine with `test/harness/fonts.conf`: Inter for the system and generic
+sans-serif names, grayscale antialiasing, no hinting, so renders don't depend on the machine's font
+setup (Chromium also gets `--disable-lcd-text`). It refuses to run if Inter is missing.
+
+### Engines
+
+`TDDR_ENGINE=chromium|firefox|webkit` picks the engine for a visual run (default `chromium`);
+diff images go to `test/.visual/<engine>/`. An engine renders the source and the output itself and
+the two are compared with the same tolerances, so a pass means the output looks like the source in
+that engine, not that the engines agree. `visual`, `examples` and `inferred-width` run in all three;
+`dev-ui` runs in Chromium only, as it tests our page's script, not an email render.
+
+A fixture opts an engine out with `skipEngines: [webkit] # reason` in `intent.md`; the reason is
+required (the parser refuses without it) and has to show that the engine renders the *source*
+differently or wrongly. What td;dr gets wrong in one engine stays a failing test. WebKit skips the
+`supports-conditions` source (it supports `margin-trim`, so the `@supports` block td;dr leaves out
+applies there), the image `flex-column-stack` source (it sizes a `width:100%;height:auto` image in a
+column flex 552x239 instead of 552x220) and two sources whose translucent text it antialiases
+differently from the flattened colour (0.0024 and 0.0028 at 375). `examples.visual.test.ts` has the
+same list for `react-order-template` in WebKit (a unitless line height times a fractional font size
+lays out 1px short, in the source only).
 
 ### What is checked
 
@@ -207,7 +226,7 @@ antialiasing, no hinting, so renders don't depend on the machine's font setup.
 | Golden lint | `test/harness/golden-lint.test.ts` | What Chromium renders fine but Outlook or Gmail don't: unbalanced or nested conditionals, tables without rows, margins on cells, non-hex `bgcolor`, a table inside a link, `<hr>`, `currentcolor`, unsized images. |
 | Output self-lint | `src/post/self-lint.ts`, every compile | The output uses only features the targets support (W006 otherwise). |
 | Size budget | `test/harness/output-size.test.ts` | Real-world, framework and complex goldens stay within 1% of `size-budget.json`; growing needs `UPDATE_SIZE_BUDGET=1` and a reason. |
-| Visual diff | `test/harness/visual.visual.test.ts` | Input and output rendered at 600 and 375 px (or the intent's `viewports`) and compared with pixelmatch (threshold 0.02) within `maxDiffRatio` (default 0.002; `maxDiffRatio<width>` for one viewport); mutation tests prove the oracle sees faint fills and hairlines. Diff images go to `test/.visual/`. |
+| Visual diff | `test/harness/visual.visual.test.ts` | Input and output rendered in each engine at 600 and 375 px (or the intent's `viewports`) and compared with pixelmatch (threshold 0.02) within `maxDiffRatio` (default 0.002; `maxDiffRatio<width>` for one viewport); mutation tests prove the oracle sees faint fills and hairlines. Diff images go to `test/.visual/<engine>/`. |
 | Real template engines | template fixtures, `test/unit/template-*.test.ts`, `test/unit/adapters/` | Each dialect's output filled by `handlebars` / `liquidjs` renders like `preview()` of the source on the same data; the condition writers are checked against both engines over value combinations. |
 | Examples and dev page | `examples/`, `test/harness/examples.visual.test.ts`, `dev-ui.visual.test.ts` | The React and Vue examples build through the Vite adapter and, filled, look like their HTML render; the dev UI links source and output. |
 | Package | `scripts/smoke.ts` | The tarball holds only `dist`, `NOTICE`, `README.md`, `package.json`; without peers every export and the CLI load; with peers all entries type-check, both adapters render, a folder build and `tddr dev` work. |
@@ -215,17 +234,19 @@ antialiasing, no hinting, so renders don't depend on the machine's font setup.
 
 A fixture's `intent.md` front matter says how it runs: `status`, `expect` (`compile` or a
 diagnostic case), `codes`, `feature`, `viewports`, `maxDiffRatio` (with a reason when loosened),
-`allowSvg`, `lang`, `template` (one or several dialects, one `expected.<dialect>.html` each).
+`allowSvg`, `lang`, `template` (one or several dialects, one `expected.<dialect>.html` each),
+`skipEngines` (see [Engines](#engines)).
 
 CI (`.github/workflows/ci.yml`) runs two jobs on every push and pull request: `check`
 (`pnpm install --frozen-lockfile`, `pnpm check`, `pnpm build`, `pnpm smoke`) and `visual`
-(Playwright's Chromium, `fonts-inter`, `pnpm test:visual`, diff images uploaded on failure).
+(a matrix of Chromium, Firefox and WebKit with `fonts-inter`, `pnpm test:visual`, and each engine's
+diff images uploaded on failure).
 
 ### What it does not prove
 
-- **Chromium is not an email client.** Visual checks say nothing about Word, Gmail's sanitizer,
-  webmail rewriting or dark modes; golden lint and the pattern-only emitter cover the structural
-  risks.
+- **Chromium, Firefox and WebKit are not email clients.** Visual checks say nothing about Word,
+  Gmail's sanitizer, webmail rewriting or dark modes; golden lint and the pattern-only emitter cover
+  the structural risks.
 - **caniemail data is community test data**, point-in-time, some of it years old; presets such as
   `outlook-new` use proxies.
 - **Real-client checks are manual:** build the gallery, send it to test inboxes (Outlook for

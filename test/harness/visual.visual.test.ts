@@ -1,13 +1,11 @@
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import type { Browser } from "playwright";
 import { compile, preview } from "../../src/index.ts";
+import { ENGINE } from "./engines.ts";
 import { fixtureOptions, isActive, loadFixtures } from "./fixture-runner.ts";
 import { dataSets, expand, templateDialects, tokenize } from "./template-fixture.ts";
-import { launchBrowser, renderAndDiff } from "./visual-diff.ts";
-
-const VISUAL = fileURLToPath(new URL("../.visual", import.meta.url));
+import { launchBrowser, renderAndDiff, VISUAL } from "./visual-diff.ts";
 
 let browser: Browser;
 beforeAll(async () => {
@@ -131,7 +129,7 @@ for (const f of loadFixtures().filter(isActive)) {
     for (const dialect of dialects ?? [undefined]) {
       for (const [set, props] of dialect ? dataSets(f) : [["", {}] as const]) {
         const label = `${f.feature}/${f.name}${dialect ? ` [${dialect}${set ? `, ${set}` : ""}]` : ""} @${w}`;
-        test(label, async () => {
+        test.skipIf(f.intent.skipEngines?.includes(ENGINE))(label, async () => {
           // a template is judged after the ESP's engine has filled it in, against the source with the same data
           const source = dialect ? preview(tokenize(f.input), props) : f.input;
           const html = dialect ? expand(compile(tokenize(f.input), { ...fixtureOptions(f), template: dialect }).html, dialect, props) : compile(f.input, fixtureOptions(f)).html;

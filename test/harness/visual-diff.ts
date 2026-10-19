@@ -1,9 +1,10 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium, type Browser } from "playwright";
+import { chromium, firefox, webkit, type Browser } from "playwright";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
+import { ENGINE, type Engine } from "./engines.ts";
 
 export type DiffOptions = {
   input: string;
@@ -25,12 +26,18 @@ const RESET = "<style>body{margin:0}</style>";
 
 const FONTS_CONF = fileURLToPath(new URL("fonts.conf", import.meta.url));
 
+// Diff images, one folder per engine (a CI job uploads its own).
+export const VISUAL = join(fileURLToPath(new URL("../.visual", import.meta.url)), ENGINE);
+
+const LAUNCHERS = { chromium, firefox, webkit };
+
 // Text is most of what differs between machines, so the browser gets the harness's font setup
-// (fonts.conf) and grayscale text, and refuses to run without Inter rather than fail on metrics.
-export const launchBrowser = async (): Promise<Browser> => {
-  const browser = await chromium.launch({
+// (fonts.conf) and, in Chromium, grayscale text, and refuses to run without Inter rather than fail
+// on metrics. A diff always compares one engine with itself.
+export const launchBrowser = async (engine: Engine = ENGINE): Promise<Browser> => {
+  const browser = await LAUNCHERS[engine].launch({
     env: { ...process.env, FONTCONFIG_FILE: FONTS_CONF },
-    args: ["--disable-lcd-text"],
+    ...(engine === "chromium" && { args: ["--disable-lcd-text"] }),
   });
   try {
     await requireInter(browser);
@@ -41,11 +48,13 @@ export const launchBrowser = async (): Promise<Browser> => {
   return browser;
 };
 
+// "Inter, serif" measures as plain serif only where Inter is missing. An unknown family alone
+// won't do: WebKit falls back to the system sans, which fonts.conf points at Inter.
 const requireInter = async (browser: Browser): Promise<void> => {
   const page = await browser.newPage();
   try {
-    const [inter, missing] = await page.evaluate(() =>
-      ["Inter", "tddr-no-such-font"].map((family) => {
+    const [inter, fallback] = await page.evaluate(() =>
+      ["Inter, serif", "serif"].map((family) => {
         const span = document.createElement("span");
         span.style.cssText = `position:absolute;white-space:nowrap;font:16px ${family}`;
         span.textContent = "The quick brown fox jumps over the lazy dog";
@@ -53,7 +62,7 @@ const requireInter = async (browser: Browser): Promise<void> => {
         return span.getBoundingClientRect().width;
       }),
     );
-    if (inter === missing) {
+    if (inter === fallback) {
       throw new Error("the visual tests need the Inter font installed (fonts-inter on Debian and Ubuntu)");
     }
   } finally {

@@ -22,6 +22,12 @@ jobs:
 
   visual:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, firefox, webkit]
+    env:
+      TDDR_ENGINE: ${{ matrix.engine }}
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -31,14 +37,14 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # the playwright version the lockfile pins; locally PLAYWRIGHT_BROWSERS_PATH may point at a preinstalled one
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright install --with-deps ${{ matrix.engine }}
       # the font test/harness/fonts.conf sets up
       - run: sudo apt-get install -y --no-install-recommends fonts-inter
       - run: pnpm test:visual
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: visual-diffs
+          name: visual-diffs-${{ matrix.engine }}
           path: test/.visual/
           if-no-files-found: ignore
           include-hidden-files: true

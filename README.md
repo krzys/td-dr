@@ -136,8 +136,9 @@ and `render(Component, props)`; `tddr/vite` exports the Vite plugin and `buildEm
 - **Refused by design:** positioning, transforms, animations, floats other than on images, negative
   margins (except full-bleed bands), `%` padding, grid areas and spans, inline SVG (unless allowed),
   media and form elements.
-- **Limits:** visual checks run in Chromium only, real clients are checked by hand; content-sized
-  columns and fluid line breaks are approximations (W003); folder builds write ESP templates only.
+- **Limits:** visual checks run in Chromium, Firefox and WebKit, real clients are checked by hand;
+  content-sized columns and fluid line breaks are approximations (W003); folder builds write ESP
+  templates only.
 
 ## Development
 

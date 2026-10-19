@@ -5,7 +5,12 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { startDevServer, type DevServer } from "../../adapters/dev/index.ts";
 import { formatBytes, formatKB, GMAIL_CLIP_BYTES } from "../../src/limits.ts";
 import { startTags } from "../../src/template/tags.ts";
+import { ENGINE } from "./engines.ts";
 import { launchBrowser } from "./visual-diff.ts";
+
+// The dev page is a UI of ours, not an email render: its script runs in whichever engine drives it,
+// so checking it in one is enough and the other engines' runs skip it.
+const chromiumOnly = ENGINE === "chromium";
 
 const EXAMPLES = fileURLToPath(new URL("../../examples", import.meta.url));
 
@@ -75,7 +80,7 @@ const openEmail = async (p: Page, hash: string) => {
 };
 const tab = (p: Page) => p.evaluate(() => document.querySelector("#code-tabs [aria-selected=true]")?.getAttribute("data-tab"));
 
-describe("dev page marks the exact tag", () => {
+describe.skipIf(!chromiumOnly)("dev page marks the exact tag", () => {
   test("html mode: an img or a p in the compiled frame marks that tag in the Compiled tab, not its cell", async () => {
     const p = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
     await openEmail(p, "email=react-itinerary&view=compare&mode=html");
@@ -171,7 +176,7 @@ describe("dev page marks the exact tag", () => {
   });
 });
 
-describe("dev page on a phone", () => {
+describe.skipIf(!chromiumOnly)("dev page on a phone", () => {
   test("shows one panel at a time, picked from the tab bar, without sideways scroll", async () => {
     const p = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
     await p.goto(server.url);
@@ -439,7 +444,7 @@ describe("dev page on a phone", () => {
   });
 });
 
-describe("dev page size readout", () => {
+describe.skipIf(!chromiumOnly)("dev page size readout", () => {
   test("shows the server's byte count and limit in the compiler's decimal kilobytes", async () => {
     const res = await fetch(`${server.url}__tddr/api/render`, {
       method: "POST",
