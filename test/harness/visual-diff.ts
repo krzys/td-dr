@@ -114,6 +114,8 @@ const shoot = async (browser: Browser, html: string, width: number): Promise<PNG
       return route.abort();
     });
     await page.setContent(withReset(html), { waitUntil: "load" });
+    // WebKit can fire load before the placeholders are decoded, and the shot then has holes
+    await page.evaluate(() => Promise.all([...document.images].map((img) => img.decode().catch(() => {}))));
     return PNG.sync.read(await page.screenshot({ fullPage: true }));
   } finally {
     await ctx.close();
