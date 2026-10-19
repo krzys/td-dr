@@ -1,6 +1,6 @@
 import type { Ctx } from "../ctx.ts";
 import { withLoc, zeroSides, type InlineNode, type Node, type Sides } from "../ir/index.ts";
-import { INHERITED, lineHeightPx } from "../style/props.ts";
+import { INHERITED, lineHeightPx, textAlignOf } from "../style/props.ts";
 import type { ComputedStyle, StyledElement, StyledNode } from "../style/types.ts";
 import { INLINE_TAGS, isHidden, isInlineLevel, isTransparent } from "./classify.ts";
 import { buildBox, reportDropped } from "./box.ts";
@@ -15,7 +15,7 @@ import { ownStyle, serializeStyled } from "./serialize-styled.ts";
 export const textStyle = (style: ComputedStyle): Record<string, string> => {
   const out: Record<string, string> = {};
   for (const p of INHERITED) {
-    const v = p === "line-height" ? lineHeightPx(style) : style[p];
+    const v = p === "line-height" ? lineHeightPx(style) : p === "text-align" ? textAlignOf(style) : style[p];
     if (v !== undefined) out[p] = v;
   }
   return out;

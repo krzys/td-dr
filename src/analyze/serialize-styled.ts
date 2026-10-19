@@ -6,7 +6,7 @@ import { isInlineLevel } from "./classify.ts";
 import { floatOf, floatSpacing } from "./float.ts";
 
 const FLOAT_ATTRS: ReadonlySet<string> = new Set(["align", "hspace", "vspace"]);
-import { isInherited, lineHeightPx } from "../style/props.ts";
+import { isInherited, lineHeightPx, textAlignOf } from "../style/props.ts";
 import type { ComputedStyle, StyledElement, StyledNode } from "../style/types.ts";
 
 const VOID = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
@@ -54,9 +54,15 @@ const separates = (el: StyledElement): boolean => el.attrs["cellspacing"] === un
  */
 export const ownStyle = (el: StyledElement, parent: ComputedStyle | undefined): Record<string, string> => {
   const out: Record<string, string> = {};
+  // by side, where it differs from the parent's: a dir="ltr" block in an rtl one has the same start, not the same side
+  const side = textAlignOf(el.style);
+  const ownSide = side !== undefined && (!parent || textAlignOf(parent) !== side) ? side : undefined;
+  if (ownSide !== undefined && el.style["text-align"] === undefined) out["text-align"] = ownSide;
   for (const [p, v] of Object.entries(el.style)) {
     if (p.startsWith("--")) continue;
-    if (p === "display") {
+    if (p === "text-align") {
+      if (ownSide !== undefined) out[p] = ownSide;
+    } else if (p === "display") {
       // a kept element says its display: the diff against the screens where it is hidden needs the real value, not the tag's guess
       if ("display" in el.declared || el.keep) out[p] = v;
     } else if (!isInherited(p) || parent?.[p] !== v || (p === "color" && el.tag === "a")) out[p] = v; // clients colour bare links

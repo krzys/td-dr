@@ -64,7 +64,8 @@ export const shell = (emitted: Emitted, meta: DocMeta, ctx: Ctx, fontHead: strin
     '<tr><td align="center" style="padding:0;">',
     ghostOpen(width, "center"),
     `<table ${TABLE} width="100%" style="width:100%;max-width:${width}px;table-layout:fixed;">`,
-    `<tr><td>${emitted.html}</td></tr>`,
+    // LiteHTML (and reportedly Word) carry the centring align into nested tables: the content cell states the document's side (docs/support.md#the-email-shell)
+    `<tr><td style="text-align:${meta.dir?.toLowerCase() === "rtl" ? "right" : "left"};">${emitted.html}</td></tr>`,
     "</table>",
     ghostClose(),
     "</td></tr>",

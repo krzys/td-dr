@@ -19,6 +19,11 @@ describe("shell", () => {
     expect(out).toContain('<html lang="ar" dir="rtl"');
   });
 
+  it("states the document's side on the content cell below the centring one", () => {
+    expect(shell(emit(), {}, testCtx(), "")).toContain('<tr><td style="text-align:left;"><p>hi</p></td></tr>');
+    expect(shell(emit(), { dir: "rtl" }, testCtx(), "")).toContain('<tr><td style="text-align:right;"><p>hi</p></td></tr>');
+  });
+
   it("escapes the title", () => {
     const out = shell(emit(), { title: 'A & "B" <c>' }, testCtx(), "");
     expect(out).toContain("<title>A &amp; &quot;B&quot; &lt;c&gt;</title>");

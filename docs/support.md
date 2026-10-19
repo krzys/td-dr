@@ -399,7 +399,7 @@ u + #body a { color:inherit; text-decoration:none; }
 <div role="article" aria-roledescription="email" lang="en">
 <table role="presentation" width="100%" bgcolor="#f4f4f4" …><tr><td align="center">
 <!--[if mso]><table role="presentation" width="600" align="center" …><tr><td><![endif]-->
-<table role="presentation" width="100%" style="width:100%;max-width:600px;table-layout:fixed;" …><tr><td>…content…</td></tr></table>
+<table role="presentation" width="100%" style="width:100%;max-width:600px;table-layout:fixed;" …><tr><td style="text-align:left;">…content…</td></tr></table>
 <!--[if mso]></td></tr></table><![endif]-->
 </td></tr></table>
 </div>
@@ -413,6 +413,9 @@ u + #body a { color:inherit; text-decoration:none; }
   the source's title (empty otherwise).
 - Gmail turns `<body>` into a `<div>`, so the background lives on the wrapper table; `u + #body`
   targets Gmail.
+- The content cell states the document's side (`right` under `<html dir="rtl">`): browsers stop the
+  centring cell's `align` at the next table, but LiteHTML (Claws Mail) carries it into every cell
+  below, and Word is reported to.
 - `<body>` has no `class`: Roundcube turns it into its `div.rcmBody` and scopes every head rule
   under that class, but an authored `class` replaces it and no head rule matches.
 - `x-apple-disable-message-reformatting` stops iOS shrinking wide emails;
@@ -453,8 +456,10 @@ name.
 ### Right-to-left text
 
 `dir` sets `direction` (unless CSS sets one; `dir="auto"` isn't resolved), written inline on the
-text-owning cell and text element; logical properties land on the resolved physical side. Flex rows
-and grids are not mirrored (W001): write items in visual order.
+text-owning cell and text element; logical properties land on the resolved physical side, and so
+does `text-align: start | end` on text (not on inline button placement, which puts `end` on the
+right whatever the direction). Text with a direction set states its side, since the shell's content
+cell states the document's. Flex rows and grids are not mirrored (W001): write items in visual order.
 
 ## Outlook and MSO
 

@@ -16,6 +16,20 @@ describe("rtl output", () => {
     expect(body(html)).toMatch(/direction:ltr[^"]*"[^>]*><p[^>]*>b/);
   });
 
+  test("text in another direction states its side, as the cells above state the document's", () => {
+    const { html } = compile('<div dir="rtl"><p>a</p><p dir="ltr">b</p><p style="text-align:end">c</p></div>');
+    expect(body(html)).toMatch(/<p style="text-align:right;[^"]*">a/);
+    expect(body(html)).toMatch(/<p dir="ltr" style="text-align:left;[^"]*">b/);
+    expect(body(html)).toMatch(/<p style="[^"]*text-align:left;[^"]*">c/);
+  });
+
+  test("start and end come out as sides", () => {
+    const { html } = compile('<p style="text-align:end">a</p><p style="text-align:start">b</p>');
+    expect(body(html)).toMatch(/text-align:right;[^"]*">a/);
+    expect(body(html)).toMatch(/text-align:left;[^"]*">b/);
+    expect(body(html)).not.toMatch(/text-align:(start|end)/);
+  });
+
   test("a flex row in rtl is laid out left to right, so it says so", () => {
     const r = compile('<div dir="rtl" style="display:flex;gap:8px"><div>A</div><div>B</div></div>');
     const d = r.diagnostics.find((x) => x.code === "W001" && /rtl/i.test(x.message));

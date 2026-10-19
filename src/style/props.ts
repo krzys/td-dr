@@ -59,5 +59,14 @@ export const lineHeightPx = (style: Readonly<Record<string, string>>): string | 
   return `${Math.round(Number.parseFloat(lh) * fs * 100) / 100}px`;
 };
 
+// text-align as a side: Word and LiteHTML know no start or end. Wherever a direction is set the side is
+// always stated, as the cells above it state the document's (docs/support.md#the-email-shell).
+export const textAlignOf = (style: Readonly<Record<string, string>>): string | undefined => {
+  const ta = style["text-align"];
+  if (ta !== undefined && ta !== "start" && ta !== "end") return ta;
+  if (ta === undefined && style["direction"] === undefined) return undefined;
+  return (ta !== "end") === (style["direction"] !== "rtl") ? "left" : "right";
+};
+
 export const get = (style: Readonly<Record<string, string>>, prop: string): string | undefined =>
   style[prop] ?? INITIAL[prop];
