@@ -10,7 +10,7 @@ const RESET_CSS = `body { margin:0; padding:0; width:100% !important; -webkit-te
 table, td { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
 img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
 a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
-u + .body a { color:inherit; text-decoration:none; }`;
+u + #body a { color:inherit; text-decoration:none; }`;
 
 const TABLE = 'role="presentation" cellpadding="0" cellspacing="0" border="0"';
 
@@ -56,7 +56,8 @@ export const shell = (emitted: Emitted, meta: DocMeta, ctx: Ctx, fontHead: strin
     "<head>",
     ...head,
     "</head>",
-    `<body id="body" class="body" style="${bodyStyle}">`,
+    // no class: Roundcube scopes head rules under its body class, which an authored one replaces (docs/support.md#the-email-shell)
+    `<body id="body" style="${bodyStyle}">`,
     ...(meta.preheader ? [preheaderDiv(meta.preheader)] : []),
     `<div role="article" aria-roledescription="email" lang="${lang}"${dir}>`,
     `<table ${TABLE} width="100%"${outerBg} style="${outerStyle}">`,

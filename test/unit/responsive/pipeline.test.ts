@@ -24,7 +24,7 @@ describe("head styles", () => {
     const out = compile(page("@media (max-width:480px){.x{padding:4px}}"));
     expect(out.html).toMatch(/<td class="t-0" style="[^"]*padding:10px/);
     expect(out.html).toContain("@media screen and (max-width:480px) {\n  .t-0 { padding:4px !important; }\n}");
-    expect(out.html.indexOf("u + .body a")).toBeLessThan(out.html.indexOf(".t-0 {"));
+    expect(out.html.indexOf("u + #body a")).toBeLessThan(out.html.indexOf(".t-0 {"));
   });
 
   it("adds the dark meta only with dark rules", () => {

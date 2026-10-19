@@ -77,7 +77,7 @@ describe("selfLint", () => {
       "body { margin:0; width:100% !important; -webkit-text-size-adjust:100%; }",
       "table, td { border-collapse:collapse; mso-table-lspace:0pt; }",
       "a[x-apple-data-detectors] { color:inherit !important; }",
-      "u + .body a { color:inherit; }",
+      "u + #body a { color:inherit; }",
       "</style>",
       "<style>@media (max-width:480px) { .col { box-shadow:none !important } }</style>",
       "<!--[if mso]><table><tr><td style=\"box-shadow:none\"><![endif]-->",

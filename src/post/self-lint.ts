@@ -34,7 +34,7 @@ const isAllowed = (tag: string, prop: string, value: string): boolean =>
   ALLOWED.some((a) => (!a.tag || a.tag.has(tag)) && a.prop.test(prop) && (!a.value || a.value.test(value.trim())));
 
 // Selectors we write ourselves in <head>: the shell's reset and the iOS/Gmail link fixes.
-const ALLOWED_SELECTORS: ReadonlySet<string> = set("body", "table", "td", "img", "a[x-apple-data-detectors]", "u + .body a");
+const ALLOWED_SELECTORS: ReadonlySet<string> = set("body", "table", "td", "img", "a[x-apple-data-detectors]", "u + #body a");
 
 // The head rules from src/responsive: generated classes (also :hover and the Outlook.com dark mirrors) and :root.
 // Progressive enhancement like @media: clients without them keep the inline styles.

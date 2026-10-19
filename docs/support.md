@@ -390,11 +390,11 @@ body { margin:0; padding:0; width:100% !important; -webkit-text-size-adjust:100%
 table, td { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
 img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
 a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
-u + .body a { color:inherit; text-decoration:none; }
+u + #body a { color:inherit; text-decoration:none; }
 </style>
 <!-- then: web fonts, emitter head CSS, head style overrides -->
 </head>
-<body id="body" class="body" style="margin:0;padding:0;background-color:#f4f4f4;">
+<body id="body" style="margin:0;padding:0;background-color:#f4f4f4;">
 <div style="display:none;…">Preview text&zwnj;&nbsp;…</div>
 <div role="article" aria-roledescription="email" lang="en">
 <table role="presentation" width="100%" bgcolor="#f4f4f4" …><tr><td align="center">
@@ -411,8 +411,10 @@ u + .body a { color:inherit; text-decoration:none; }
   else `en` with I009; it and `dir` go on `<html>` and the article wrapper, as some clients strip
   `<html>` attributes. The root container's background becomes the page background. `<title>` is
   the source's title (empty otherwise).
-- Gmail turns `<body>` into a `<div>`, so the background lives on the wrapper table; `u + .body`
+- Gmail turns `<body>` into a `<div>`, so the background lives on the wrapper table; `u + #body`
   targets Gmail.
+- `<body>` has no `class`: Roundcube turns it into its `div.rcmBody` and scopes every head rule
+  under that class, but an authored `class` replaces it and no head rule matches.
 - `x-apple-disable-message-reformatting` stops iOS shrinking wide emails;
   `a[x-apple-data-detectors]` and `format-detection` tame auto-linked phone numbers and dates.
   `-webkit-text-size-adjust` is `100%`, never `none`. The viewport never blocks zoom.

@@ -36,7 +36,7 @@ describe("shell", () => {
 
   it("paints the background on body and wrapper", () => {
     const out = shell(emit({ background: "#f4f4f4" }), {}, testCtx(), "");
-    expect(out).toContain('<body id="body" class="body" style="margin:0;padding:0;background-color:#f4f4f4;">');
+    expect(out).toContain('<body id="body" style="margin:0;padding:0;background-color:#f4f4f4;">');
     expect(out).toContain('bgcolor="#f4f4f4"');
   });
 
