@@ -207,7 +207,7 @@ several links in click tracking is **unverified**.
 | Background image or gradient | CSS for clients that paint it, a solid fallback colour, [VML](#vml-background-images) for images in Outlook. Gmail paints CSS backgrounds partially (a `url()` background can make it drop the whole `style`; none for non-Google accounts); Yahoo has no multiple backgrounds. |
 | `<img>` | Fluid (`max-width:100%`) or fixed, always with `width` / `height` attributes. |
 | An `<a>` that looks like a button, or `data-email="button"` | [Bulletproof button](#bulletproof-buttons). |
-| `display: none` | Dropped (I002), or emitted hidden when another screen shows it. |
+| `display: none`, the `hidden` attribute, `popover`, a closed `<dialog>` | Dropped (I002), or emitted hidden when another screen shows it; inline in a text line, kept with `display:none`. |
 | `<details>` | Shown expanded (W001). |
 | Negative margin that exactly cancels the parent's padding | A full-bleed band. Any other is E005. |
 | `%` padding or margin | E006: tables can't scale padding with the viewport. |

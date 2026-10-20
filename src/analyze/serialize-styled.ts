@@ -64,8 +64,9 @@ export const ownStyle = (el: StyledElement, parent: ComputedStyle | undefined): 
     if (p === "text-align") {
       if (ownSide !== undefined) out[p] = ownSide;
     } else if (p === "display") {
-      // a kept element says its display: the diff against the screens where it is hidden needs the real value, not the tag's guess
-      if ("display" in el.declared || el.keep) out[p] = v;
+      // a kept element says its display: the diff against the screens where it is hidden needs the real value, not the tag's guess;
+      // a hidden one says so too, for clients that ignore the hidden attribute
+      if ("display" in el.declared || el.keep || v === "none") out[p] = v;
     } else if (!isInherited(p) || parent?.[p] !== v || (p === "color" && el.tag === "a")) out[p] = v; // clients colour bare links
   }
   dropResets(el.tag, out, el.style);

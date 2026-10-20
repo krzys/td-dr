@@ -6,6 +6,7 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dt, dd, blockquote, pre, hr, address,
 li { display: list-item; }
 table { display: table; }
 head, style, script, link, meta, title, template { display: none; }
+[hidden], dialog:not([open]), [popover] { display: none; } /* a popover is never open in email */
 body { margin: 8px; } /* the analyzer ignores body margins; the shell owns them */
 p, blockquote, ul, ol, dl, figure, pre { margin-top: 1em; margin-bottom: 1em; }
 blockquote, figure { margin-left: 40px; margin-right: 40px; }
