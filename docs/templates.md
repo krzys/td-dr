@@ -82,6 +82,9 @@ around it (whitespace between chain members is dropped, so put spaces inside the
 Outlook-only content the construct stays outside the conditional, so the ESP resolves it before
 Outlook reads the comment.
 
+Margins are collapsed for the block as written, so a construct that renders nothing (an empty `each`, a
+false `if`) doesn't let the margins around it collapse through the gap. Keep that spacing in padding.
+
 ```html
 <tr><td>Always there.</td></tr>
 {{#if paid}}<tr><td style="padding:16px 24px;background-color:#dcfce7;">Paid in full.</td></tr>{{/if}}
