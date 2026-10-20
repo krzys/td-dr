@@ -4,7 +4,7 @@ import { INHERITED, lineHeightPx, textAlignOf } from "../style/props.ts";
 import type { ComputedStyle, StyledElement, StyledNode } from "../style/types.ts";
 import { INLINE_TAGS, isHidden, isInlineLevel, isTransparent } from "./classify.ts";
 import { buildBox, reportDropped } from "./box.ts";
-import { bleedsParent, negativeMarginHint } from "./box-geometry.ts";
+import { bleedsParent, legacyAlign, negativeMarginHint } from "./box-geometry.ts";
 import { firstStop, firstStopRaw, isGradientText } from "./box-paint.ts";
 import { warnFloatWrapStops } from "./float.ts";
 import { hideWrap, unwrapHide } from "./hide.ts";
@@ -140,6 +140,12 @@ export const solidGradientText = (el: StyledElement, ctx: Ctx): StyledElement =>
   return bare(colour);
 };
 
+// The cell spaces the root, but an author table's auto side margins centre it in that cell (align="center" is one),
+// as does a centring parent (<center>, div align). align="left" / "right" floats it there by itself;
+// margin:0 auto is the only other margin a table may carry.
+const tableMargin = (el: StyledElement): string =>
+  el.tag === "table" && ((el.style["margin-left"] === "auto" && el.style["margin-right"] === "auto") || legacyAlign(el) === "center") ? "0 auto" : "0";
+
 /**
  * A text block or inline element passed through as one InlineNode. The root is
  * serialized with every inherited value spelled out (no parent), so a client's
@@ -193,7 +199,7 @@ export const passThrough = (source: StyledElement, ctx: Ctx): Node => {
         if (INLINE_TAGS.has(el.tag) && !out["display"] && d && d !== "inline") out["display"] = inRow && d === "block" ? "inline-block" : d;
         // a block's own styles beat the cell's; an inline's don't reach the line's strut
         if (block) restated = out;
-        return alike && margin.top + margin.right + margin.bottom + margin.left === 0 ? out : { ...out, margin: "0" };
+        return alike && margin.top + margin.right + margin.bottom + margin.left === 0 ? out : { ...out, margin: tableMargin(el) };
       }
       if (top.includes(n) && pxOf(s["margin-top"])) s["margin-top"] = "0";
       if (bottom.includes(n) && pxOf(s["margin-bottom"])) s["margin-bottom"] = "0";

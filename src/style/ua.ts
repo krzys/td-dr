@@ -25,6 +25,7 @@ center, div:is([align="center" i], [align="middle" i]) { text-align: -webkit-cen
 div[align="left" i] { text-align: -webkit-left; }
 div[align="right" i] { text-align: -webkit-right; }
 div[align="justify" i] { text-align: justify; }
+table[align="center" i] { margin-left: auto; margin-right: auto; }
 th { font-weight: bold; text-align: center; }
 pre { font-family: monospace; white-space: pre; }
 ul { list-style-type: disc; }

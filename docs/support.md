@@ -207,7 +207,9 @@ several links in click tracking is **unverified**.
 - `<hr>` becomes an empty cell with a top border; gradient dividers fall back to a solid border. A
   `line-height:1px` divider renders thicker in Outlook without `mso-line-height-rule:exactly`.
 - An author `<table>` passes through. The shell collapses every table's borders, so an author table
-  with cell spacing or a `border` attribute gets `border-collapse:separate` inline.
+  with cell spacing or a `border` attribute gets `border-collapse:separate` inline. Centred by
+  `align="center"`, auto side margins or a centring parent (`<center>`, `div align`), it keeps
+  `margin:0 auto` (CSS beats the attribute in browsers); `align="left"` / `"right"` floats it in its cell. One auto side margin alone is dropped.
 
 ### Boxes and content
 
