@@ -37,8 +37,9 @@ export const firstStopRaw = (image: string): string | undefined => {
   const inner = /gradient\((.*)\)\s*$/s.exec(splitTop(image)[0] ?? "")?.[1];
   if (!inner) return undefined;
   const parts = splitTop(inner);
-  const stops = /^(to\s|-?[\d.]+(deg|turn|rad|grad)$|circle|ellipse|closest|farthest|at\s)/.test(parts[0] ?? "") ? parts.slice(1) : parts;
-  return stops[0]?.replace(/\s+-?[\d.]+(%|px)?$/, "");
+  // a conic gradient opens with `from <angle> [at <position>]`, its stops sit at angles
+  const stops = /^(to\s|from\s|-?[\d.]+(deg|turn|rad|grad)$|circle|ellipse|closest|farthest|at\s)/.test(parts[0] ?? "") ? parts.slice(1) : parts;
+  return stops[0]?.replace(/(\s+-?[\d.]+(%|px|deg|turn|rad|grad)?){1,2}$/, "");
 };
 
 // That colour, when it is a plain hex/rgb/named colour.

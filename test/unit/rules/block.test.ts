@@ -361,6 +361,13 @@ describe("background images", () => {
     expect(firstStop("linear-gradient(var(--a), #000)")).toBeUndefined();
   });
 
+  test("firstStop skips a conic gradient's from angle and centre", () => {
+    expect(firstStop("conic-gradient(from 45deg, #2f5d3a, #c2410c)")).toBe("#2f5d3a");
+    expect(firstStop("conic-gradient(from 0.25turn at 50% 30%, red 0deg, blue 90deg)")).toBe("red");
+    expect(firstStop("conic-gradient(at center, #fff 10%, #000)")).toBe("#fff");
+    expect(firstStop("conic-gradient(#2f5d3a 0deg 90deg, #c2410c 90deg)")).toBe("#2f5d3a");
+  });
+
   test("firstStop only offers a colour that works as an Outlook fallback", () => {
     expect(firstStop("linear-gradient(#1e293bcc, #000)")).toBeUndefined();
     expect(firstStop("linear-gradient(currentColor, #000)")).toBeUndefined();
