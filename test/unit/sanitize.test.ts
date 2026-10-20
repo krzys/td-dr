@@ -361,4 +361,22 @@ describe("sanitize", () => {
       expect(r.ctx.diagnostics.list()[0]?.loc).toEqual({ line: 1, col: 1 });
     });
   });
+
+  describe("tag names", () => {
+    test("an element a browser can't name is unwrapped, its text kept, one I001", () => {
+      const r = run("<div><scr<script>ipt>alert(1)</scr</script>ipt><p>after</p><a<b>x</a<b></div>");
+      expect(r.html).not.toMatch(/<[a-z]+</i);
+      expect(r.html).toBe("<div>ipt&gt;alert(1)ipt&gt;<p>after</p>x</div>");
+      expect(r.ctx.diagnostics.list().map((d) => [d.code, d.message])).toEqual([["I001", "Removed element with an invalid tag name, its content kept"]]);
+    });
+
+    test("custom, Office and camelCase svg names stay", () => {
+      const r = run('<x-card.v2><o:p>a</o:p><v:roundrect>b</v:roundrect><svg><linearGradient id="g"/></svg></x-card.v2>');
+      expect(r.html).toContain("<x-card.v2>");
+      expect(r.html).toContain("<o:p>");
+      expect(r.html).toContain("<v:roundrect>");
+      expect(r.html).toContain("<linearGradient");
+      expect(codesOf(r.ctx)).toEqual([]);
+    });
+  });
 });

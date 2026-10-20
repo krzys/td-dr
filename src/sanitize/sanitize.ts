@@ -75,13 +75,19 @@ const badUrl = (tag: string, name: string, value: string): string | undefined =>
   return use && badScheme(value, use);
 };
 
-type Category = "script" | "handler" | "svg" | "srcdoc" | "formaction" | `url:${string}`;
+// What a browser would parse back as one tag: `scr<script` would not (HTML's valid custom
+// element names, plus the o:/v: prefixes Office markup uses).
+const TAG_NAME = /^[a-z][a-z0-9._:\-\u00b7\u00c0-\u{effff}]*$/iu;
+const TAG_HINT = "A stray < starts a tag; write it as &lt; in text.";
+
+type Category = "script" | "handler" | "svg" | "srcdoc" | "formaction" | "tag" | `url:${string}`;
 const WHAT: Record<string, string> = {
   script: "script element",
   handler: "event handler attribute",
   svg: "unsafe SVG content",
   srcdoc: "srcdoc attribute",
   formaction: "formaction attribute",
+  tag: "element with an invalid tag name, its content kept",
 };
 
 // Puts a node's children where it was.
@@ -209,6 +215,8 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
         continue;
       }
       cleanAttrs(c, inSvg || lower === "svg");
+      const badName = !TAG_NAME.test(c.name);
+      if (badName) note("tag", c);
       const outer = guard;
       guard = hint ?? guard;
       const wasSvg = inSvg;
@@ -219,7 +227,7 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
       if (lower === "form") {
         ctx.diagnostics.report("E008", { message: "<form> removed, its content kept: mail clients disable or strip forms", hint: CONTROL_HINT, loc: locOf(c) });
         unwrap(kids, c);
-      }
+      } else if (badName) unwrap(kids, c);
     }
   };
   // <picture> compiles as its <img>: the fallback every client loads anyway
@@ -275,6 +283,7 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
 
   for (const [k, loc] of firstHit) {
     if (k.startsWith("url:")) ctx.diagnostics.report("I001", { message: `Removed ${k.slice(4)}: URL`, hint: URL_HINT, loc });
+    else if (k === "tag") ctx.diagnostics.report("I001", { message: `Removed ${WHAT[k]}`, hint: TAG_HINT, loc });
     else ctx.diagnostics.report("I001", { message: `Removed ${WHAT[k]}`, loc });
   }
 

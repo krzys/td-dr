@@ -53,6 +53,8 @@ E008s fail the build.
   as in CSS. A `url()` or `image-set()` with any other scheme becomes `none`,
   so `background: #eee url(javascript:…)` keeps its colour; an `@font-face` whose `src` isn't
   a font or an allowed URL is dropped, and so is an `@property` with such an initial value.
+- An element whose name no tag can have (`scr<script`, from a stray `<`): unwrapped, its text
+  kept (I001).
 - `iframe`, `object`, `embed`, `applet`, `portal`, `fencedframe`: removed with what they hold
   (E008). Mail clients load no embedded documents or plugins; link to the page instead.
 - `input`, `select`, `textarea`, `button`, `datalist`: removed (E008), a hidden `input` with I002.
