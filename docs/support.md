@@ -8,6 +8,7 @@ hint. Client claims not confirmed in a real client are marked **unverified**.
 
 - A full document or a body fragment. `<style>` blocks (head or body) and the `css` option take
   part in the cascade; external stylesheets are not fetched (W001), except font host links.
+- A leading byte order mark is dropped, in the HTML and in a data set's JSON.
 - **Lowered to tables:** layout containers (`div`, `section`, flex and grid elements, anything
   block-level that holds blocks).
 - **Passed through** with every inherited style spelled out inline: text-level content (`p`,

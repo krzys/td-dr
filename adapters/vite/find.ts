@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
 import { LANG_TAG } from "../../src/ctx.ts";
+import { stripBom } from "../../src/parse/decode.ts";
 import { dialects, type DialectName } from "../../src/template/dialects.ts";
 import type { DataSet, EmailEntry, Framework } from "./types.ts";
 
@@ -13,7 +14,7 @@ export const dataObject = (v: unknown): Record<string, unknown> => {
 export const parseDataText = (text: string): Record<string, unknown> => {
   let v: unknown;
   try {
-    v = JSON.parse(text);
+    v = JSON.parse(stripBom(text));
   } catch (e) {
     throw new Error(`invalid JSON: ${(e as Error).message}`);
   }
