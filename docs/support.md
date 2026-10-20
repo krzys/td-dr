@@ -49,7 +49,7 @@ Any other `data-email` value is E011.
 | `@import`, `@font-face`, font `<link>` | [Web fonts](#web-fonts). |
 | `@container`, other at-rules, rules inside a `style` attribute | Skipped (W001). |
 | Invalid values (negative `gap`, unparsable declarations, selectors) | Ignored as a browser would (W002). |
-| `box-shadow`, `text-shadow` | Kept; W005 names the clients that drop them. |
+| `box-shadow`, `text-shadow` | Dropped (W001); no email-safe form keeps them. |
 | Positioning, transforms, animations and transitions | E002, E003, E009. |
 
 ## Layout
@@ -329,6 +329,7 @@ Lint, never errors:
 - `!important` is lowercase after a space.
 - Hover rules apply per emitted cell: `.card:hover{color:red}` fires only on the hovered cell.
 - Input lint runs on the desktop screen only. Each screen costs a full compile.
+- Thunderbird drops `@media` rules and Roundcube prefixes head rules ([observed locally](#observed-locally)).
 
 ## Images
 
@@ -647,6 +648,20 @@ input lint (W005, I003; only CSS that reaches the output) and output self-lint (
 a pinned copy in `src/targets/data/` (MIT, attribution in `NOTICE`), never fetched at runtime;
 `pnpm caniemail` refreshes it and a test fails once it is 120 days old. Property-to-slug mapping is
 an explicit table in `src/targets/features.ts`. The results are community tests at a point in time.
+
+### Observed locally
+
+Seen in a local test of a few mail clients, beyond the caniemail data:
+
+- **Thunderbird 158 (Original HTML view):** removes every `@media`, `@supports` and `@layer` rule and
+  CSS nesting from `<style>`; plain rules and `@font-face` stay. It shows the desktop layout from the
+  inline styles, so [screens](#screens) never apply. It also caps an image's width to the pane.
+- **Roundcube 1.6 (Elastic skin):** prefixes head rules with its message container, which works only
+  while `<body>` has no class. The skin's body `line-height: 1.5`, 14px font and heading line-heights
+  reach unstyled text, and Bootstrap's `box-sizing: border-box` applies to cells. It corrupts
+  non-base64 SVG `data:` URIs.
+- **Evolution (WebKitGTK):** narrows the body to the viewport minus 24px unless the email sets a
+  body width; the [shell](#the-email-shell) does.
 
 ## Diagnostic codes
 
