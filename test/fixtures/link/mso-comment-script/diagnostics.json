@@ -1,0 +1,32 @@
+[
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed event handler attribute",
+    "hint": "Scripts, event handlers and framework markers are stripped from email output.",
+    "loc": {
+      "line": 7,
+      "col": 5
+    }
+  },
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed javascript: URL",
+    "hint": "Links and images keep http, https, mailto, tel, sms and cid URLs, data: images, fragments, relative URLs and placeholders.",
+    "loc": {
+      "line": 7,
+      "col": 5
+    }
+  },
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed script element",
+    "hint": "Scripts, event handlers and framework markers are stripped from email output.",
+    "loc": {
+      "line": 7,
+      "col": 5
+    }
+  }
+]

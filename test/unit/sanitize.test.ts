@@ -379,4 +379,117 @@ describe("sanitize", () => {
       expect(codesOf(r.ctx)).toEqual([]);
     });
   });
+
+  describe("markup inside conditional comments", () => {
+    const messages = (r: ReturnType<typeof run>) => r.ctx.diagnostics.list().map((d) => [d.code, d.message]);
+
+    test("loses scripts, handlers and unsafe URLs; untouched tags keep their bytes", () => {
+      const vml = '<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="https://x.test/go" style="height:40px;v-text-anchor:middle;" arcsize="10%" stroke="f" fillcolor="#1a73e8"><w:anchorlock/><center>Go</center></v:roundrect>';
+      const r = run(
+        `<body><!--[if mso]><table role="presentation"><tr><td>${vml}<script>alert(1)</script><b onclick="a()" class=x>z</b>` +
+          `<a href="jav&#x61;script:x" title=t>y</a><img src='vbscript:x' width=1/></td></tr></table><![endif]--></body>`,
+      );
+      expect(r.html).toBe(
+        `<!--[if mso]><table role="presentation"><tr><td>${vml}<b class=x>z</b><a title=t>y</a><img width=1/></td></tr></table><![endif]-->`,
+      );
+      expect(messages(r)).toEqual([
+        ["I001", "Removed script element"],
+        ["I001", "Removed event handler attribute"],
+        ["I001", "Removed javascript: URL"],
+        ["I001", "Removed vbscript: URL"],
+      ]);
+    });
+
+    test("obfuscated forms: split script tags, unquoted and uppercase handlers, srcdoc, embeds", () => {
+      const r = run(
+        "<body><!--[if IE]><scr<script></script>ipt>alert(1)</script><SCRIPT src=//x.test/a.js></SCRIPT><p ONMOUSEOVER=a()>p</p>" +
+          '<iframe srcdoc="<b>x</b>" src="https://x.test"></iframe><input formaction="https://x.test" value=1><![endif]--></body>',
+      );
+      // `scr<script` is one tag to a browser, with an invalid name; its text is all that stays
+      expect(r.html).toBe("<!--[if IE]>ipt>alert(1)<p>p</p><![endif]-->");
+      expect(r.html).not.toMatch(/script|onmouseover|srcdoc|formaction/i);
+      expect(codesOf(r.ctx).sort()).toEqual(["E008", "E008", "I001", "I001", "I001"]);
+    });
+
+    test.each([
+      ['<img src=x onerror=alert(1) title=a"b>', ""],
+      ["<a href=javascript:alert(1) title=it's>x</a>", "x</a>"],
+      ["<img src=x onerror=alert(1) a='><p title='x'>", ""],
+      ["<img src=x onerror=alert(1)//", ""],
+      ['<a href="https://x.test" href="javascript:alert(1)">x</a>', "x</a>"],
+      ['<img src="x" onerror="a()"/b>', ""],
+      ["<b>k</b><img src=x onerror=alert(1)", "<b>k</b>"],
+    ])("a tag a parser could read another way goes whole: %s", (inner, kept) => {
+      const r = run(`<body><!--[if mso]>${inner}<![endif]--></body>`);
+      expect(r.html).toBe(`<!--[if mso]>${kept}<![endif]-->`);
+      expect(r.ctx.diagnostics.list().map((d) => d.message)).toEqual(["Removed malformed tag in a conditional comment"]);
+    });
+
+    test("a dropped tag can't join its neighbours into a new one", () => {
+      const r = run("<body><!--[if IE]><<iframe>script>alert(1)<</iframe>/script><![endif]--></body>");
+      expect(r.html).not.toMatch(/<script/i);
+      expect(r.html).toMatch(/^<!--\[if IE\]>.*<!\[endif\]-->$/);
+    });
+
+    test("deep nesting gives up and empties the comment", () => {
+      const r = run(`<body><!--[if IE]>${"<".repeat(20)}${"iframe>".repeat(20)}x<![endif]--></body>`);
+      expect(r.html).toBe("<!--[if IE]><![endif]-->");
+      expect(r.ctx.diagnostics.list().map((d) => d.message)).toContain("Removed malformed tag in a conditional comment");
+    });
+
+    test("CSS in style elements and attributes gets the sheet checks", () => {
+      const r = run(
+        '<body><!--[if IE]><style>p{width:expression(alert(1));color:#111}@import url(javascript:x);</style>' +
+          '<p style="color:#222; background:#eee url(javascript:alert(1))">x</p><b style=\'behavior:url(a.htc)\'>y</b><![endif]--></body>',
+      );
+      expect(r.html).toBe('<!--[if IE]><style>p{color:#111}</style><p style="color:#222">x</p><b>y</b><![endif]-->');
+      expect(r.ctx.diagnostics.list().map((d) => d.message)).toEqual([
+        "Removed @import: javascript: URL",
+        "Removed width: expression() runs script",
+        "Removed background: javascript: URL",
+        "Removed behavior: it loads script",
+      ]);
+    });
+
+    test("a style that holds markup or CSS postcss can't read goes when it could hide script", () => {
+      const r = run("<body><!--[if IE]><svg><style><img src=x onerror=alert(1)></style></svg><style>p{width:expression(1)</style><![endif]--></body>");
+      expect(r.html).toBe("<!--[if IE]><svg></svg><![endif]-->");
+      expect(codesOf(r.ctx)).toEqual(["I001", "I001"]);
+    });
+
+    test("Outlook CSS, VML styles and fonts keep their bytes", () => {
+      const mso =
+        "<!--[if mso]><style>table{border-collapse:collapse;mso-table-lspace:0pt}@font-face{font-family:X;src:url(data:font/woff2;base64,AA)}" +
+        '.x { mso-line-height-rule: exactly; }</style><v:rect style="width:552px;height:4px;" fill="t"><v:fill src="https://x.test/a.png"/></v:rect><![endif]-->';
+      const r = run(`<body>${mso}</body>`);
+      expect(r.html).toBe(mso);
+      expect(codesOf(r.ctx)).toEqual([]);
+    });
+
+    test("meta refresh and base go silently, as in the body", () => {
+      const r = run('<body><!--[if mso]><meta http-equiv="refresh" content="0;url=javascript:alert(1)"><base href="https://x.test/"><meta name=x><![endif]--></body>');
+      expect(r.html).toBe("<!--[if mso]><meta name=x><![endif]-->");
+      expect(codesOf(r.ctx)).toEqual([]);
+    });
+
+    test("text with a lone < and downlevel-revealed openers stay", () => {
+      const html = "<!--[if mso]><p>a < b &amp; c</p><![endif]--><!--[if !mso]><!--><i>x</i><!--<![endif]-->";
+      const r = run(`<body>${html}</body>`);
+      expect(r.html).toBe(html);
+      expect(codesOf(r.ctx)).toEqual([]);
+    });
+
+    test("a VML fill takes a data: image like an img does", () => {
+      const fill = '<!--[if gte mso 9]><v:rect fill="t"><v:fill type="tile" src="data:image/png;base64,AAAA" color="#ffffff"/></v:rect><![endif]-->';
+      expect(run(`<body>${fill}</body>`).html).toBe(fill);
+      expect(run('<body><!--[if mso]><v:fill src="data:text/html,x"/><![endif]--></body>').html).toBe("<!--[if mso]><v:fill/><![endif]-->");
+    });
+
+    test("a comment with nothing to clean is unchanged", () => {
+      const mso = '<!--[if gte mso 9]><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->';
+      const r = run(`<body>${mso}</body>`);
+      expect(r.html).toBe(mso);
+      expect(codesOf(r.ctx)).toEqual([]);
+    });
+  });
 });

@@ -2,15 +2,19 @@ import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
 import { AMP_HINT, ampMarker } from "../parse/amp.ts";
 import { children, findAllElements, findElement, isComment, isElement, isText, locOf, type DomChild, type DomDocument, type DomElement, type DomNode } from "../parse/dom.ts";
+import { importUrl } from "../parse/font-hosts.ts";
 import type { ParsedDoc } from "../parse/html.ts";
-import { cssUrls } from "../style/unsafe.ts";
+import { unsafeFace } from "../style/at-rules.ts";
+import { cssUrls, unsafeDecl, type Unsafe } from "../style/unsafe.ts";
 import { TDDR_TAGS } from "../template/chain.ts";
 import { TEMPLATE_ATTRS } from "../template/hints.ts";
 import { markChains } from "./chains.ts";
+import postcss, { CssSyntaxError, type AtRule, type Root } from "postcss";
+import { Tokenizer, TokenizerMode, type Token } from "parse5";
 import { badScheme, srcsetUrls, URL_HINT, type UrlUse } from "./urls.ts";
 
 const DROP_TAGS = new Set(["script", "noscript", "template", "style", "link", "meta", "title", "base"]);
-// URL attributes by what they load; src is an image on <img> only.
+// URL attributes by what they load; src is an image on <img> and VML (v:fill, v:imagedata) only.
 const IMAGE_ATTRS = new Set(["background", "poster", "lowsrc", "dynsrc"]);
 const LINK_ATTRS = new Set(["href", "xlink:href", "src", "action", "cite", "longdesc", "codebase"]);
 // An embedded document's source, and a submit target: nothing a mail client follows.
@@ -72,8 +76,178 @@ const PREHEADER_HINT = "The preheader is one string and takes no blocks. Put the
 const badUrl = (tag: string, name: string, value: string): string | undefined => {
   if (name === "srcset") return srcsetUrls(value).map((u) => badScheme(u, "image")).find(Boolean);
   if (name === "ping") return value.split(/\s+/).map((u) => badScheme(u, "link")).find(Boolean);
-  const use: UrlUse | undefined = IMAGE_ATTRS.has(name) || (name === "src" && tag === "img") ? "image" : LINK_ATTRS.has(name) ? "link" : undefined;
+  const use: UrlUse | undefined = IMAGE_ATTRS.has(name) || (name === "src" && (tag === "img" || tag.startsWith("v:"))) ? "image" : LINK_ATTRS.has(name) ? "link" : undefined;
   return use && badScheme(value, use);
+};
+
+// A downlevel-hidden conditional comment is text to the DOM, but Outlook parses what is in it,
+// and old IE runs [if IE] script, so an HTML tokenizer reads it and its tags get the same checks
+// by hand (docs/support.md#sanitizing). A tag with nothing to drop keeps its bytes: VML is fussy.
+// One a parser could read another way (a stray quote, a repeated attribute, no closing >) goes.
+const COND_OPEN = /^\s*\[if[^\]]*\]>/;
+const COND_CLOSE = /<!\[endif\]\s*$/;
+// Each pass drops a layer: `<<iframe>script>` is a script once the iframe goes.
+const MAX_PASSES = 8;
+const MALFORMED_HINT = "Write tags in a conditional comment out in full: quoted values, each attribute once, a closing >.";
+
+type Dropped = Category | { tag: string } | Unsafe;
+type Edit = [start: number, end: number, text: string];
+
+class Scanner extends Tokenizer {
+  // where the tag being read starts, when the input ends inside it
+  get pendingTag(): number | undefined {
+    return this.currentToken?.location?.startOffset;
+  }
+}
+
+// CSS gets the checks a sheet does. A sheet postcss can't read goes when it holds anything they
+// look for; undefined drops the element.
+const cleanCss = (css: string, drop: (d: Dropped) => void): string | undefined => {
+  let root: Root;
+  try {
+    root = postcss.parse(css);
+  } catch (e) {
+    if (!(e instanceof CssSyntaxError)) throw e;
+    const why = unsafeDecl("style", css) ?? (/behavior|binding|@import/i.test(css) ? { message: "Removed unreadable CSS" } : undefined);
+    if (why) drop(why);
+    return why ? undefined : css;
+  }
+  let changed = false;
+  const change = (why: Unsafe): void => {
+    drop(why);
+    changed = true;
+  };
+  root.walkAtRules((r) => {
+    const name = r.name.toLowerCase();
+    const scheme = name === "import" ? badScheme(importUrl(r.params), "link") : undefined;
+    const why = name === "font-face" ? unsafeFace(r) : scheme === undefined ? undefined : { message: `Removed @import: ${scheme}: URL`, hint: URL_HINT };
+    if (!why) return;
+    change(why);
+    r.remove();
+  });
+  root.walkDecls((d) => {
+    if (d.parent?.type === "atrule" && (d.parent as AtRule).name.toLowerCase() === "font-face") return;
+    const why = unsafeDecl(d.prop, d.value);
+    if (!why) return;
+    change(why);
+    if (why.value === undefined) d.remove();
+    else d.value = why.value;
+  });
+  return changed ? root.toString() : css;
+};
+
+const cleanMarkup = (src: string, drop: (d: Dropped) => void): string => {
+  const edits: Edit[] = [];
+  const errors: number[] = [];
+  let script: number | undefined; // an open <script>, dropped to its end
+  let style: Token.TagToken | undefined;
+  const cut = (start: number, end: number, why?: Dropped): void => {
+    if (why) drop(why);
+    edits.push([start, end, ""]);
+  };
+  const tag = (t: Token.TagToken, start: boolean): void => {
+    const { startOffset: s, endOffset: e, attrs: at } = t.location!;
+    const name = t.tagName;
+    if (name === "script") {
+      // reported where it opens, cut to where it closes
+      if (start && script === undefined) drop("script"), (script = s);
+      else if (!start && script !== undefined) cut(script, e), (script = undefined);
+      else if (!start) cut(s, e);
+      return;
+    }
+    if (errors.some((o) => o >= s && o < e)) return cut(s, e, "malformed");
+    if (!TAG_NAME.test(name)) return cut(s, e, "tag");
+    if (EMBEDS.has(name) || CONTROLS.has(name)) return cut(s, e, start ? { tag: name } : undefined);
+    if (!start) return;
+    // dropped silently, as in the body
+    if (name === "base" || (name === "meta" && t.attrs.some((a) => a.name === "http-equiv" && /refresh/i.test(a.value)))) return cut(s, e);
+    for (const a of t.attrs) {
+      const { startOffset: as, endOffset: ae } = at![a.name]!;
+      let why: Dropped | undefined;
+      let from = as;
+      while (from > s && /\s/.test(src[from - 1]!)) from--;
+      if (a.name.startsWith("on")) why = "handler";
+      else if (DOC_ATTRS.has(a.name)) why = a.name as Category;
+      else if (a.name === "style") {
+        const css = cleanCss(a.value, drop);
+        if (css === a.value) continue;
+        if (css) edits.push([as, ae, `style="${css.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}"`]);
+        else cut(from, ae);
+        continue;
+      } else {
+        const scheme = badUrl(name, a.name, a.value);
+        if (scheme !== undefined) why = `url:${scheme}`;
+      }
+      if (why) cut(from, ae, why);
+    }
+  };
+  const scanner: Scanner = new Scanner(
+    { sourceCodeLocationInfo: true },
+    {
+      onStartTag: (t) => {
+        tag(t, true);
+        // as a browser reads them: script to its end tag, style as text
+        if (t.tagName === "script") scanner.state = TokenizerMode.SCRIPT_DATA;
+        else if (t.tagName === "style") {
+          scanner.state = TokenizerMode.RAWTEXT;
+          style = t;
+        }
+      },
+      onEndTag: (t) => {
+        if (style && t.tagName === "style") {
+          const { startOffset: s, endOffset: e } = style.location!;
+          const css = src.slice(e, t.location!.startOffset);
+          // in <svg> a style holds markup
+          const kept = css.includes("<") ? (drop("malformed"), undefined) : cleanCss(css, drop);
+          if (kept === undefined) edits.push([s, t.location!.endOffset, ""]);
+          else if (kept !== css) edits.push([e, t.location!.startOffset, kept]);
+          style = undefined;
+        }
+        tag(t, false);
+      },
+      onParseError: (err) => {
+        errors.push(err.startOffset);
+        const pending = err.code === "eof-in-tag" ? scanner.pendingTag : undefined;
+        if (pending !== undefined) cut(pending, src.length, "malformed");
+      },
+      onEof: () => {
+        if (script !== undefined) cut(script, src.length);
+        else if (style) cut(style.location!.startOffset, src.length, "malformed");
+      },
+      onComment: () => {},
+      onDoctype: () => {},
+      onCharacter: () => {},
+      onNullCharacter: () => {},
+      onWhitespaceCharacter: () => {},
+    },
+  );
+  scanner.write(src, true);
+  // an edit inside a dropped span goes with it
+  edits.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
+  let out = "";
+  let at = 0;
+  for (const [s, e, text] of edits) {
+    if (s < at) continue;
+    out += src.slice(at, s) + text;
+    at = e;
+  }
+  return out + src.slice(at);
+};
+
+const cleanComment = (data: string, drop: (d: Dropped) => void): string => {
+  const open = COND_OPEN.exec(data)?.[0] ?? "";
+  const close = COND_CLOSE.exec(data.slice(open.length))?.[0] ?? "";
+  let inner = data.slice(open.length, data.length - close.length);
+  for (let pass = 0, prev = ""; prev !== inner; pass++) {
+    if (pass === MAX_PASSES) {
+      drop("malformed");
+      inner = "";
+      break;
+    }
+    prev = inner;
+    inner = cleanMarkup(inner, drop);
+  }
+  return open + inner + close;
 };
 
 // What a browser would parse back as one tag: `scr<script` would not (HTML's valid custom
@@ -81,7 +255,7 @@ const badUrl = (tag: string, name: string, value: string): string | undefined =>
 const TAG_NAME = /^[a-z][a-z0-9._:\-\u00b7\u00c0-\u{effff}]*$/iu;
 const TAG_HINT = "A stray < starts a tag; write it as &lt; in text.";
 
-type Category = "script" | "handler" | "svg" | "srcdoc" | "formaction" | "tag" | `url:${string}`;
+type Category = "script" | "handler" | "svg" | "srcdoc" | "formaction" | "tag" | "malformed" | `url:${string}`;
 const WHAT: Record<string, string> = {
   script: "script element",
   handler: "event handler attribute",
@@ -89,6 +263,7 @@ const WHAT: Record<string, string> = {
   srcdoc: "srcdoc attribute",
   formaction: "formaction attribute",
   tag: "element with an invalid tag name, its content kept",
+  malformed: "malformed tag in a conditional comment",
 };
 
 // Puts a node's children where it was.
@@ -133,6 +308,15 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
   // around it would just be ignored.
   const hintAt = (el: DomElement, message: string): void => ctx.diagnostics.report("E012", { message, hint: PREHEADER_HINT, loc: locOf(el) });
 
+  const removed = (tag: string, n: DomNode): void => {
+    const embed = EMBEDS.has(tag);
+    ctx.diagnostics.report("E008", {
+      message: `<${tag}> removed: ${embed ? "mail clients don't load embedded documents or plugins" : "mail clients disable or strip form controls"}`,
+      hint: embed ? EMBED_HINT : CONTROL_HINT,
+      loc: locOf(n),
+    });
+  };
+
   const cleanAttrs = (c: DomElement, svg: boolean): void => {
     for (const [name, value] of Object.entries(c.attribs)) {
       if (name.startsWith("on")) {
@@ -164,6 +348,13 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
     for (const c of [...kids]) {
       if (isComment(c)) {
         if (!MSO_COMMENT.test(c.data)) detach(kids, c);
+        else {
+          c.data = cleanComment(c.data, (d) => {
+            if (typeof d === "string") note(d, c);
+            else if ("tag" in d) removed(d.tag, c);
+            else ctx.diagnostics.report("I001", { message: d.message, hint: d.hint, loc: locOf(c) });
+          });
+        }
         continue;
       }
       if (!isElement(c)) continue;
@@ -206,14 +397,7 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
       if (EMBEDS.has(lower) || CONTROLS.has(lower)) {
         if (lower === "input" && c.attribs["type"]?.trim().toLowerCase() === "hidden") {
           ctx.diagnostics.report("I002", { message: "Hidden <input> dropped", hint: "A hidden input only feeds a form submit, which mail clients don't do.", loc: locOf(c) });
-        } else {
-          const embed = EMBEDS.has(lower);
-          ctx.diagnostics.report("E008", {
-            message: `<${lower}> removed: ${embed ? "mail clients don't load embedded documents or plugins" : "mail clients disable or strip form controls"}`,
-            hint: embed ? EMBED_HINT : CONTROL_HINT,
-            loc: locOf(c),
-          });
-        }
+        } else removed(lower, c);
         detach(kids, c);
         continue;
       }
@@ -286,7 +470,7 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
 
   for (const [k, loc] of firstHit) {
     if (k.startsWith("url:")) ctx.diagnostics.report("I001", { message: `Removed ${k.slice(4)}: URL`, hint: URL_HINT, loc });
-    else if (k === "tag") ctx.diagnostics.report("I001", { message: `Removed ${WHAT[k]}`, hint: TAG_HINT, loc });
+    else if (k === "tag" || k === "malformed") ctx.diagnostics.report("I001", { message: `Removed ${WHAT[k]}`, hint: k === "tag" ? TAG_HINT : MALFORMED_HINT, loc });
     else ctx.diagnostics.report("I001", { message: `Removed ${WHAT[k]}`, loc });
   }
 

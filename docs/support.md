@@ -53,6 +53,11 @@ E008s fail the build.
   as in CSS. A `url()` or `image-set()` with any other scheme becomes `none`,
   so `background: #eee url(javascript:…)` keeps its colour; an `@font-face` whose `src` isn't
   a font or an allowed URL is dropped, and so is an `@property` with such an initial value.
+- Inside `<!--[if mso]>…<![endif]-->` and other conditional comments, which Outlook parses
+  (and old IE ran): the same scripts, handlers, URLs, frames, form controls and CSS go, and
+  `<meta http-equiv=refresh>` and `<base>` too. A tag a parser could read two ways (a stray
+  quote, an attribute twice, no closing `>`) goes whole (I001). Tags with nothing to drop keep
+  their exact bytes, so hand-written VML stays as written.
 - An element whose name no tag can have (`scr<script`, from a stray `<`): unwrapped, its text
   kept (I001).
 - `iframe`, `object`, `embed`, `applet`, `portal`, `fencedframe`: removed with what they hold
