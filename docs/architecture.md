@@ -10,7 +10,7 @@ compile time.
 input HTML (+ options.css)
   │ parse      parse5 with source locations → DOM; collects <style>, options.css and font links
   │ sanitize   DOM → DOM: scripts, handlers, framework markers, unsafe URLs, template chains, preheader
-  │ style      cascade per screen → StyledElement tree; design width; input lint
+  │ style      cascade per screen → StyledElement tree; unsafe CSS dropped; design width; input lint
   │ analyze    ordered rule registry: StyledElement → Layout IR
   │ passes     IR → emit-ready IR, through the phase chain
   │ emit       IR → tables, MSO ghost tables, VML, inline styles

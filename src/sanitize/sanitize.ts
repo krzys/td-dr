@@ -2,16 +2,16 @@ import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
 import { children, findAllElements, findElement, isComment, isElement, isText, locOf, type DomChild, type DomDocument, type DomElement, type DomNode } from "../parse/dom.ts";
 import type { ParsedDoc } from "../parse/html.ts";
+import { cssUrls } from "../style/unsafe.ts";
 import { TDDR_TAGS } from "../template/chain.ts";
 import { TEMPLATE_ATTRS } from "../template/hints.ts";
 import { markChains } from "./chains.ts";
-import { badScheme, srcsetUrls, type UrlUse } from "./urls.ts";
+import { badScheme, srcsetUrls, URL_HINT, type UrlUse } from "./urls.ts";
 
 const DROP_TAGS = new Set(["script", "noscript", "template", "style", "link", "meta", "title", "base"]);
 // URL attributes by what they load; src is an image on <img> only.
 const IMAGE_ATTRS = new Set(["background", "poster", "lowsrc", "dynsrc"]);
 const LINK_ATTRS = new Set(["href", "xlink:href", "src", "action", "cite", "longdesc", "codebase"]);
-const URL_HINT = "Links and images keep http, https, mailto, tel, sms and cid URLs, data: images, fragments, relative URLs and placeholders.";
 // An embedded document's source, and a submit target: nothing a mail client follows.
 const DOC_ATTRS = new Set(["srcdoc", "formaction"]);
 
@@ -31,6 +31,8 @@ const MSO_COMMENT = /^\s*(\[if[\s\]]|\[endif\]|<!\[endif\])/;
 const SVG_HREFS = ["href", "xlink:href"];
 // These can pull in another document, so only #fragment references survive.
 const SAME_DOC_ONLY = new Set(["use", "feimage"]);
+// Presentation attributes that take a url() the way their CSS property does.
+const SVG_PAINT = new Set(["fill", "stroke", "filter", "clip-path", "mask", "marker-start", "marker-mid", "marker-end", "cursor"]);
 const ANIMATORS = new Set(["animate", "set", "animatemotion", "animatetransform"]);
 // SMIL can set an href at runtime and so dodge the attribute checks below.
 const animatesHref = (c: { name: string; attribs: Record<string, string> }): boolean =>
@@ -134,7 +136,7 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
         note("svg", c);
         delete c.attribs[name];
       } else {
-        const scheme = badUrl(c.name.toLowerCase(), name, value);
+        const scheme = svg && SVG_PAINT.has(name) ? cssUrls(value).map((u) => badScheme(u, "image")).find(Boolean) : badUrl(c.name.toLowerCase(), name, value);
         if (scheme === undefined) continue;
         note(`url:${scheme}`, c);
         delete c.attribs[name];

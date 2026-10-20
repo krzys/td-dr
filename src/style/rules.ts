@@ -4,7 +4,7 @@
 import type { AtRule, ChildNode, Container, Declaration, Rule } from "postcss";
 import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
-import { fontFace, fontImport, isSilent, supportsHolds } from "./at-rules.ts";
+import { fontFace, fontImport, isSilent, supportsHolds, unsafeFace } from "./at-rules.ts";
 import { asksDark, inMedia, keepsTextLive, TOP, usableQueries, type EnvScope } from "./conditions.ts";
 import type { Decl, Declare, ViewportNotes } from "./declarations.ts";
 import { canInline, matchRule, type Select, type Sel } from "./match.ts";
@@ -80,7 +80,9 @@ const atRule = (node: AtRule, scope: Scope, run: Run): void => {
     const full = prefix + (node.params.trim() || `<anonymous ${run.anonymous++}>`);
     walk(node, { ...scope, layer: register(run, full), path: full }, run);
   } else if (name === "font-face") {
-    run.out.fonts.faces.push(fontFace(node));
+    const unsafe = unsafeFace(node);
+    if (unsafe) ctx.diagnostics.report("I001", { ...unsafe, loc });
+    else run.out.fonts.faces.push(fontFace(node));
   } else if (name === "import") {
     const kept = fontImport(node, loc, ctx);
     if (kept !== undefined) run.out.fonts.imports.push(kept);

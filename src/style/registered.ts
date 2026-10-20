@@ -4,6 +4,7 @@ import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
 import type { DomElement } from "../parse/dom.ts";
 import { offer, offerTo, type Candidate, type Props, type Store } from "./precedence.ts";
+import { unsafeDecl } from "./unsafe.ts";
 
 export type Registered = { inherits: boolean; initial: string | undefined };
 export type Registry = ReadonlyMap<string, Registered>;
@@ -24,6 +25,11 @@ export const propertyRule = (node: AtRule, loc: SrcLoc | undefined, ctx: Ctx): [
       hint: 'It needs syntax and inherits, and an initial-value unless syntax is "*".',
       loc,
     });
+    return undefined;
+  }
+  const unsafe = initial === undefined ? undefined : unsafeDecl(name, initial);
+  if (unsafe) {
+    ctx.diagnostics.report("I001", { message: `${unsafe.message} in @property; the rule was ignored`, hint: unsafe.hint, loc });
     return undefined;
   }
   return [name, { inherits: inherits === "true", initial }];

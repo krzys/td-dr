@@ -213,6 +213,12 @@ describe("sanitize", () => {
       expect(r.html).toContain("<circle");
     });
 
+    test("checks url() in presentation attributes like CSS", () => {
+      const r = svg('<rect fill="url(javascript:alert(2))" stroke="url(#g) red" mask="url(\'data:text/html,x\')" width="1"/>');
+      expect(r.html).toBe('<svg viewBox="0 0 8 8"><rect stroke="url(#g) red" width="1"></rect></svg><p>k</p>');
+      expect(r.ctx.diagnostics.list().map((d) => d.message)).toEqual(["Removed javascript: URL", "Removed data: URL"]);
+    });
+
     test("keeps an https link", () => {
       expect(svg('<a href="https://x.test/"><circle r="1"/></a>').html).toContain('href="https://x.test/"');
     });

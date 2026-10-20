@@ -48,6 +48,11 @@ E008s fail the build.
   and `data:` for images only. Any other scheme loses the attribute, one I001 per scheme:
   `javascript:`, `vbscript:`, `data:text/html`, spelled with entities, tabs or invisible
   characters too.
+- CSS: `behavior`, `-moz-binding` and `expression()` go (I001), in style attributes, sheets,
+  media and dark rules alike; a `url()` in an SVG `fill`, `stroke`, `mask` or the like is checked
+  as in CSS. A `url()` or `image-set()` with any other scheme becomes `none`,
+  so `background: #eee url(javascript:…)` keeps its colour; an `@font-face` whose `src` isn't
+  a font or an allowed URL is dropped, and so is an `@property` with such an initial value.
 - `iframe`, `object`, `embed`, `applet`, `portal`, `fencedframe`: removed with what they hold
   (E008). Mail clients load no embedded documents or plugins; link to the page instead.
 - `input`, `select`, `textarea`, `button`, `datalist`: removed (E008), a hidden `input` with I002.

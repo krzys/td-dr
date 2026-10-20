@@ -7,7 +7,7 @@ import type { Props, Store } from "./precedence.ts";
 
 const STRING = /"((?:\\[\s\S]|[^"\\])*)"|'((?:\\[\s\S]|[^'\\])*)'/y;
 
-const unescape = (s: string): string =>
+export const unescape = (s: string): string =>
   s.replace(/\\(?:([0-9a-f]{1,6})[ \t\n]?|(\n)|([\s\S]))/gi, (_m, hex?: string, nl?: string, ch?: string) => {
     if (hex) {
       const cp = parseInt(hex, 16);

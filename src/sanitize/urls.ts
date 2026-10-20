@@ -8,6 +8,8 @@ const INVISIBLE = /[\x00-\x20\x7f-\x9f\p{Cf}\p{Zs}\p{Zl}\p{Zp}]/gu;
 const SCHEME = /^([a-z][a-z0-9+.-]*):/i;
 const ALLOWED: ReadonlySet<string> = new Set(["http", "https", "mailto", "tel", "sms", "cid"]);
 
+export const URL_HINT = "Links and images keep http, https, mailto, tel, sms and cid URLs, data: images, fragments, relative URLs and placeholders.";
+
 // image: <img src>, srcset, background attributes, CSS url(); font: @font-face src; link: the rest
 export type UrlUse = "link" | "image" | "font";
 

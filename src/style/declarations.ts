@@ -4,6 +4,7 @@ import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
 import { expandDeclaration } from "./shorthands.ts";
 import { hasViewport, liveValue, resolveViewport } from "./units.ts";
+import { unsafeDecl } from "./unsafe.ts";
 
 export type Decl = {
   prop: string;
@@ -25,8 +26,15 @@ export const declarations = (width: number, narrow: boolean, ctx: Ctx): Declare 
   // IE hacks (*zoom, _height): postcss moves the prefix into raws, browsers ignore the decl
   if (/[*_#]$/.test(n.raws.before?.trim() ?? "")) return [];
   if (!n.prop.startsWith("--") && !/^-?[a-z][a-z0-9-]*$/i.test(n.prop)) return [];
-  const written = n.value.trim();
+  let written = n.value.trim();
   if (!written) return [];
+  // script and unsafe URLs go in every mode (docs/support.md#sanitizing)
+  const unsafe = unsafeDecl(n.prop, written);
+  if (unsafe) {
+    ctx.diagnostics.report("I001", { message: unsafe.message, hint: unsafe.hint, loc: loc() });
+    if (unsafe.value === undefined) return [];
+    written = unsafe.value;
+  }
   const vw: Array<[string, string]> = [];
   const value = resolveViewport(written, width, (token, px) => vw.push([token, px]));
   const prop = n.prop.startsWith("--") ? n.prop : n.prop.toLowerCase();

@@ -4,6 +4,7 @@ import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
 import { importUrl, isFontHost } from "../parse/font-hosts.ts";
 import { evalSupports } from "./supports.ts";
+import { unsafeDecl, type Unsafe } from "./unsafe.ts";
 
 // Nothing to cascade in these, so no warning either.
 const SILENT = new Set(["charset", "page", "namespace"]);
@@ -17,6 +18,15 @@ export const fontFace = (node: AtRule): string => {
     if ((p as AtRule).name.toLowerCase() === "media") face = `@media ${(p as AtRule).params}{${face}}`;
   }
   return face;
+};
+
+// A face is copied as written, so a src that loads anything but a font drops it.
+export const unsafeFace = (node: AtRule): Unsafe | undefined => {
+  let found: Unsafe | undefined;
+  node.walkDecls((d) => {
+    found ??= unsafeDecl(d.prop, d.value, "font");
+  });
+  return found && { message: `${found.message} in @font-face; the face was dropped`, hint: found.hint };
 };
 
 // browsers only honour @import before every rule except @charset and other @imports
