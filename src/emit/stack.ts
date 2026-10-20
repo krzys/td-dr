@@ -1,7 +1,7 @@
 // A stack: one outer table for sizing and alignment, the box (if any) in a single cell around an
 // inner table of rows, one row per child.
 import { borderX, locKey, type Node, type RowNode, type Sides, type StackNode, type VAlign } from "../ir/index.ts";
-import { paddingValue, styleString, type Decls } from "./attrs.ts";
+import { HIDE_DECLS, paddingValue, styleString, type Decls } from "./attrs.ts";
 import { blockLayout, boxCell, cellHeight, ghosted, tableTag, type CellContent } from "./box.ts";
 import { conditional, templated } from "./conditional.ts";
 import { traced, type EmitContext } from "./context.ts";
@@ -43,6 +43,10 @@ const SPREAD: Readonly<Record<"between" | "around" | "evenly", (i: number, n: nu
   evenly: () => 1,
 };
 
+// Where another screen uses another space-* value (ctx.otherScreens.respaced), every gap gets two rows
+// and an end gap hides the ones this value doesn't use, outer first, so all screens keep one structure.
+const ENDS: Readonly<Record<keyof typeof SPREAD, number>> = { between: 0, around: 1, evenly: 2 };
+
 const justified = (e: EmitContext, n: StackNode, height: number): string => {
   const head = open(e, "table", [
     ["role", "presentation"],
@@ -60,10 +64,20 @@ const justified = (e: EmitContext, n: StackNode, height: number): string => {
   const place = PLACE[n.justify!] ?? (shown.length === 1 ? (n.justify === "between" ? "top" : "middle") : undefined);
   // Word honours a cell's height and valign, so Outlook places these too
   if (place) return withBody(head, tr(wrap(e, "td", [["height", String(height)], ["valign", place]], `\n${withBody(tableOpen(e, "100%", [["width", "100%"], ...blockLayout(e)]), rows(e, n.children))}\n`)));
-  const spread = SPREAD[n.justify as keyof typeof SPREAD];
-  const spacers = (k: number): string[] => Array<string>(k).fill(tr(wrap(e, "td", [["style", styleString(EMPTY_TEXT)]], "&nbsp;")));
-  const body = items.flatMap((c) => (outlookOnlyChild(c) ? [row(e, c)] : [...spacers(spread(shown.indexOf(c), shown.length)), row(e, c, true)]));
-  return withBody(head, [...body, ...spacers(spread(shown.length, shown.length))].join("\n"));
+  const mode = n.justify as keyof typeof SPREAD;
+  const cell = wrap(e, "td", [["style", styleString(EMPTY_TEXT)]], "&nbsp;");
+  // a hidden row, not cell: an empty row still takes its share
+  const spacer = (hide = false): string => (hide ? wrap(e, "tr", [["style", styleString(HIDE_DECLS)]], `\n${cell}\n`) : tr(cell));
+  const respaced = !!n.loc && !!e.ctx.otherScreens?.respaced.has(locKey(n.loc));
+  // the empty rows before item i of k (i = k: after the last)
+  const gap = (i: number, k: number): string[] => {
+    if (!respaced) return Array<string>(SPREAD[mode](i, k)).fill(spacer());
+    if (i > 0 && i < k) return [spacer(), spacer()];
+    const hidden = 2 - ENDS[mode];
+    return i === 0 ? [spacer(hidden > 0), spacer(hidden > 1)] : [spacer(hidden > 1), spacer(hidden > 0)];
+  };
+  const body = items.flatMap((c) => (outlookOnlyChild(c) ? [row(e, c)] : [...gap(shown.indexOf(c), shown.length), row(e, c, true)]));
+  return withBody(head, [...body, ...gap(shown.length, shown.length)].join("\n"));
 };
 
 // One cell per child. Wrappers that only add padding (margins turned into padding)

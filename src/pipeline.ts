@@ -51,6 +51,14 @@ const LAYOUT = ["display", "flex-direction", "flex-wrap", "flex-basis", "flex-gr
 const sideBorder = (el: StyledElement): boolean =>
   (["left", "right"] as const).some((s) => (Number.parseFloat(get(el.style, `border-${s}-width`) ?? "0") || 0) > 0 && (get(el.style, `border-${s}-style`) ?? "none") !== "none");
 
+// a column the screen spaces with another space-* value (ctx.otherScreens.respaced)
+const SPACED = new Set(["space-between", "space-around", "space-evenly"]);
+const respacedIn = (was: StyledElement, el: StyledElement): boolean => {
+  const a = get(was.style, "justify-content") ?? "";
+  const b = get(el.style, "justify-content") ?? "";
+  return a !== b && SPACED.has(a) && SPACED.has(b);
+};
+
 // What the other screens do differently (ctx.otherScreens).
 const otherScreens = (desktop: StyledElement, screens: readonly Screen[]): OtherScreens => {
   const index = (el: StyledElement, out = new Map<string, StyledElement>()): Map<string, StyledElement> => {
@@ -62,13 +70,15 @@ const otherScreens = (desktop: StyledElement, screens: readonly Screen[]): Other
   const base = index(desktop);
   const relaidBelow = new Map<string, number>();
   const sideBorders = new Set([...base].filter(([, el]) => sideBorder(el)).map(([key]) => key));
+  const respaced = new Set<string>();
   for (const { variant, styled } of screens) {
     for (const [key, el] of index(styled)) {
       const was = base.get(key);
       if (variant.kind === "width" && was && LAYOUT.some((p) => get(was.style, p) !== get(el.style, p))) relaidBelow.set(key, Math.max(relaidBelow.get(key) ?? 0, variant.env.viewport));
+      if (was && respacedIn(was, el)) respaced.add(key);
     }
   }
-  return { relaidBelow, sideBorders };
+  return { relaidBelow, sideBorders, respaced };
 };
 
 // Gmail drops the rules past 16 KB of head <style>, the reset included.

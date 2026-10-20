@@ -23,6 +23,7 @@ const ALLOWED: readonly Allowed[] = [
   { tag: set("td"), prop: /^background-(image|size|position|repeat)$/, why: "image or gradient behind a cell, over its bgcolor; Outlook gets the bgcolor, plus VML for a photo (vml-backgrounds)" },
   { tag: set("td"), prop: /^display$/, value: /^none$/, why: "the hide of a block that shows on some screens only; Outlook gets mso-hide too (preheader, progressive-head-styles)" },
   { tag: set("td"), prop: /^max-height$/, value: /^0$/, why: "part of that hide (preheader)" },
+  { tag: set("tr"), prop: /^(display|max-height)$/, value: /^(none|0)$/, why: "a spacer row of a vertical distribution that another screen uses; where the hide doesn't apply the row takes one more share (vertical-distribution)" },
   { prop: /^(mso-|-ms-)/, why: "Outlook-only properties, harmless elsewhere (outlook-quirks)" },
   { prop: /^-webkit-text-size-adjust$/, why: "iOS font inflation reset (apple-ios-quirks)" },
   { tag: set("table"), prop: /^height$/, value: /^\d+(\.\d+)?px$/, why: "vertical distribution in a min-height box; Yahoo reads it as min-height, which is what it means here (vertical-distribution)" },

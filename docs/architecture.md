@@ -63,7 +63,8 @@ properties between elements. So the pipeline compiles once per screen and compar
 3. Every screen is cascaded to derive what all compiles share: elements shown on some screens only
    (`keep`), rows stacked on some screens only (`stacked`), and `ctx.otherScreens` (elements a
    narrower screen lays out differently, so the base doesn't warn about breaks that screen
-   replaces; boxes with a side border on the base, which get their own table everywhere).
+   replaces; boxes with a side border on the base, which get their own table everywhere; columns
+   another screen spaces with another `space-*` value, which get the same spacer rows everywhere).
 4. The base compile (wide, light, no hover) is the output. Each other screen compiles on a quiet
    ctx with trace markers and is diffed tag by tag; changes become classes and head rules.
 

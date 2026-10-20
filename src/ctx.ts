@@ -39,6 +39,9 @@ export type OtherScreens = {
   // elements with a left or right border on the base screen: their box gets a table of its own in every
   // compile, so all screens keep one structure (emit/plan.ts sharesSlotCell)
   readonly sideBorders: ReadonlySet<string>;
+  // flex columns another screen spaces with another space-* value: their spacer rows take a shape every
+  // value fits, so all screens keep one structure (emit/stack.ts justified)
+  readonly respaced: ReadonlySet<string>;
 };
 
 export interface Ctx {
