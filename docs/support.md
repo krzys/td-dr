@@ -12,7 +12,7 @@ hint. Client claims not confirmed in a real client are marked **unverified**.
   as a browser would: by its byte order mark (UTF-8, UTF-16), else by a `<meta charset>` or
   `http-equiv` charset in the first 1024 bytes, read as the HTML spec's prescan reads them
   (comments and other tags skipped; a stylesheet's leading `@charset`), else UTF-8.
-  The output is always UTF-8.
+  The output is always UTF-8. A U+FFFD left by a wrong guess is a W018.
 - **Lowered to tables:** layout containers (`div`, `section`, flex and grid elements, anything
   block-level that holds blocks).
 - **Passed through** with every inherited style spelled out inline: text-level content (`p`,
@@ -762,6 +762,7 @@ even in strict mode.
 | W015 | Link without an accessible name. |
 | W016 | Text contrast below WCAG AA. |
 | W017 | Transparent image on a light background may vanish in dark mode. |
+| W018 | U+FFFD in the input or the `css` option: bytes that didn't decode (first place and count). |
 | I001 | Unsafe markup removed. |
 | I002 | Hidden content dropped. |
 | I003 | Partially supported by some target clients (with caniemail's note). |

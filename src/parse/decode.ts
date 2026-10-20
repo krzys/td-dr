@@ -1,6 +1,7 @@
 // Bytes to text as a browser reads a file: a byte order mark wins, then the encoding the file
 // declares, else UTF-8 (https://html.spec.whatwg.org/multipage/parsing.html#determining-the-character-encoding).
 // compile() takes text; the CLI reads files through here.
+import type { Ctx } from "../ctx.ts";
 
 export const BOM = "﻿";
 
@@ -114,3 +115,18 @@ export const decodeCss = (bytes: Uint8Array): string =>
     const label = AT_CHARSET.exec(head)?.[1];
     return label ? declared(label) : undefined;
   });
+
+// U+FFFD is what a decoder writes for bytes it can't read: the file was in another encoding
+const FFFD = /\uFFFD/g;
+export const reportUndecoded = (src: string, ctx: Ctx): void => {
+  const count = (s: string) => s.match(FFFD)?.length ?? 0;
+  const n = count(src);
+  if (n > 0) {
+    const at = src.indexOf("\uFFFD");
+    const before = src.slice(0, at);
+    const loc = { line: before.split("\n").length, col: at - before.lastIndexOf("\n") };
+    ctx.diagnostics.report("W018", { message: `Text has ${n} U+FFFD replacement character${n === 1 ? "" : "s"}: it wasn't read in its own encoding`, loc });
+  }
+  const css = ctx.options.css.reduce((sum, s) => sum + count(s), 0);
+  if (css > 0) ctx.diagnostics.report("W018", { message: `An extra stylesheet (the css option) has ${css} U+FFFD replacement character${css === 1 ? "" : "s"}` });
+};

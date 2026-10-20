@@ -107,3 +107,31 @@ describe("cli", () => {
     expect(await build({ "in.html": bytes('﻿<div style="max-width:600px;margin:0 auto"><p>Grüße</p></div>', "utf16le") })).toContain("Grüße");
   });
 });
+
+describe("text that didn't decode", () => {
+  it("warns once with the first replacement character's place and the count", () => {
+    const html = '<div style="max-width:600px;margin:0 auto">\n  <p>caf� and na�ve</p>\n</div>';
+    const w = compile(html).diagnostics.filter((d) => d.code === "W018");
+    expect(w).toHaveLength(1);
+    expect(w[0]).toMatchObject({ severity: "warning", loc: { line: 2, col: 9 } });
+    expect(w[0]!.message).toContain("2 U+FFFD");
+  });
+
+  it("names an extra stylesheet that has one", () => {
+    const w = compile("<p>ok</p>", { css: ['p::after{content:"�"}'] }).diagnostics.filter((d) => d.code === "W018");
+    expect(w).toHaveLength(1);
+    expect(w[0]!.message).toContain("css option");
+    expect(w[0]!.loc).toBeUndefined();
+  });
+
+  it("says nothing for clean text or a written &#xFFFD;", () => {
+    expect(compile("<p>Grüße &#xFFFD;</p>").diagnostics.map((d) => d.code)).not.toContain("W018");
+  });
+
+  it("is what the CLI reports for a file in an undeclared legacy encoding", async () => {
+    const err: string[] = [];
+    const io: CliIO = { stdout: () => {}, stderr: (s) => void err.push(s), readFile: () => new Uint8Array([...bytes("<p>caf"), 0xe9, ...bytes("</p>")]), writeFile: () => {} };
+    expect(await run(["build", "in.html"], io)).toBe(0);
+    expect(err.join("")).toMatch(/^in\.html:1:7: warning W018: /m);
+  });
+});
