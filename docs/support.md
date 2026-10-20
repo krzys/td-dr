@@ -191,6 +191,8 @@ several links in click tracking is **unverified**.
 
 - Lists stay `<ul>` / `<ol>` / `<li>` with explicit margins, indent and text styles (Outlook
   doesn't inherit into lists reliably). Spacing around a list lives on the surrounding cells.
+  As in browsers, a nested list has no top or bottom margin and circle, then square bullets, and
+  `type` on `ol`, `ul` or `li` becomes `list-style-type`.
 - In Outlook `margin-left` on `ul` and `li` adds up, and `<li value="n">` is rewritten as a new
   `<ol start="n">`. `reversed` is unsupported in Gmail, Outlook and Yahoo; `list-style-image`
   misrenders in Outlook.

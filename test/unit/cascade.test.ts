@@ -38,6 +38,17 @@ describe("cascade", () => {
     expect(r.values["color"]).toBe("blue");
   });
 
+  test("the list type attribute is list-style-type; nested lists lose their block margins", () => {
+    expect(run('<ol type="a"><li>x</li></ol>', "ol").values["list-style-type"]).toBe("lower-alpha");
+    expect(run('<ol type="A"><li>x</li></ol>', "ol").values["list-style-type"]).toBe("upper-alpha");
+    expect(run('<ul type="NONE"><li>x</li></ul>', "ul").values["list-style-type"]).toBe("none");
+    expect(run('<ul><li type="square">x</li></ul>', "li").values["list-style-type"]).toBe("square");
+    const nested = run("<ul><li>x<ul><li>y</li></ul></li></ul>", "ul").values;
+    expect(nested["list-style-type"]).toBe("disc");
+    const inner = run("<ul><li>x<ol><li>y<ul><li>z</li></ul></li></ol></li></ul>", "ol").values;
+    expect([inner["margin-top"], inner["margin-bottom"]]).toEqual(["0", "0"]);
+  });
+
   test("author beats UA, UA fills the rest", () => {
     const r = styled("p{margin-top:3px}");
     expect(r.values["margin-top"]).toBe("3px");

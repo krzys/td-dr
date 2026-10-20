@@ -25,6 +25,19 @@ th { font-weight: bold; text-align: center; }
 pre { font-family: monospace; white-space: pre; }
 ul { list-style-type: disc; }
 ol { list-style-type: decimal; }
+:is(ul, ol) :is(ul, ol) { margin-top: 0; margin-bottom: 0; }
+:is(ul, ol) ul { list-style-type: circle; }
+:is(ul, ol) :is(ul, ol) ul { list-style-type: square; }
+/* the type attribute, a presentational hint: ol's is case-sensitive, ul's and li's aren't */
+:is(ol, li)[type="1"] { list-style-type: decimal; }
+:is(ol, li)[type="a" s] { list-style-type: lower-alpha; }
+:is(ol, li)[type="A" s] { list-style-type: upper-alpha; }
+:is(ol, li)[type="i" s] { list-style-type: lower-roman; }
+:is(ol, li)[type="I" s] { list-style-type: upper-roman; }
+:is(ul, li)[type="disc" i] { list-style-type: disc; }
+:is(ul, li)[type="circle" i] { list-style-type: circle; }
+:is(ul, li)[type="square" i] { list-style-type: square; }
+:is(ul, li)[type="none" i] { list-style-type: none; }
 em, i { font-style: italic; }
 a { color: #0000ee; text-decoration: underline; }
 hr { margin: 0.5em auto; border-width: 1px; border-style: inset; color: gray; overflow: hidden; }
