@@ -56,7 +56,9 @@ export const parse = (html: string, ctx: Ctx): ParsedDoc => {
 
   const htmlEl = findElement(document, (el) => el.name === "html");
   const title = findElement(document, (el) => el.name === "title");
-  if (htmlEl?.attribs["lang"]) meta.lang = htmlEl.attribs["lang"];
+  // fallback beyond browsers: honour xml:lang when lang is absent (XHTML-style templates)
+  const lang = htmlEl?.attribs["lang"] || htmlEl?.attribs["xml:lang"];
+  if (lang) meta.lang = lang;
   if (htmlEl?.attribs["dir"]) meta.dir = htmlEl.attribs["dir"];
   if (title) meta.title = textContent(title).trim();
 

@@ -432,9 +432,9 @@ u + #body a { color:inherit; text-decoration:none; }
 </html>
 ```
 
-- `lang` comes from `<html lang>`, else the `lang` option (or a component's `export const lang`),
-  else `en` with I009; it and `dir` go on `<html>` and the article wrapper, as some clients strip
-  `<html>` attributes. The root container's background becomes the page background. `<title>` is
+- `lang` comes from `<html lang>` (or its `xml:lang`), else the `lang` option (or a component's
+  `export const lang`), else `en` with I009; it and `dir` go on `<html>` and the article wrapper, as
+  some clients strip `<html>` attributes. The root container's background becomes the page background. `<title>` is
   the source's title (empty otherwise).
 - Gmail turns `<body>` into a `<div>`, so the background lives on the wrapper table; `u + #body`
   targets Gmail.

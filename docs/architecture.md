@@ -177,7 +177,7 @@ a fixture or unit test.
 | Size changes must not change rendering. | A size budget keeps the gains; visual diffs keep the rendering. Defaults clients may need (`border="0"`, per-cell font styles) stay until real-client sends show otherwise. |
 | Templates as placeholders and markers written in a dialect at the end; conditions mean what they mean in JS; the native rewrite is syntactic. | The same components export as HTML and as ESP templates; nothing before the writer knows a dialect, and what has no exact form is refused at the source ([templates.md](templates.md)). |
 | An equivalence check of every template against its data sets with the real engines. | The rewrite and the writers must hold on the author's own emails, not only td;dr's tests. Identical wrappers from both paths would couple them, an allow-list of known mismatches would hide regressions, and pixel diffs would need a browser in the build. |
-| The email always declares a language (`<html lang>`, the component's `export const lang`, `--lang`, else `en` with I009). | Screen readers pick a voice from it; a wrong default is reported rather than left out. |
+| The email always declares a language (`<html lang>` or `xml:lang`, the component's `export const lang`, `--lang`, else `en` with I009). | Screen readers pick a voice from it; a wrong default is reported rather than left out. |
 
 ## Verification
 

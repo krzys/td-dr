@@ -13,6 +13,13 @@ describe("lang", () => {
   it("comes from <html lang> before the option", () => {
     expect(langs(compile('<!doctype html><html lang="fr"><body><p>x</p></body></html>', { lang: "de" }).html)).toEqual(["fr", "fr"]);
   });
+  it("comes from xml:lang on <html> when lang is missing", () => {
+    const xhtml = (attrs: string) => `<!doctype html><html xmlns="http://www.w3.org/1999/xhtml" ${attrs}><body><p>Hallo</p></body></html>`;
+    const r = compile(xhtml('xml:lang="nl"'), { lang: "de" });
+    expect(langs(r.html)).toEqual(["nl", "nl"]);
+    expect(i009(r)).toEqual([]);
+    expect(langs(compile(xhtml('lang="fr" xml:lang="nl"')).html)).toEqual(["fr", "fr"]);
+  });
   it("defaults to en with an I009, for a component as much as a whole document", () => {
     for (const input of ["<p>x</p>", "<!doctype html><html><body><p>x</p></body></html>"]) {
       const r = compile(input);
