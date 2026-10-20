@@ -657,9 +657,10 @@ Seen in a local test of a few mail clients, beyond the caniemail data:
   CSS nesting from `<style>`; plain rules and `@font-face` stay. It shows the desktop layout from the
   inline styles, so [screens](#screens) never apply. It also caps an image's width to the pane.
 - **Roundcube 1.6 (Elastic skin):** prefixes head rules with its message container, which works only
-  while `<body>` has no class. The skin's body `line-height: 1.5`, 14px font and heading line-heights
-  reach unstyled text, and Bootstrap's `box-sizing: border-box` applies to cells. It corrupts
-  non-base64 SVG `data:` URIs.
+  while `<body>` has no class; the [shell](#the-email-shell)'s has just an id. The skin's body
+  `line-height: 1.5`, 14px font and heading line-heights reach text that doesn't set its own (the
+  shell sets a normal line height), and Bootstrap's `box-sizing: border-box` applies to cells. It
+  corrupts non-base64 SVG `data:` URIs.
 - **Evolution (WebKitGTK):** narrows the body to the viewport minus 24px unless the email sets a
   body width; the [shell](#the-email-shell) does.
 
