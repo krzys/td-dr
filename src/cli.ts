@@ -4,12 +4,14 @@ import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { LANG_TAG } from "./ctx.ts";
 import { compile } from "./index.ts";
+import { decodeCss, decodeHtml } from "./parse/decode.ts";
 import { UnknownTargetError } from "./targets/capabilities.ts";
 
 export type CliIO = {
   stdout(s: string): void;
   stderr(s: string): void;
-  readFile(path: string): Promise<string> | string;
+  // bytes are decoded as a browser would (BOM, then <meta charset> or @charset, else UTF-8)
+  readFile(path: string): Promise<Uint8Array | string> | Uint8Array | string;
   writeFile(path: string, s: string): Promise<void> | void;
   isDir?(path: string): boolean;
 };
@@ -154,6 +156,8 @@ const dev = async (args: string[], values: { port?: string; host?: string; "base
   }
 };
 
+const text = (file: Uint8Array | string, decode: (b: Uint8Array) => string): string => (typeof file === "string" ? file : decode(file));
+
 const version = (): string => {
   const url = new URL("../package.json", import.meta.url);
   return (JSON.parse(readFileSync(url, "utf8")) as { version: string }).version;
@@ -254,8 +258,8 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
   let html: string;
   const css: string[] = [];
   try {
-    html = await io.readFile(input);
-    for (const f of values.css ?? []) css.push(await io.readFile(f));
+    html = text(await io.readFile(input), decodeHtml);
+    for (const f of values.css ?? []) css.push(text(await io.readFile(f), decodeCss));
   } catch (e) {
     io.stderr(`tddr: ${(e as Error).message}\n`);
     return 2;
@@ -309,7 +313,7 @@ if (isMain()) {
   process.exitCode = await run(process.argv.slice(2), {
     stdout: (s) => void process.stdout.write(s),
     stderr: (s) => void process.stderr.write(s),
-    readFile: (p) => readFileSync(p, "utf8"),
+    readFile: (p) => readFileSync(p),
     writeFile: (p, s) => writeFileSync(p, s),
     isDir: (p) => statSync(p, { throwIfNoEntry: false })?.isDirectory() ?? false,
   });
