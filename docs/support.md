@@ -12,7 +12,7 @@ hint. Client claims not confirmed in a real client are marked **unverified**.
   block-level that holds blocks).
 - **Passed through** with every inherited style spelled out inline: text-level content (`p`,
   `h1`–`h6`, `span`, `a`, `strong`, lists, `blockquote`, `pre`, real `<table>` markup).
-- **Removed** (I001): scripts, event handlers, `javascript:` URLs.
+- **Removed** in every mode: unsafe markup, frames, plugins and form controls ([sanitizing](#sanitizing)).
 - **Framework output** is cleaned by rule, not per framework: every comment goes except MSO
   conditionals and td;dr's own `tddr:` markers (so Vue's `<!---->`, `<!--[-->` and React's
   `<!-- -->`, `<!--$-->`); `script`, `noscript`, `template`, `link`, `meta`, `title`, `base` and
@@ -36,6 +36,19 @@ hint. Client claims not confirmed in a real client are marked **unverified**.
 | `data-email-if`, `-unless`, `-else-if`, `-else`, `-each`, `-as` | ESP template blocks ([templates.md](templates.md#hints-in-plain-html)). |
 
 Any other `data-email` value is E011.
+
+### Sanitizing
+
+Runs on the whole input, raw blocks included, in every mode; strict only decides whether the
+E008s fail the build.
+
+- `script` (I001), event handler attributes (I001), `javascript:` URLs (I001), `srcdoc` and
+  `formaction` (I001).
+- `iframe`, `object`, `embed`, `applet`, `portal`, `fencedframe`: removed with what they hold
+  (E008). Mail clients load no embedded documents or plugins; link to the page instead.
+- `input`, `select`, `textarea`, `button`, `datalist`: removed (E008), a hidden `input` with I002.
+  Checkbox and radio hacks for interactive email go too. A `<form>` is unwrapped, its text kept
+  (E008). For a call to action use an `<a>`, lowered to a [bulletproof button](#bulletproof-buttons).
 
 ## CSS values
 
@@ -231,7 +244,7 @@ several links in click tracking is **unverified**.
 | Negative margin that exactly cancels the parent's padding | A full-bleed band. Any other is E005. |
 | `%` padding or margin | E006: tables can't scale padding with the viewport. |
 | `float` on anything but an image | E004. |
-| `video`, `audio`, `canvas`, `iframe`, `object`, `embed`, form controls, inline `svg` | E008. |
+| `video`, `audio`, `canvas`, inline `svg` | E008. Frames, plugins and form controls are [removed](#sanitizing) (E008). |
 
 ### Approximations
 
@@ -698,7 +711,7 @@ even in strict mode.
 | E005 | Negative margin that isn't a full-bleed band. |
 | E006 | Unsupported length: `%` padding or margin, `vh`, `%` outside widths, `calc()` other than `calc(P% ± Npx)` on a flex item, a `%` width with horizontal padding under `content-box`. |
 | E007 | Unsupported flex feature: `row-reverse`, `column-reverse`, `wrap-reverse`, `align-content`, unknown alignment values. |
-| E008 | Element with no email-safe equivalent: `video`, `audio`, `canvas`, `iframe`, `object`, `embed`, `svg`, form controls, `<picture>` without `<img>`. |
+| E008 | Element with no email-safe equivalent: `video`, `audio`, `canvas`, `svg`, `<picture>` without `<img>`; frames, plugins and form controls, which are removed in every mode. |
 | E009 | Animation or transition. |
 | E010 | No layout rule matched (a td;dr bug). |
 | E011 | Unknown `data-email` value. |

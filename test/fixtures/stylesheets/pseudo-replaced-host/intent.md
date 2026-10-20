@@ -6,4 +6,4 @@ expect: compile
 codes: []
 status: active
 ---
-Browsers draw no ::before/::after on replaced or foreign elements (svg, img, textarea), so nothing is inserted and the svg markup is unchanged.
+Browsers draw no ::before/::after on replaced or foreign elements (svg, img, canvas), so nothing is inserted and the svg markup is unchanged.

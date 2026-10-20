@@ -9,7 +9,8 @@ import type { WidthSpec } from "../ir/index.ts";
 
 type Problem = { code: Code; message: string; hint?: string };
 
-// Tags with no email-safe equivalent at all.
+// Tags with no email-safe equivalent at all. In the pipeline, sanitize has already removed
+// frames, plugins and form controls (docs/support.md#sanitizing).
 const UNSUPPORTED_TAGS: ReadonlySet<string> = new Set([
   "video", "audio", "canvas", "iframe", "object", "embed", "svg",
   "form", "input", "select", "textarea", "button",

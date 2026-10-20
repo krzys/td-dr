@@ -1,0 +1,52 @@
+[
+  {
+    "code": "E008",
+    "severity": "error",
+    "message": "<iframe> removed: mail clients don't load embedded documents or plugins",
+    "hint": "Mail clients don't load embedded pages or plugins. Link to the page instead, e.g. with a screenshot of it as the link's image.",
+    "loc": {
+      "line": 7,
+      "col": 5
+    }
+  },
+  {
+    "code": "E008",
+    "severity": "error",
+    "message": "<input> removed: mail clients disable or strip form controls",
+    "hint": "Mail clients disable or strip form controls. Link to a form on the web instead; an <a> with data-email=\"button\" makes a button every client shows.",
+    "loc": {
+      "line": 10,
+      "col": 7
+    }
+  },
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <input> dropped",
+    "hint": "A hidden input only feeds a form submit, which mail clients don't do.",
+    "loc": {
+      "line": 11,
+      "col": 7
+    }
+  },
+  {
+    "code": "E008",
+    "severity": "error",
+    "message": "<button> removed: mail clients disable or strip form controls",
+    "hint": "Mail clients disable or strip form controls. Link to a form on the web instead; an <a> with data-email=\"button\" makes a button every client shows.",
+    "loc": {
+      "line": 12,
+      "col": 7
+    }
+  },
+  {
+    "code": "E008",
+    "severity": "error",
+    "message": "<form> removed, its content kept: mail clients disable or strip forms",
+    "hint": "Mail clients disable or strip form controls. Link to a form on the web instead; an <a> with data-email=\"button\" makes a button every client shows.",
+    "loc": {
+      "line": 8,
+      "col": 5
+    }
+  }
+]

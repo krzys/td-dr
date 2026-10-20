@@ -65,9 +65,62 @@ describe("sanitize", () => {
   });
 
   test("strips on* and javascript: urls, keeps normal links", () => {
-    const r = run('<a href=" JaVa\nScript:alert(1)" onclick="x()">a</a><a href="https://x.y" onmouseover="y()">b</a><form action="javascript:z()"></form>');
-    expect(r.html).toBe('<a>a</a><a href="https://x.y">b</a><form></form>');
+    const r = run('<a href=" JaVa\nScript:alert(1)" onclick="x()">a</a><a href="https://x.y" onmouseover="y()">b</a>');
+    expect(r.html).toBe('<a>a</a><a href="https://x.y">b</a>');
     expect(codesOf(r.ctx)).toEqual(["I001", "I001"]);
+  });
+
+  describe("frames, plugins and form controls", () => {
+    // <frame> outside a frameset never leaves the parser.
+    test.each(["iframe", "object", "embed", "applet", "portal", "fencedframe"])("removes <%s> with E008, in every mode", (tag) => {
+      for (const strict of [true, false]) {
+        const ctx = testCtx({ strict });
+        // embed is void: nothing nests in it.
+        const inner = tag === "embed" ? "" : `<p>fallback</p></${tag}>`;
+        const out = sanitize(parse(`<p>a</p><${tag} src="https://x.test/" data="https://x.test/">${inner}<p>b</p>`, ctx), ctx);
+        expect(ser(out.body)).toBe("<p>a</p><p>b</p>");
+        expect(codesOf(ctx)).toEqual(["E008"]);
+        expect(ctx.diagnostics.list()[0]?.message).toContain(`<${tag}>`);
+      }
+    });
+
+    test("an iframe's srcdoc goes with it, inside raw too", () => {
+      const r = run('<div data-email="raw"><iframe srcdoc="<script>alert(1)</script>"></iframe><p>k</p></div>');
+      expect(r.html).toBe('<div data-email="raw"><p>k</p></div>');
+      expect(codesOf(r.ctx)).toEqual(["E008"]);
+    });
+
+    test("removes form controls, keeps what else the form holds", () => {
+      const r = run('<form action="https://x.test/post" method="post"><p>Name</p><input name="n"><select><option>a</option></select><textarea>t</textarea><button formaction="javascript:x()">Go</button><p>after</p></form>');
+      expect(r.html).toBe("<p>Name</p><p>after</p>");
+      expect(codesOf(r.ctx)).toEqual(["E008", "E008", "E008", "E008", "E008"]);
+      expect(r.ctx.diagnostics.list().map((d) => d.message.split(" ")[0])).toEqual(["<input>", "<select>", "<textarea>", "<button>", "<form>"]);
+    });
+
+    test("a <button> is pointed at the bulletproof button", () => {
+      const r = run("<p><button>Buy</button></p>");
+      expect(r.html).toBe("<p></p>");
+      expect(r.ctx.diagnostics.list()[0]?.hint).toContain('data-email="button"');
+    });
+
+    test("a hidden input is hidden content, I002", () => {
+      const r = run('<p>a<input type="HIDDEN" name="t" value="x"></p>');
+      expect(r.html).toBe("<p>a</p>");
+      expect(codesOf(r.ctx)).toEqual(["I002"]);
+    });
+
+    test("srcdoc and formaction go wherever they sit", () => {
+      const r = run('<p srcdoc="x" formaction="https://x.test/">a</p>');
+      expect(r.html).toBe("<p>a</p>");
+      expect(codesOf(r.ctx)).toEqual(["I001", "I001"]);
+    });
+
+    test("the body's own handlers go too", () => {
+      const ctx = testCtx();
+      const out = sanitize(parse('<body onload="x()" background="javascript:y()"><p>a</p></body>', ctx), ctx);
+      expect(out.body.attribs).toEqual({});
+      expect(codesOf(ctx)).toEqual(["I001", "I001"]);
+    });
   });
 
   test("keeps MSO conditionals, drops other comments", () => {

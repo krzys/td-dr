@@ -8,6 +8,15 @@ import { markChains } from "./chains.ts";
 
 const DROP_TAGS = new Set(["script", "noscript", "template", "style", "link", "meta", "title", "base"]);
 const URL_ATTRS = new Set(["href", "src", "action", "formaction", "background"]);
+// An embedded document's source, and a submit target: nothing a mail client follows.
+const DOC_ATTRS = new Set(["srcdoc", "formaction"]);
+
+// Mail clients don't load embedded documents or plugins, and strip or disable forms (Outlook.com
+// drops a form with what is in it), so these go in every mode (docs/support.md#sanitizing).
+const EMBEDS = new Set(["iframe", "frame", "frameset", "object", "embed", "applet", "portal", "fencedframe"]);
+const CONTROLS = new Set(["input", "select", "textarea", "button", "keygen", "datalist"]);
+const EMBED_HINT = "Mail clients don't load embedded pages or plugins. Link to the page instead, e.g. with a screenshot of it as the link's image.";
+const CONTROL_HINT = 'Mail clients disable or strip form controls. Link to a form on the web instead; an <a> with data-email="button" makes a button every client shows.';
 
 // Conditional comments the MSO patterns depend on, in all their spellings.
 const MSO_COMMENT = /^\s*(\[if[\s\]]|\[endif\]|<!\[endif\])/;
@@ -55,12 +64,31 @@ const templateAttr = (el: DomElement): string | undefined => {
 
 const PREHEADER_HINT = "The preheader is one string and takes no blocks. Put the condition on the content of a placeholder instead, e.g. send the preheader text as a field.";
 
-type Category = "script" | "handler" | "jsUrl" | "svg";
+type Category = "script" | "handler" | "jsUrl" | "svg" | "srcdoc" | "formaction";
 const WHAT: Record<Category, string> = {
   script: "script element",
   handler: "event handler attribute",
   jsUrl: "javascript: URL",
   svg: "unsafe SVG content",
+  srcdoc: "srcdoc attribute",
+  formaction: "formaction attribute",
+};
+
+// Puts a node's children where it was.
+const unwrap = (kids: DomChild[], el: DomElement): void => {
+  const inner = children(el);
+  const i = kids.indexOf(el);
+  const prev = kids[i - 1] ?? null;
+  const next = kids[i + 1] ?? null;
+  for (const k of inner) k.parent = el.parent;
+  const first = inner[0] ?? next;
+  const last = inner[inner.length - 1] ?? prev;
+  if (prev) prev.next = first;
+  if (next) next.prev = last;
+  if (inner[0]) inner[0].prev = prev;
+  if (inner[inner.length - 1]) inner[inner.length - 1]!.next = next;
+  kids.splice(i, 1, ...inner);
+  el.parent = null;
 };
 
 export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
@@ -85,6 +113,26 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
   // The preheader leaves the body here, before any template hint is read, so a hint on, in or
   // around it would just be ignored.
   const hintAt = (el: DomElement, message: string): void => ctx.diagnostics.report("E012", { message, hint: PREHEADER_HINT, loc: locOf(el) });
+
+  const cleanAttrs = (c: DomElement, svg: boolean): void => {
+    for (const [name, value] of Object.entries(c.attribs)) {
+      if (name.startsWith("on")) {
+        note("handler", c);
+        delete c.attribs[name];
+      } else if (DOC_ATTRS.has(name)) {
+        note(name as Category, c);
+        delete c.attribs[name];
+      } else if ((URL_ATTRS.has(name) || svg && name === "xlink:href") && isJsUrl(value)) {
+        note("jsUrl", c);
+        delete c.attribs[name];
+      } else if (svg && SVG_HREFS.includes(name) && isDataUrl(value)) {
+        note("svg", c);
+        delete c.attribs[name];
+      }
+      // data-* (data-v-* scoped styles, data-reactroot…) stay until the cascade has
+      // used them; serializeStyled drops them from the output.
+    }
+  };
 
   // A nested preheader stays in its parent's subtree so the text reads in document order.
   let inPreheader = false;
@@ -134,20 +182,21 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
         detach(kids, c);
         continue;
       }
-      for (const [name, value] of Object.entries(c.attribs)) {
-        if (name.startsWith("on")) {
-          note("handler", c);
-          delete c.attribs[name];
-        } else if ((URL_ATTRS.has(name) || (inSvg || lower === "svg") && name === "xlink:href") && isJsUrl(value)) {
-          note("jsUrl", c);
-          delete c.attribs[name];
-        } else if ((inSvg || lower === "svg") && SVG_HREFS.includes(name) && isDataUrl(value)) {
-          note("svg", c);
-          delete c.attribs[name];
+      if (EMBEDS.has(lower) || CONTROLS.has(lower)) {
+        if (lower === "input" && c.attribs["type"]?.trim().toLowerCase() === "hidden") {
+          ctx.diagnostics.report("I002", { message: "Hidden <input> dropped", hint: "A hidden input only feeds a form submit, which mail clients don't do.", loc: locOf(c) });
+        } else {
+          const embed = EMBEDS.has(lower);
+          ctx.diagnostics.report("E008", {
+            message: `<${lower}> removed: ${embed ? "mail clients don't load embedded documents or plugins" : "mail clients disable or strip form controls"}`,
+            hint: embed ? EMBED_HINT : CONTROL_HINT,
+            loc: locOf(c),
+          });
         }
-        // data-* (data-v-* scoped styles, data-reactroot…) stay until the cascade has
-        // used them; serializeStyled drops them from the output.
+        detach(kids, c);
+        continue;
       }
+      cleanAttrs(c, inSvg || lower === "svg");
       const outer = guard;
       guard = hint ?? guard;
       const wasSvg = inSvg;
@@ -155,6 +204,10 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
       walk(c);
       inSvg = wasSvg;
       guard = outer;
+      if (lower === "form") {
+        ctx.diagnostics.report("E008", { message: "<form> removed, its content kept: mail clients disable or strip forms", hint: CONTROL_HINT, loc: locOf(c) });
+        unwrap(kids, c);
+      }
     }
   };
   // <picture> compiles as its <img>: the fallback every client loads anyway
@@ -204,6 +257,7 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
     if (pic.prev) pic.prev.next = img;
     if (pic.next) pic.next.prev = img;
   }
+  cleanAttrs(body, false);
   walk(body);
   markChains(body, ctx);
 
