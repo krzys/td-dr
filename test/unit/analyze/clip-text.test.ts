@@ -28,8 +28,13 @@ describe("text clipped to its background never ships invisible", () => {
     expect(html).not.toContain('bgcolor="#ff0000"');
   });
 
-  test("an hsl() first stop falls back to the surrounding colour", () => {
+  test("an hsl() first stop is lowered to hex first, so it is the fallback", () => {
     const { messages } = run("background-image:linear-gradient(hsl(200 80% 50%),#00ff00);-webkit-background-clip:text;color:transparent");
+    expect(messages).toEqual(["Text clipped to its background becomes solid #1aa1e6"]);
+  });
+
+  test("a gradient starting at currentColor uses the surrounding colour", () => {
+    const { messages } = run("background-image:linear-gradient(currentColor,#00ff00);-webkit-background-clip:text;color:transparent");
     expect(messages).toEqual(["Text clipped to its background becomes solid #334155"]);
   });
 

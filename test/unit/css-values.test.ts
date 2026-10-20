@@ -80,7 +80,15 @@ describe("colour lowering", () => {
   test("space syntax with alpha becomes rgba", () => {
     expect(lowerColors("hsl(0 100% 50% / .5)")).toBe("rgba(255, 0, 0, 0.5)");
     expect(lowerColors("2px solid rgb(0 0 0 / 50%)")).toBe("2px solid rgba(0, 0, 0, 0.5)");
-    expect(lowerColors("hsl(120 100% 25%)")).toBe("hsl(120 100% 25%)");
+  });
+
+  test("hsl becomes hex or rgba in either syntax", () => {
+    expect(lowerColors("hsl(120 100% 25%)")).toBe("#008000");
+    expect(lowerColors("hsl(0, 100%, 50%)")).toBe("#ff0000");
+    expect(lowerColors("hsla(0, 0%, 0%, .5)")).toBe("rgba(0, 0, 0, 0.5)");
+    expect(lowerColors("1px solid hsl(240deg 100% 50% / 25%)")).toBe("1px solid rgba(0, 0, 255, 0.25)");
+    expect(lowerColors("linear-gradient(hsl(200, 50%, 40%), #000)")).toBe("linear-gradient(#337799, #000)");
+    expect(lowerColors("hsl(var(--h), 50%, 50%)")).toBe("hsl(var(--h), 50%, 50%)");
   });
 
   test("urls and strings are left alone", () => {
@@ -104,6 +112,8 @@ describe("colour lowering", () => {
   test("plain values are untouched", () => {
     expect(lowerColors("#abc")).toBe("#abc");
     expect(lowerColors("rgb(1 2 3)")).toBe("rgb(1 2 3)");
+    expect(lowerColors("rgb(1, 2, 3)")).toBe("rgb(1, 2, 3)");
+    expect(lowerColors("rgba(0,0,0,.5)")).toBe("rgba(0,0,0,.5)");
   });
 });
 

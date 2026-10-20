@@ -5,7 +5,8 @@ import { transform } from "lightningcss";
 import { mapUnprotected, PROTECTED } from "./units.ts";
 
 export const MODERN_COLOR = /(?<![\w-])(?:oklch|oklab|lab|lch|hwb|color|color-mix)\(/i;
-// what we lower: the modern ones, and rgb()/hsl() with a space-syntax alpha so alpha.ts can read them
+// what we lower: the modern ones, hsl() in either syntax (LiteHTML can't parse it, Word isn't known to),
+// and rgb() with a space-syntax alpha so alpha.ts can read it
 const LOWERED = /(?<![\w-])(oklch|oklab|lab|lch|hwb|color|color-mix|hsla?|rgba?)\(/gi;
 
 export const unquoted = (value: string): string => value.replace(new RegExp(PROTECTED, "gi"), '""');
@@ -94,8 +95,8 @@ export const lowerColors = (value: string, current?: string): string =>
       if (end >= part.length) break;
       const fn = part.slice(m.index, end + 1);
       LOWERED.lastIndex = end + 1;
-      // rgb(1 2 3), hsl(0, 100%, 50%) and rgba(0,0,0,.5) are fine as they are
-      if (/^(rgb|hsl)a?\(/i.test(fn) && !fn.includes("/")) continue;
+      // rgb(1 2 3) and rgba(0,0,0,.5) are fine as they are
+      if (/^rgba?\(/i.test(fn) && !fn.includes("/")) continue;
       const src = current ? fn.replace(/(?<![\w-])currentcolor(?![\w-])/gi, current) : fn;
       const low = lowerOne(src);
       if (low === undefined) continue;
