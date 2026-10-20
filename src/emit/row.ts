@@ -75,6 +75,8 @@ const columnCell = (e: EmitContext, cell: Cell): string => columnCellOf(traced(e
 
 const columnCellOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell): string => {
   const child = c.child;
+  // WebKit drops a cell with nothing in it, so the row's columns stop lining up with the rows above
+  const empty = isNothing(child);
   const blocked = stack && stack !== "gone" ? stack : undefined;
   // justify-content is vertical in a column: the block keeps the text-align of its own
   const align = blocked && c.align ? (slotAlign(child) ?? "left") : (c.align ?? slotAlign(child));
@@ -102,6 +104,7 @@ const columnCellOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell): st
           // the grow column's width:100% would squeeze a content-sized neighbour to its longest word
           ["white-space", r.nowrapAuto && "auto" in c.width ? "nowrap" : undefined],
           ...(child.kind === "inline" ? cellTextDecls(child) : onLine(child) ? textDecls(child.line) : []),
+          ...(empty ? EMPTY_TEXT : []),
           ...(c.hidden ? HIDE_DECLS : []),
           ...(stack === "gone" ? STACK_GONE : []),
         ],
@@ -115,8 +118,8 @@ const columnCellOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell): st
   const nested = child.kind === "stack" || child.kind === "row";
   // a shrink-wrapped row sits where its cell aligns it; without this it falls back to left
   const placed = child.kind === "row" && !child.box.align && (align === "right" || align === "center") ? { ...child, box: { ...child.box, align } } : child;
-  const html = child.kind === "inline" ? child.html : emitNode(inContent(e), placed);
-  const inner = nested ? `\n${html}\n` : html;
+  const html = child.kind === "inline" ? child.html : empty ? "&nbsp;" : emitNode(inContent(e), placed);
+  const inner = nested && !empty ? `\n${html}\n` : html;
   return wrap(e, "td", attrs, c.hidden ? ifNotMso(inner) : inner);
 };
 

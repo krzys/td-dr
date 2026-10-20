@@ -513,8 +513,8 @@ How the emitter answers:
   `mso-padding-alt` for button and spacer cells; `mso-hide:all` for hidden content.
 - **Spacing:** margins become cell padding, `margin: 0 auto` becomes `align="center"`;
   `border-collapse: collapse` avoids white seams around painted cells.
-- **Empty cells** render taller than set: spacer cells use
-  `font-size:0;line-height:0;mso-line-height-rule:exactly` and `&nbsp;`.
+- **Empty cells** render taller than set (and WebKit collapses a cell with no content): spacer and
+  filler cells use `font-size:0;line-height:0;mso-line-height-rule:exactly` and `&nbsp;`.
 - **Lists:** older versions ignore padding and vertical margin on `ul` / `ol`; spacing comes from
   the surrounding cells.
 
