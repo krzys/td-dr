@@ -18,6 +18,7 @@ input HTML (+ options.css)
   │ shell      doctype, head, MSO settings, reset, head <style>, preheader, centring wrapper
   │ post       dead class removal, output self-lint
   │ template   (with options.template) markers and placeholders → Handlebars / Liquid
+  │ wrap       lines over 900 bytes broken where a line break means what was there
   ▼
 { html, diagnostics, trace? }
 ```
@@ -37,7 +38,8 @@ input HTML (+ options.css)
 | responsive | `src/responsive/` | Compiles each other screen and diffs it with the base ([support.md](support.md#head-styles)). |
 | shell | `src/shell/` | The document around the body ([support.md](support.md#the-email-shell)). |
 | post | `src/post/` | Removes classes no rule targets, self-lints the output (W006 means a compiler bug), reads and strips trace markers. |
-| template | `src/template/write.ts` | `writeTemplate(html, dialect, report)`. The last step; nothing before it knows a dialect ([templates.md](templates.md)). |
+| template | `src/template/write.ts` | `writeTemplate(html, dialect, report)`. Nothing before it knows a dialect ([templates.md](templates.md)). |
+| wrap | `src/post/wrap.ts` | `wrapLines(html, ctx)`. The last step: keeps every line under SMTP's 998 bytes without changing what renders, or reports W019 ([support.md](support.md#size-limits)). |
 
 ### Stage contracts
 
@@ -223,7 +225,7 @@ lays out 1px short, in the source only).
 | Layer | Where | Guarantees |
 |---|---|---|
 | Unit tests | `test/unit/` | Each rule, pass, emitter, cascade feature, template writer, adapter and CLI path; `contracts.test.ts` holds the stage contracts. |
-| Golden fixtures | `test/fixtures/`, `test/harness/fixtures.test.ts` | `input.html` compiles to exactly `expected.html` with exactly `diagnostics.json`. |
+| Golden fixtures | `test/fixtures/`, `test/harness/fixtures.test.ts` | `input.html` compiles to exactly `expected.html` with exactly `diagnostics.json`, and no line over 998 bytes without a W019. |
 | Golden lint | `test/harness/golden-lint.test.ts` | What Chromium renders fine but Outlook or Gmail don't: unbalanced or nested conditionals, tables without rows, margins on cells, non-hex `bgcolor`, a table inside a link, `<hr>`, `currentcolor`, unsized images. |
 | Output self-lint | `src/post/self-lint.ts`, every compile | The output uses only features the targets support (W006 otherwise). |
 | Size budget | `test/harness/output-size.test.ts` | Real-world, framework and complex goldens stay within 1% of `size-budget.json`; growing needs `UPDATE_SIZE_BUDGET=1` and a reason. |

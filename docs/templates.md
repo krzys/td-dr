@@ -241,5 +241,5 @@ build or helpers can still differ.
 Inside the compiler a field is a placeholder (the path between U+E000 and U+E001) and a loop or
 branch is a pair of block markers (`<!--tddr:each items line-->` … `<!--/tddr:each-->`,
 `<!--tddr:if c-->` / `<!--tddr:elseif c-->` / `<!--tddr:else-->` … `<!--/tddr:if-->`). Lowering
-treats them like any other content; the last pipeline step (`src/template/write.ts`) writes them in
-the dialect, and an unpaired marker can only be a td;dr bug (W006).
+treats them like any other content; the template step (`src/template/write.ts`), last but for the
+line wrap, writes them in the dialect, and an unpaired marker can only be a td;dr bug (W006).

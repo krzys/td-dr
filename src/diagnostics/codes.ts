@@ -38,6 +38,7 @@ export const codes = {
   W016: { severity: "warning", title: "Low text contrast", hint: "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background." },
   W017: { severity: "warning", title: "Transparent image may vanish in dark mode", hint: "Gmail apps and Outlook darken the background behind it, so dark ink disappears. Give it a light outline or a solid background baked into the image." },
   W018: { severity: "warning", title: "Text that didn't decode", hint: "U+FFFD stands where bytes weren't valid in the encoding the file was read as. Save it as UTF-8, or declare its encoding with <meta charset> (the CLI reads it)." },
+  W019: { severity: "warning", title: "Line too long to send", hint: "A line break is only added where it means what was there, so a long URL, attribute value or unbroken word stays whole. Shorten it, or give the text a space." },
   W004: { severity: "warning", title: "Wider than its slot", hint: "Fixed widths larger than the space they sit in are clamped (and overflow in Outlook)." },
   I002: { severity: "info", title: "Hidden content dropped", hint: "display:none content is not emitted. For preview text use data-email=\"preheader\"." },
   I003: { severity: "info", title: "Partially supported by some target clients", hint: "Works with caveats; see the note." },

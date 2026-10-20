@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { compile } from "../../src/index.ts";
+import { byteLength, SMTP_LINE_BYTES } from "../../src/limits.ts";
 import { fixtureOptions, isActive, loadFixtures } from "./fixture-runner.ts";
 import { goldenName, templateDialects, tokenize } from "./template-fixture.ts";
 
@@ -18,6 +19,11 @@ describe("fixtures", () => {
           : compile(f.input, fixtureOptions(f));
         await expect(html).toMatchFileSnapshot(`${f.dir}/${dialect ? goldenName(dialects!, dialect) : "expected.html"}`);
         await expect(JSON.stringify(diagnostics, null, 2) + "\n").toMatchFileSnapshot(`${f.dir}/diagnostics.json`);
+
+        // a mail server breaks a longer line anywhere (docs/support.md#size-limits)
+        if (!diagnostics.some((d) => d.code === "W019")) {
+          expect(Math.max(...html.split("\n").map(byteLength))).toBeLessThanOrEqual(SMTP_LINE_BYTES);
+        }
 
         const errors = diagnostics.filter((d) => d.severity === "error");
         if (f.intent.expect === "diagnostic") {

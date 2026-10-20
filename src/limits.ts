@@ -7,6 +7,12 @@ export const GMAIL_CLIP_BYTES = 102_000;
 // Gmail drops the head <style> rules past this point, the reset included.
 export const HEAD_STYLE_BYTES = 16 * 1024;
 
+// SMTP allows 998 bytes a line (https://www.rfc-editor.org/rfc/rfc5322#section-2.1.1); a server
+// breaks a longer one wherever it likes, mid-URL or mid-tag.
+export const SMTP_LINE_BYTES = 998;
+// Lines are wrapped below it, so a relay's own rewrite of a line has room.
+export const WRAP_LINE_BYTES = 900;
+
 export const byteLength = (s: string): number => Buffer.byteLength(s, "utf8");
 
 export const formatKB = (bytes: number): string => `${(bytes / 1000).toFixed(1)} KB`;

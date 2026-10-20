@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 11px is very small",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 21,
+      "col": 1
+    }
+  }
+]

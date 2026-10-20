@@ -7,6 +7,7 @@ import { reportUndecoded } from "./parse/decode.ts";
 import { parse, type ParsedDoc } from "./parse/html.ts";
 import { runPasses } from "./passes/index.ts";
 import { post } from "./post/post.ts";
+import { wrapLines } from "./post/wrap.ts";
 import { markTree } from "./emit/trace.ts";
 import { readTrace, stripMarkers, type TraceEntry } from "./post/trace.ts";
 import { sanitize } from "./sanitize/sanitize.ts";
@@ -171,7 +172,7 @@ export const runTraced = (input: string, given: Ctx): { html: string; trace?: Tr
   let out = html;
   if (ctx.options.template) out = writeTemplate(html, ctx.options.template, reportTemplate(input, ctx));
   else if (hasTemplate(html)) ctx.diagnostics.report("E014");
-  if (!ctx.options.trace || !marked) return { html: clipCheck(out, ctx) };
+  if (!ctx.options.trace || !marked) return { html: clipCheck(wrapLines(out, ctx), ctx) };
   const read = readTrace(out, marked.found);
-  return { html: clipCheck(read.html, ctx), trace: read.trace };
+  return { html: clipCheck(wrapLines(read.html, ctx), ctx), trace: read.trace };
 };

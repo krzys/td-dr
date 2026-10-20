@@ -677,9 +677,16 @@ Sizes are raw UTF-8 bytes, shown in decimal kilobytes with the exact limit (`src
 |---|---|---|
 | Gmail clips the message behind "View entire message" | 102,000 (`GMAIL_CLIP_BYTES`) | W009 |
 | Gmail drops head `<style>` rules past this point, the reset included | 16,384 (`HEAD_STYLE_BYTES`) | W012 |
+| A mail server breaks a longer line anywhere, even inside a URL (RFC 5322 §2.1.1) | 998 per line (`SMTP_LINE_BYTES`) | W019 |
 
 An inlined `data:` image counts toward the clip (base64 adds about a third); a hosted one only as
 its URL.
+
+The last step breaks lines over 900 bytes (`WRAP_LINE_BYTES`) where a line break means what was
+there: whitespace between attributes or in text, and after a declaration in a style attribute or
+a rule in a `<style>`. Never inside `<pre>` or `white-space: pre*` text, an attribute value, a
+`url()`, a comment, a conditional marker or a `{{ }}` / `{% %}` tag, and in Outlook-only markup only
+at existing whitespace between attributes. A line with nowhere safe to break is a W019.
 
 ## Targets and client data
 
@@ -763,6 +770,7 @@ even in strict mode.
 | W016 | Text contrast below WCAG AA. |
 | W017 | Transparent image on a light background may vanish in dark mode. |
 | W018 | U+FFFD in the input or the `css` option: bytes that didn't decode (first place and count). |
+| W019 | Output line over 998 bytes with nowhere safe to break (a long URL or unbroken word). |
 | I001 | Unsafe markup removed. |
 | I002 | Hidden content dropped. |
 | I003 | Partially supported by some target clients (with caniemail's note). |
