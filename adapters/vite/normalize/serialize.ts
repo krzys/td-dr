@@ -44,11 +44,19 @@ const preformatted = (el: DomElement, inherited: boolean): boolean => {
 };
 const verbatim = (s: string): string => s.replaceAll("\\", "\\\\").replaceAll("\n", "\\n").replaceAll("\t", "\\t");
 
-// class is a list of names and style ignores spaces outside quotes; any other value is kept as written
+// CSS ignores spaces outside quotes, and beside `;`, `{` and `}` the output's line wrap may add one
+// (src/post/wrap.ts)
 const QUOTED = /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/;
+const css = (v: string): string =>
+  v
+    .split(QUOTED)
+    .map((part, i) => (i % 2 ? part : collapse(part).replace(/ ?([;{}]) ?/g, "$1")))
+    .join("")
+    .trim();
+// class is a list of names; any other value is kept as written
 const attrValue = (name: string, v: string): string => {
   if (name === "class") return collapse(v).trim();
-  if (name === "style") return v.split(QUOTED).map((part, i) => (i % 2 ? part : collapse(part))).join("").trim();
+  if (name === "style") return css(v);
   return verbatim(v);
 };
 
@@ -63,6 +71,9 @@ export const serialize = (root: DomNode, gaps: Gaps): string => {
     kids.forEach((c, i) => {
       if (isText(c) && pre) {
         if (c.data) lines.push(pad + escape(verbatim(c.data)));
+      } else if (isText(c) && isElement(n) && n.name === "style") {
+        const t = css(c.data);
+        if (t) lines.push(pad + escape(t));
       } else if (isText(c)) {
         let t = collapse(c.data);
         if (!inline(beside(kids, i, -1))) t = t.replace(/^ /, "");

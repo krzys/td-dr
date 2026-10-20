@@ -433,6 +433,14 @@ describe("normalize equates: the same spacing spelled two ways", () => {
   it("formatting whitespace and padding spelled as shorthand or sides", () => {
     same(stack(pad("0 0 8px 0", "a")), stack('<td style="padding-bottom:8px;">a</td>').replace(/></g, ">\n  <"));
   });
+
+  // the output's long lines are broken after a declaration or rule (docs/support.md#size-limits), and
+  // the two renders can break in different places
+  it("a line break after a declaration or rule", () => {
+    same('<p style="color:red;font-size:12px">x</p>', '<p style="color:red;\nfont-size:12px">x</p>');
+    same("<style>.a{color:red;margin:0}.b{color:blue}</style><p>x</p>", "<style>.a{color:red;\nmargin:0}\n.b{color:blue}</style><p>x</p>");
+    flags('<p style="font-family:\'a;b\'">x</p>', '<p style="font-family:\'a;\nb\'">x</p>', "a;");
+  });
 });
 
 // The two real paths: the source with its hints evaluated, compiled (the HTML render), and the

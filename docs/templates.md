@@ -227,10 +227,11 @@ its own data sets (`*.json` beside it):
 4. A difference is E016 naming the email, data set, dialect and first differing line; so is data
    that doesn't meet a dialect's needs. The file is not written. `--no-verify` skips the check.
 
-Normalization compares what a reader sees: one line per node, whitespace collapsed, attributes
-sorted; plain full-width padding-only wrapper tables dissolve into the surrounding cell (or become
-the outside gap of a painted cell); gaps between stacked single-cell rows are summed onto the upper
-row. Painted and hidden boxes, columns, widths, alignment and MSO markup must match exactly.
+Normalization compares what a reader sees: one line per node, whitespace collapsed (in CSS, dropped
+beside `;`, `{` and `}`, where the line wrap may break), attributes sorted; plain full-width
+padding-only wrapper tables dissolve into the surrounding cell (or become the outside gap of a
+painted cell); gaps between stacked single-cell rows are summed onto the upper row. Painted and
+hidden boxes, columns, widths, alignment and MSO markup must match exactly.
 
 Limits: an email without data sets or without the engine installed is skipped (I005); branches no
 data set reaches are not compared; it compares markup, not pixels; a sending platform's own engine
