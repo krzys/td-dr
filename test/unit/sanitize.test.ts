@@ -260,8 +260,99 @@ describe("sanitize", () => {
       expect(r.html).toContain('href="#local"');
     });
 
-    test("html outside svg keeps data: links", () => {
-      expect(run('<a href="data:text/plain,hi">x</a>').html).toContain('href="data:text/plain,hi"');
+  });
+
+  describe("url schemes", () => {
+    const attr = (html: string, name: string): string | undefined => {
+      const r = run(html);
+      const el = r.out.body.children.find((c): c is typeof r.out.body => "attribs" in c);
+      return el?.attribs[name];
+    };
+
+    test.each([
+      "https://x.test/a?b=1#c",
+      "HTTP://x.test/",
+      "mailto:a@x.test?subject=Hi",
+      "tel:+15550100",
+      "sms:+15550100",
+      "cid:logo@x.test",
+      "#top",
+      "/p/1",
+      "../p/1",
+      "//x.test/p",
+      "?page=2",
+      "",
+      "\uE000user.url\uE001",
+      "{{unsubscribe_url}}",
+      "*|UNSUB|*",
+      "%%=RedirectTo(@url)=%%",
+      "page/a:b",
+    ])("keeps the link %s", (url) => {
+      const r = run(`<a href="${url}">x</a>`);
+      expect(attr(`<a href="${url}">x</a>`, "href")).toBe(url);
+      expect(codesOf(r.ctx)).toEqual([]);
+    });
+
+    test.each([
+      ["javascript:alert(1)", "javascript"],
+      ["JavaScript:alert(1)", "javascript"],
+      ["java\tscript:alert(1)", "javascript"],
+      ["java&#9;script:alert(1)", "javascript"],
+      ["&#106;avascript:alert(1)", "javascript"],
+      ["&#x6A;&#x61;vascript&colon;alert(1)", "javascript"],
+      ["\x01 javascript:alert(1)", "javascript"],
+      ["javascript :alert(1)", "javascript"],
+      ["java\u200bscript:alert(1)", "javascript"],
+      ["\u00a0javascript:alert(1)", "javascript"],
+      ["vbscript:msgbox(1)", "vbscript"],
+      ["data:text/html,<script>alert(1)</script>", "data"],
+      ["data:image/png;base64,AAAA", "data"],
+      ["DATA:text/html;base64,PHNjcmlwdD4=", "data"],
+      ["file:///etc/passwd", "file"],
+      ["blob:https://x.test/1", "blob"],
+      ["livescript:x", "livescript"],
+    ])("removes the link %s", (url, scheme) => {
+      const r = run(`<a href="${url}">x</a>`);
+      expect(r.html).toBe("<a>x</a>");
+      expect(codesOf(r.ctx)).toEqual(["I001"]);
+      expect(r.ctx.diagnostics.list()[0]?.message).toBe(`Removed ${scheme}: URL`);
+      expect(r.ctx.diagnostics.list()[0]?.hint).toContain("http, https, mailto");
+    });
+
+    test("data: is kept for images only", () => {
+      expect(attr('<img src="data:image/png;base64,AAAA" alt="">', "src")).toBe("data:image/png;base64,AAAA");
+      expect(attr('<img src="data:text/html,hi" alt="">', "src")).toBeUndefined();
+      expect(attr('<img src="data:,hi" alt="">', "src")).toBeUndefined();
+      expect(attr('<table background="data:image/gif;base64,R0lG"><tr><td>x</td></tr></table>', "background")).toBe("data:image/gif;base64,R0lG");
+      expect(attr('<a href="data:image/png;base64,AAAA">x</a>', "href")).toBeUndefined();
+    });
+
+    test("checks every URL attribute, not only href and src", () => {
+      for (const html of [
+        '<table background="javascript:x"><tr><td>x</td></tr></table>',
+        '<blockquote cite="javascript:x">q</blockquote>',
+        '<video poster="vbscript:x"></video>',
+        '<img lowsrc="javascript:x" src="a.png" alt="">',
+        '<a ping="https://x.test/p javascript:x" href="/">x</a>',
+        '<a xlink:href="javascript:x">x</a>',
+        '<math><mi href="javascript:x">x</mi></math>',
+      ]) {
+        const r = run(html);
+        expect(r.html, html).not.toMatch(/javascript|vbscript/);
+        expect(codesOf(r.ctx), html).toEqual(["I001"]);
+      }
+    });
+
+    test("one bad srcset candidate drops the srcset; commas in data: images don't split it", () => {
+      expect(attr('<img src="a.png" srcset="a.png 1x, data:image/png;base64,AA,AA 2x" alt="">', "srcset")).toBe("a.png 1x, data:image/png;base64,AA,AA 2x");
+      expect(attr('<img src="a.png" srcset="a.png 1x,javascript:x 2x" alt="">', "srcset")).toBeUndefined();
+      expect(attr('<img src="a.png" srcset="data:text/html,a 1x" alt="">', "srcset")).toBeUndefined();
+    });
+
+    test("one I001 per scheme, at its first use", () => {
+      const r = run('<a href="javascript:a">1</a>\n<a href="vbscript:b">2</a><a href="javascript:c">3</a>');
+      expect(r.ctx.diagnostics.list().map((d) => d.message)).toEqual(["Removed javascript: URL", "Removed vbscript: URL"]);
+      expect(r.ctx.diagnostics.list()[0]?.loc).toEqual({ line: 1, col: 1 });
     });
   });
 });

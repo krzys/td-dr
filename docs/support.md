@@ -42,8 +42,12 @@ Any other `data-email` value is E011.
 Runs on the whole input, raw blocks included, in every mode; strict only decides whether the
 E008s fail the build.
 
-- `script` (I001), event handler attributes (I001), `javascript:` URLs (I001), `srcdoc` and
-  `formaction` (I001).
+- `script`, event handler attributes, `srcdoc` and `formaction` (I001).
+- URLs in `href`, `src`, `srcset`, `background`, `poster`, `cite`, `action`, `ping` and the like
+  keep `http`, `https`, `mailto`, `tel`, `sms`, `cid`, fragments, relative URLs and placeholders,
+  and `data:` for images only. Any other scheme loses the attribute, one I001 per scheme:
+  `javascript:`, `vbscript:`, `data:text/html`, spelled with entities, tabs or invisible
+  characters too.
 - `iframe`, `object`, `embed`, `applet`, `portal`, `fencedframe`: removed with what they hold
   (E008). Mail clients load no embedded documents or plugins; link to the page instead.
 - `input`, `select`, `textarea`, `button`, `datalist`: removed (E008), a hidden `input` with I002.

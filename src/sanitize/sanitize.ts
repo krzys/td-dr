@@ -5,9 +5,13 @@ import type { ParsedDoc } from "../parse/html.ts";
 import { TDDR_TAGS } from "../template/chain.ts";
 import { TEMPLATE_ATTRS } from "../template/hints.ts";
 import { markChains } from "./chains.ts";
+import { badScheme, srcsetUrls, type UrlUse } from "./urls.ts";
 
 const DROP_TAGS = new Set(["script", "noscript", "template", "style", "link", "meta", "title", "base"]);
-const URL_ATTRS = new Set(["href", "src", "action", "formaction", "background"]);
+// URL attributes by what they load; src is an image on <img> only.
+const IMAGE_ATTRS = new Set(["background", "poster", "lowsrc", "dynsrc"]);
+const LINK_ATTRS = new Set(["href", "xlink:href", "src", "action", "cite", "longdesc", "codebase"]);
+const URL_HINT = "Links and images keep http, https, mailto, tel, sms and cid URLs, data: images, fragments, relative URLs and placeholders.";
 // An embedded document's source, and a submit target: nothing a mail client follows.
 const DOC_ATTRS = new Set(["srcdoc", "formaction"]);
 
@@ -20,9 +24,6 @@ const CONTROL_HINT = 'Mail clients disable or strip form controls. Link to a for
 
 // Conditional comments the MSO patterns depend on, in all their spellings.
 const MSO_COMMENT = /^\s*(\[if[\s\]]|\[endif\]|<!\[endif\])/;
-
-// Browsers drop tabs/newlines and trim control chars around the scheme.
-const isJsUrl = (v: string): boolean => v.replace(/[\x00-\x20]/g, "").toLowerCase().startsWith("javascript:");
 
 // Kept <svg> is author markup shown in a mail client's webview: no data: links, no embedded
 // HTML, no references to other documents.
@@ -64,11 +65,18 @@ const templateAttr = (el: DomElement): string | undefined => {
 
 const PREHEADER_HINT = "The preheader is one string and takes no blocks. Put the condition on the content of a placeholder instead, e.g. send the preheader text as a field.";
 
-type Category = "script" | "handler" | "jsUrl" | "svg" | "srcdoc" | "formaction";
-const WHAT: Record<Category, string> = {
+// The scheme a URL attribute holds that isn't allowed; one bad srcset or ping entry is enough.
+const badUrl = (tag: string, name: string, value: string): string | undefined => {
+  if (name === "srcset") return srcsetUrls(value).map((u) => badScheme(u, "image")).find(Boolean);
+  if (name === "ping") return value.split(/\s+/).map((u) => badScheme(u, "link")).find(Boolean);
+  const use: UrlUse | undefined = IMAGE_ATTRS.has(name) || (name === "src" && tag === "img") ? "image" : LINK_ATTRS.has(name) ? "link" : undefined;
+  return use && badScheme(value, use);
+};
+
+type Category = "script" | "handler" | "svg" | "srcdoc" | "formaction" | `url:${string}`;
+const WHAT: Record<string, string> = {
   script: "script element",
   handler: "event handler attribute",
-  jsUrl: "javascript: URL",
   svg: "unsafe SVG content",
   srcdoc: "srcdoc attribute",
   formaction: "formaction attribute",
@@ -122,11 +130,13 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
       } else if (DOC_ATTRS.has(name)) {
         note(name as Category, c);
         delete c.attribs[name];
-      } else if ((URL_ATTRS.has(name) || svg && name === "xlink:href") && isJsUrl(value)) {
-        note("jsUrl", c);
-        delete c.attribs[name];
       } else if (svg && SVG_HREFS.includes(name) && isDataUrl(value)) {
         note("svg", c);
+        delete c.attribs[name];
+      } else {
+        const scheme = badUrl(c.name.toLowerCase(), name, value);
+        if (scheme === undefined) continue;
+        note(`url:${scheme}`, c);
         delete c.attribs[name];
       }
       // data-* (data-v-* scoped styles, data-reactroot…) stay until the cascade has
@@ -261,7 +271,10 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
   walk(body);
   markChains(body, ctx);
 
-  for (const [k, loc] of firstHit) ctx.diagnostics.report("I001", { message: `Removed ${WHAT[k]}`, loc });
+  for (const [k, loc] of firstHit) {
+    if (k.startsWith("url:")) ctx.diagnostics.report("I001", { message: `Removed ${k.slice(4)}: URL`, hint: URL_HINT, loc });
+    else ctx.diagnostics.report("I001", { message: `Removed ${WHAT[k]}`, loc });
+  }
 
   const meta = preheader.length > 0 ? { ...doc.meta, preheader: preheader.join(" ") } : doc.meta;
   return { document, body, styles: doc.styles, meta };

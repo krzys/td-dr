@@ -1,0 +1,32 @@
+[
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed vbscript: URL",
+    "hint": "Links and images keep http, https, mailto, tel, sms and cid URLs, data: images, fragments, relative URLs and placeholders.",
+    "loc": {
+      "line": 7,
+      "col": 34
+    }
+  },
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed javascript: URL",
+    "hint": "Links and images keep http, https, mailto, tel, sms and cid URLs, data: images, fragments, relative URLs and placeholders.",
+    "loc": {
+      "line": 7,
+      "col": 136
+    }
+  },
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed data: URL",
+    "hint": "Links and images keep http, https, mailto, tel, sms and cid URLs, data: images, fragments, relative URLs and placeholders.",
+    "loc": {
+      "line": 7,
+      "col": 244
+    }
+  }
+]
