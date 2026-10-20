@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E008",
+    "severity": "error",
+    "message": "AMP for Email input is not compiled",
+    "hint": "td;dr compiles the text/html part of an email. AMP for Email goes in its own text/x-amp-html MIME part next to it; compile a plain HTML version of the message here.",
+    "loc": {
+      "line": 2,
+      "col": 1
+    }
+  }
+]

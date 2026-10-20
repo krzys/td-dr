@@ -1,5 +1,6 @@
 import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
+import { AMP_HINT, ampMarker } from "../parse/amp.ts";
 import { children, findAllElements, findElement, isComment, isElement, isText, locOf, type DomChild, type DomDocument, type DomElement, type DomNode } from "../parse/dom.ts";
 import type { ParsedDoc } from "../parse/html.ts";
 import { cssUrls } from "../style/unsafe.ts";
@@ -111,6 +112,8 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
   const document = doc.document.cloneNode(true) as DomDocument;
   const body: DomElement | undefined = findElement(document, (el) => el.name === "body");
   if (!body) throw new Error("cloned document lost its <body>");
+  const amp = ampMarker(document);
+  if (amp) ctx.diagnostics.report("E008", { message: "AMP for Email input is not compiled", hint: AMP_HINT, loc: locOf(amp) });
 
   // One I001 per category, pointing at the first hit.
   const firstHit = new Map<Category, SrcLoc | undefined>();

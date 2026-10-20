@@ -60,6 +60,9 @@ E008s fail the build.
 - `input`, `select`, `textarea`, `button`, `datalist`: removed (E008), a hidden `input` with I002.
   Checkbox and radio hacks for interactive email go too. A `<form>` is unwrapped, its text kept
   (E008). For a call to action use an `<a>`, lowered to a [bulletproof button](#bulletproof-buttons).
+- AMP for Email (`<html ⚡4email>`, `amp4email`, `amp-*` elements, the AMP runtime): refused with
+  one E008. td;dr compiles the `text/html` part; AMP goes in its own `text/x-amp-html` part. The
+  `amp4email-boilerplate` style is ignored, so what allow mode writes stays visible.
 
 ## CSS values
 
@@ -722,7 +725,7 @@ even in strict mode.
 | E005 | Negative margin that isn't a full-bleed band. |
 | E006 | Unsupported length: `%` padding or margin, `vh`, `%` outside widths, `calc()` other than `calc(P% ± Npx)` on a flex item, a `%` width with horizontal padding under `content-box`. |
 | E007 | Unsupported flex feature: `row-reverse`, `column-reverse`, `wrap-reverse`, `align-content`, unknown alignment values. |
-| E008 | Element with no email-safe equivalent: `video`, `audio`, `canvas`, `svg`, `<picture>` without `<img>`; frames, plugins and form controls, which are removed in every mode. |
+| E008 | Element with no email-safe equivalent: `video`, `audio`, `canvas`, `svg`, `<picture>` without `<img>`; frames, plugins and form controls, which are removed in every mode; AMP for Email input. |
 | E009 | Animation or transition. |
 | E010 | No layout rule matched (a td;dr bug). |
 | E011 | Unknown `data-email` value. |

@@ -1,5 +1,6 @@
 import { parse as parse5 } from "parse5";
 import { adapter } from "parse5-htmlparser2-tree-adapter";
+import { isAmpBoilerplate } from "./amp.ts";
 import { isFontHost } from "./font-hosts.ts";
 import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
@@ -25,6 +26,8 @@ export const parse = (html: string, ctx: Ctx): ParsedDoc => {
   if (!body) throw new Error("parse5 always creates <body>; not found");
 
   const styles: StyleSource[] = findAllElements(document, (el) => el.name === "style").flatMap((el) => {
+    // AMP input is refused in sanitize; its body{visibility:hidden} must not hide the HTML
+    if (isAmpBoilerplate(el)) return [];
     const media = el.attribs["media"]?.trim().toLowerCase();
     if (media && !/^(all|screen)\b/.test(media)) {
       ctx.diagnostics.report("W001", { message: `<style media="${media}"> is not for screens and was ignored`, loc: locOf(el) });
