@@ -42,7 +42,7 @@ Any other `data-email` value is E011.
 | `var()`, `calc()` | Resolved. `calc(P% ± Npx)` stays a width on flex items; other mixed `calc()` is E006. |
 | `em`, `rem`, `%` font sizes | px. `rem` is the root's computed font size (16px by default); in media queries `em` / `rem` are 16px. |
 | `vw`, `vmin`, `vmax`, `clamp()`, `min()`, `max()` | Resolved at the [design width](#design-width) (I006). Text sizes stay live in a narrow-screen head rule; layout values are fixed. `vh` is E006. |
-| `hsl()`, `oklch()`, `color-mix()`, other modern colours (`rgb()` stays, bar a `/` alpha) | Hex or `rgba()`. Translucent colours are flattened over a known solid backdrop; over an image or gradient they stay as written (W001). |
+| `hsl()`, `oklch()`, `color-mix()`, other modern colours (`rgb()` with commas stays; in space syntax it is lowered too) | Hex or `rgba()`. Translucent colours are flattened over a known solid backdrop; over an image or gradient they stay as written (W001). |
 | Logical properties, `dir` | Physical sides by the resolved direction ([right-to-left](#right-to-left-text)). |
 | `::before` / `::after` with static `content` | Written as text. Other pseudo-elements warn. |
 | `@media` width and `prefers-color-scheme`, `:hover` | [Head styles](#head-styles). Other media features warn. |

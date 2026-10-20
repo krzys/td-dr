@@ -82,6 +82,14 @@ describe("colour lowering", () => {
     expect(lowerColors("2px solid rgb(0 0 0 / 50%)")).toBe("2px solid rgba(0, 0, 0, 0.5)");
   });
 
+  test("rgb in space syntax becomes hex or rgba", () => {
+    expect(lowerColors("rgb(232 239 233)")).toBe("#e8efe9");
+    expect(lowerColors("rgba(34 34 34)")).toBe("#222222");
+    expect(lowerColors("rgb(1 2 3 / 50%)")).toBe("rgba(1, 2, 3, 0.5)");
+    expect(lowerColors("1px solid rgb(100% 0% 0%)")).toBe("1px solid #ff0000");
+    expect(lowerColors("rgb(var(--r) 0 0)")).toBe("rgb(var(--r) 0 0)");
+  });
+
   test("hsl becomes hex or rgba in either syntax", () => {
     expect(lowerColors("hsl(120 100% 25%)")).toBe("#008000");
     expect(lowerColors("hsl(0, 100%, 50%)")).toBe("#ff0000");
@@ -111,7 +119,6 @@ describe("colour lowering", () => {
 
   test("plain values are untouched", () => {
     expect(lowerColors("#abc")).toBe("#abc");
-    expect(lowerColors("rgb(1 2 3)")).toBe("rgb(1 2 3)");
     expect(lowerColors("rgb(1, 2, 3)")).toBe("rgb(1, 2, 3)");
     expect(lowerColors("rgba(0,0,0,.5)")).toBe("rgba(0,0,0,.5)");
   });
