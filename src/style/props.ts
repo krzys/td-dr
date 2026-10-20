@@ -24,6 +24,10 @@ export const INHERITED: ReadonlySet<string> = new Set([
   "border-spacing",
 ]);
 
+// The side a -webkit-center / -webkit-left / -webkit-right text-align (center, div align) places the
+// blocks inside on: inherited with text-align, and as a custom property never serialized.
+export const LEGACY_ALIGN = "--tddr-legacy-align";
+
 export const isInherited = (prop: string): boolean => INHERITED.has(prop) || prop.startsWith("--");
 
 // Initial values for properties rules ask about; a missing computed value means this.

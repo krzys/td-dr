@@ -88,6 +88,14 @@ A full-width box shares its slot's cell instead of nesting a table, except a box
 right border (in collapsed tables a side border is shared with the column and would move every
 sibling row in by half); with several screens the base screen's border decides.
 
+`align` on a `<div>`, like `<center>`, is `text-align` for its lines and, as browsers'
+`-webkit-center` / `-webkit-left` / `-webkit-right`, also places the blocks inside, at any depth
+until one sets a `text-align` of its own, whatever their margins (a `* { margin: 0 }` reset keeps
+it): a fixed-width block, a table or a block image narrower than its parent becomes an aligned table
+or cell with `align`. `align="left"` only moves a block in an RTL parent. Inline content, an
+inline image too, just follows the `text-align`. A table is placed by it but, as in browsers, its
+cells go back to `start`.
+
 ### Flex rows
 
 A non-wrapping row is one table row, one cell per item.

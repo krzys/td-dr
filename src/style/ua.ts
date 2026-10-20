@@ -20,7 +20,11 @@ h6 { font-size: 0.67em; margin-top: 2.33em; margin-bottom: 2.33em; font-weight: 
 strong, b { font-weight: bold; }
 small { font-size: smaller; }
 dd { margin-left: 40px; }
-center { text-align: center; }
+/* -webkit-*: the lines, and also the blocks inside, whatever their margins (inherit.ts) */
+center, div:is([align="center" i], [align="middle" i]) { text-align: -webkit-center; }
+div[align="left" i] { text-align: -webkit-left; }
+div[align="right" i] { text-align: -webkit-right; }
+div[align="justify" i] { text-align: justify; }
 th { font-weight: bold; text-align: center; }
 pre { font-family: monospace; white-space: pre; }
 ul { list-style-type: disc; }

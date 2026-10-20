@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { computeValues } from "../../src/style/inherit.ts";
+import { LEGACY_ALIGN } from "../../src/style/props.ts";
 import type { ComputedStyle, StyledElement, StyledNode } from "../../src/style/types.ts";
 import { codesOf, styledFrom, testCtx } from "../helpers/index.ts";
 
@@ -26,6 +27,19 @@ describe("inheritance", () => {
     expect(run({ color: "unset" }, parent).style.color).toBe("red");
     expect(run({ display: "unset" }, parent).style.display).toBeUndefined();
     expect(run({ "margin-top": "revert" }, parent).style["margin-top"]).toBeUndefined();
+  });
+
+  test("-webkit-center & co. are the side for text-align and carry on to the blocks below", () => {
+    const centre = run({ "text-align": "-webkit-center" }).style;
+    expect([centre["text-align"], centre[LEGACY_ALIGN]]).toEqual(["center", "center"]);
+    expect(run({}, centre).style[LEGACY_ALIGN]).toBe("center");
+    expect(run({ "text-align": "inherit" }, centre).style[LEGACY_ALIGN]).toBe("center");
+    expect(run({ "text-align": "center" }, centre).style[LEGACY_ALIGN]).toBeUndefined();
+    expect(run({ "text-align": "initial" }, centre).style[LEGACY_ALIGN]).toBeUndefined();
+    expect(run({ "text-align": "-webkit-right" }, centre).style).toMatchObject({ "text-align": "right", [LEGACY_ALIGN]: "right" });
+    const table = run({ display: "table" }, centre).style;
+    expect([table["text-align"], table[LEGACY_ALIGN]]).toEqual(["start", undefined]);
+    expect(run({ display: "table", "text-align": "center" }, centre).style["text-align"]).toBe("center");
   });
 
   test("keyword on a missing parent value drops it", () => {

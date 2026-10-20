@@ -2,6 +2,7 @@
 // the border-box px the IR carries.
 import type { Ctx } from "../ctx.ts";
 import { zeroSides, type Align, type Border, type Box, type Sides } from "../ir/index.ts";
+import { get, LEGACY_ALIGN } from "../style/props.ts";
 import type { StyledElement, StyledNode } from "../style/types.ts";
 import { clipsOverflow } from "./box-clip.ts";
 import { isPaintedNode, type Background } from "./box-paint.ts";
@@ -70,6 +71,19 @@ export const negativeMarginHint = (side: Side, el?: StyledElement): string | und
   return OVERLAP;
 };
 
+// A parent's -webkit-center / -webkit-left / -webkit-right (center, div align) places a block in it
+// whatever the block's margins, but only off the start side and only one narrower than the parent
+// (docs/support.md#block-flow).
+const FLOWS = new Set(["block", "list-item", "flow-root", "inline-block", "table-cell"]);
+const sized = (v: string | undefined): boolean => v !== undefined && v !== "auto" && v !== "none" && v !== "100%";
+export const legacyAlign = (el: StyledElement): Align | undefined => {
+  const side = el.parentStyle?.[LEGACY_ALIGN];
+  if (side === undefined || !FLOWS.has(get(el.parentStyle!, "display") ?? "") || isInlineLevel(el) || get(el.style, "float") !== "none") return undefined;
+  if (el.tag !== "table" && el.tag !== "img" && !sized(el.style["width"]) && !sized(el.style["max-width"])) return undefined;
+  const rtl = el.parentStyle!["direction"] === "rtl";
+  return side === "center" || (side === "right" && !rtl) || (side === "left" && rtl) ? (side as Align) : undefined;
+};
+
 // auto becomes align, negatives (E005) and odd units (E006) stay 0. The shell owns the body's margins.
 export const marginOf = (el: StyledElement, ctx: Ctx): { margin: Sides; align?: Align } => {
   const margin = zeroSides();
@@ -87,7 +101,7 @@ export const marginOf = (el: StyledElement, ctx: Ctx): { margin: Sides; align?: 
       }
     } else margin[s] = pxOrZero(el, ctx, `margin-${s}`);
   }
-  const align: Align | undefined = auto("left") && auto("right") ? "center" : auto("left") ? "right" : auto("right") ? "left" : undefined;
+  const align: Align | undefined = auto("left") && auto("right") ? "center" : auto("left") ? "right" : auto("right") ? "left" : legacyAlign(el);
   return align ? { margin, align } : { margin };
 };
 

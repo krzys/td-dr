@@ -1,6 +1,6 @@
 import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
-import { isInherited } from "./props.ts";
+import { isInherited, LEGACY_ALIGN } from "./props.ts";
 import { expandDeclaration, parsePending, toPhysical } from "./shorthands.ts";
 import { hasModernColor, lowerColors } from "./colors.ts";
 import { formatPx, INITIAL_FONT_SIZE, parsePx, reduceMath, resolveFontSize, toPx, type FontSizes } from "./units.ts";
@@ -125,6 +125,19 @@ export const computeValues = (
     else next = toPx(t, sizes);
     if (next === null) report("E006", `${p}: unsupported length "${t}"`);
     else out[p] = next;
+  }
+  // -webkit-center & co. are text-align for the lines and also place the blocks inside, margins or not
+  // (docs/support.md#block-flow); a text-align of its own ends that, inherit and unset don't
+  const ta = decls.findLast(([p]) => p === "text-align")?.[1].trim().toLowerCase();
+  if (ta !== undefined) {
+    const legacy = /^-webkit-(left|right|center)$/.exec(out["text-align"]?.toLowerCase() ?? "")?.[1];
+    if (legacy) out["text-align"] = out[LEGACY_ALIGN] = legacy;
+    else if (ta === "initial" || !KEYWORDS.has(ta)) delete out[LEGACY_ALIGN];
+  }
+  // a table is placed by it but resets it to start for its own cells, as browsers do
+  if (out[LEGACY_ALIGN] !== undefined && (out["display"] === "table" || out["display"] === "inline-table")) {
+    out["text-align"] = "start";
+    delete out[LEGACY_ALIGN];
   }
   // no border style means no border, whatever width was written
   for (const side of ["top", "right", "bottom", "left"]) {
