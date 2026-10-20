@@ -3,6 +3,7 @@ import type { CompileOptions } from "../../src/ctx.ts";
 import { findElement } from "../../src/parse/dom.ts";
 import { parse } from "../../src/parse/html.ts";
 import { cascade } from "../../src/style/cascade.ts";
+import { compile } from "../../src/index.ts";
 import { codesOf, styledFrom, testCtx } from "../helpers/index.ts";
 import { DESKTOP, type StyledElement } from "../../src/style/types.ts";
 
@@ -495,5 +496,65 @@ describe("logical properties", () => {
       expect(codesOf(styled(".d::after{content:'';display:block;height:0;clear:both;visibility:hidden}", '<p class="d">a</p>').ctx)).toEqual([]);
       expect(codesOf(styled(".d::after{content:'';display:table;clear:both;border:0}", '<p class="d">a</p>').ctx)).toEqual([]);
     });
+  });
+});
+
+describe("legacy attributes (presentational hints)", () => {
+  const body = (html: string) => {
+    const ctx = testCtx();
+    const doc = parse(html, ctx);
+    return cascade(doc, ctx, DESKTOP).styleOf(doc.body);
+  };
+
+  test("body bgcolor, text and background become its colours and image", () => {
+    const r = body('<body bgcolor="#102030" text="ffffff" background="paper.png"><p>x</p></body>');
+    expect(r.values["background-color"]).toBe("#102030");
+    expect(r.values["color"]).toBe("#ffffff");
+    expect(r.values["background-image"]).toBe('url("paper.png")');
+    expect(r.authored.has("background-color")).toBe(true);
+  });
+
+  test("any author rule beats them, even a type selector", () => {
+    const r = body('<style>body{background-color:#fff}</style><body bgcolor="#102030" text="#ffffff"><p>x</p></body>');
+    expect(r.values["background-color"]).toBe("#fff");
+    expect(r.values["color"]).toBe("#ffffff");
+  });
+
+  test("body link colours every link over the UA blue; an author rule still wins", () => {
+    expect(run('<body link="#ffcc00"><a href="https://x.example/">x</a></body>', "a").values["color"]).toBe("#ffcc00");
+    expect(run('<body link="#ffcc00"><a>x</a></body>', "a").values["color"]).toBe("#0000ee");
+    expect(run('<style>a{color:red}</style><body link="#ffcc00"><a href="https://x.example/">x</a></body>', "a").values["color"]).toBe("red");
+  });
+
+  test("a colour they can't read is left out", () => {
+    const r = body('<body bgcolor="chucknorris" text="rgb(1,2,3)"><p>x</p></body>');
+    expect(r.values["background-color"]).toBeUndefined();
+    expect(r.values["color"]).toBeUndefined();
+  });
+
+  test("body background keeps only a relative, http(s), cid or data:image url, with quotes and parens encoded", () => {
+    const image = (attr: string) => body(`<body background="${attr}"><p>x</p></body>`).values["background-image"];
+    expect(image("javascript:alert(1)")).toBeUndefined();
+    expect(image(" JaVaScRiPt:alert(1)")).toBeUndefined();
+    expect(image("java&#9;script:alert(1)")).toBeUndefined();
+    expect(image("&#x6a;avascript:alert(1)")).toBeUndefined();
+    expect(image("vbscript:x")).toBeUndefined();
+    expect(image("data:text/html,x")).toBeUndefined();
+    expect(image("https://img.example/a b.png')x(")).toBe('url("https://img.example/a%20b.png%27%29x%28")');
+    expect(image("x&quot;);color:red;b:url(&quot;y")).toBe('url("x%22%29;color:red;b:url%28%22y")');
+    expect(image("cid:bg-1")).toBe('url("cid:bg-1")');
+    expect(image("data:image/png;base64,AAAA")).toBe('url("data:image/png;base64,AAAA")');
+    expect(image("img/paper.png")).toBe('url("img/paper.png")');
+  });
+
+  test("a body background url can't reach the output as script or break out of its attribute", () => {
+    for (const attr of ["javascript:alert(1)", "java&#10;script:alert(1)", "x');background:url(javascript:alert(1)"]) {
+      const { html } = compile(`<body background="${attr}" bgcolor="#102030"><p>x</p></body>`);
+      expect(html).not.toMatch(/(?:url\(['"]?|background=["'])\s*javascript:/i);
+      expect(html).not.toMatch(/url\('x'\)/);
+    }
+    expect(compile(`<body background="x');b:url(javascript:alert(1)"><p>x</p></body>`).html).toContain("background-image:url('x%27%29;b:url%28javascript:alert%281%29')");
+    const { html } = compile('<body background="https://img.example/bg.png" bgcolor="#102030"><p>x</p></body>');
+    expect(html).toContain('background="https://img.example/bg.png"');
   });
 });

@@ -5,7 +5,7 @@ import { compareSpecificity, type Specificity } from "./specificity.ts";
 
 export type Candidate = {
   value: string;
-  tier: number; // -1 @property initial-value, 0 UA normal, 1 author normal, 2 important
+  tier: number; // -1 @property initial-value, 0 UA normal, 0.5 presentational hint, 1 author normal, 2 important
   inline: boolean; // style="" beats selectors at the same importance
   layer: number; // -1 = unlayered, else its index in the order layers were first named
   spec: Specificity;

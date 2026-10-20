@@ -6,6 +6,7 @@ import type { ParsedDoc } from "../parse/html.ts";
 import { conditionsOf } from "./conditions.ts";
 import { declarations, viewportNotes } from "./declarations.ts";
 import { directionFrom, directions, physical, reportDirAuto } from "./direction.ts";
+import { presentationalHints } from "./hints.ts";
 import { styleAttributes, type InlineDecls } from "./inline.ts";
 import { selectIn } from "./match.ts";
 import { offerTo, type Candidate, type Props, type Store } from "./precedence.ts";
@@ -39,11 +40,13 @@ export type CascadeOutput = {
 
 type Won = { elements: Store } & PseudoWon;
 
-// Every declaration offered to what it lands on, sheets in source order, then style="".
-const offerAll = (blocks: readonly Block[], inline: readonly InlineDecls[], order: number): Won => {
+// Every declaration offered to what it lands on: legacy attributes, sheets in source order, then style="".
+const offerAll = (blocks: readonly Block[], hints: readonly InlineDecls[], inline: readonly InlineDecls[], order: number): Won => {
   const elements: Store = new Map();
   const props: Record<PseudoSide, Store> = { before: new Map(), after: new Map() };
   const literal: Record<PseudoSide, Set<DomElement>> = { before: new Set(), after: new Set() };
+  // above the UA sheet, below every author rule
+  for (const { el, decls } of hints) for (const d of decls) offerTo(elements, el, d.prop, { value: d.value, tier: 0.5, inline: false, layer: -1, spec: [0, 0, 0], order: 0 });
   for (const b of blocks) {
     for (const sel of b.sels) {
       for (const d of b.decls) {
@@ -67,7 +70,7 @@ const resolve = (props: Props | undefined, dir: () => Direction, attr: string | 
   const authored = new Set<string>();
   for (const [prop, c] of physical(props, dir)) {
     values[prop] = registeredKeyword(registry, prop, c.value) ?? c.value;
-    if (c.tier === 1 || c.tier === 2) authored.add(prop);
+    if (c.tier > 0) authored.add(prop);
   }
   // dir is a presentational hint (UA tier): it sets direction unless the author did
   if (!props?.has("direction") && (attr === "ltr" || attr === "rtl")) values["direction"] = attr;
@@ -90,7 +93,7 @@ export const cascade = (doc: ParsedDoc, ctx: Ctx, env: Env): CascadeOutput => {
   const inline = styleAttributes(doc, declare, notes, ctx);
   reportDirAuto(doc, ctx);
 
-  const won = offerAll(rules.blocks, inline.found, rules.order);
+  const won = offerAll(rules.blocks, presentationalHints(doc, declare, notes), inline.found, rules.order);
   const shown = pseudoDecisions(won, won.elements, ctx);
   const root = doc.body.parent && isElement(doc.body.parent) ? doc.body.parent : doc.body;
   offerInitials(rules.registered, won.elements, root, () => findAllElements(doc.document, () => true), shown.map((p) => p.props));

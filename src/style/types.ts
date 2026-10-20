@@ -8,7 +8,7 @@ export type ComputedStyle = Declarations;
 
 export type Cascaded = {
   values: Declarations;
-  authored: ReadonlySet<string>; // won by author CSS or style="", not the UA sheet
+  authored: ReadonlySet<string>; // won by author CSS, style="" or a legacy attribute, not the UA sheet
 };
 
 export type StyledElement = {

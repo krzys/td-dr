@@ -19,6 +19,10 @@ hint. Client claims not confirmed in a real client are marked **unverified**.
   `<style>` leave the body after their CSS, fonts and metadata are collected; React 19's hoisted
   image preloads are dropped. `data-*` attributes survive the cascade (scoped CSS selects on them)
   and are dropped at serialization, `data-email` excepted. Unused classes are removed after emission.
+- **Legacy attributes** count as CSS that any author rule beats: `<body>` `bgcolor`, `text`,
+  `background` and `link` (every `a[href]`), so the shell takes the page colour from them. `vlink`
+  and `alink` are ignored. A `background` url is kept only when relative, `http(s):`, `cid:` or
+  `data:image/`, with quotes, parens and spaces percent-encoded.
 
 ### Hints
 
