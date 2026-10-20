@@ -46,4 +46,8 @@ ol { list-style-type: decimal; }
 em, i { font-style: italic; }
 a { color: #0000ee; text-decoration: underline; }
 hr { margin: 0.5em auto; border-width: 1px; border-style: inset; color: gray; overflow: hidden; }
+hr[align="left" i] { margin-left: 0; margin-right: auto; }
+hr[align="right" i] { margin-left: auto; margin-right: 0; }
+hr[align="center" i] { margin-left: auto; margin-right: auto; }
+hr:is([color], [noshade]) { border-style: solid; }
 `;

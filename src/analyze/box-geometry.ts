@@ -19,10 +19,11 @@ const frameX = (f: Frame): number => f.padding.left + f.padding.right + (f.borde
 const frameY = (f: Frame): number => f.padding.top + f.padding.bottom + (f.border.top?.width ?? 0) + (f.border.bottom?.width ?? 0);
 
 // A px height only differs from a min-height when the content is taller: the browser spills it
-// over what follows, a cell grows. Clipped boxes keep reporting it dropped.
+// over what follows, a cell grows. Clipped boxes keep reporting it dropped, bar an <hr>
+// (the UA clips it): nothing in it can stick out.
 export const heightAsMin = (el: StyledElement): number | undefined => {
   const len = parseLen(el.style["height"] ?? "auto");
-  return carries(el) && !clipsOverflow(el) && len && "px" in len && len.px > 0 ? len.px : undefined;
+  return carries(el) && (!clipsOverflow(el) || el.tag === "hr") && len && "px" in len && len.px > 0 ? len.px : undefined;
 };
 
 // px or 0; percentages and odd units can't be carried (E006)

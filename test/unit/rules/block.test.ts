@@ -247,6 +247,10 @@ describe("blockRule", () => {
       expect(clipped.box.minHeight).toBeUndefined();
       expect(clipped.ctx.diagnostics.list().map((d) => d.message)).toContain("height: 100px is dropped");
     });
+    test("an hr keeps its height although the UA sheet clips it", () => {
+      const hr = run({ height: "4px", overflow: "hidden" }, { declared: { height: "4px" }, tag: "hr" });
+      expect(hr.box.minHeight).toBe(4);
+    });
     test("inherited and consumed ones are fine", () => {
       const declared = { color: "#111111", "font-size": "14px", "padding-top": "4px", display: "block", "background-color": "#fff" };
       expect(codesOf(run({}, { declared }).ctx)).toEqual([]);

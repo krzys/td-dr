@@ -20,9 +20,10 @@ hint. Client claims not confirmed in a real client are marked **unverified**.
   image preloads are dropped. `data-*` attributes survive the cascade (scoped CSS selects on them)
   and are dropped at serialization, `data-email` excepted. Unused classes are removed after emission.
 - **Legacy attributes** count as CSS that any author rule beats: `<body>` `bgcolor`, `text`,
-  `background` and `link` (every `a[href]`), so the shell takes the page colour from them. `vlink`
-  and `alink` are ignored. A `background` url is kept only when relative, `http(s):`, `cid:` or
-  `data:image/`, with quotes, parens and spaces percent-encoded.
+  `background` and `link` (every `a[href]`), so the shell takes the page colour from them; `<hr>`
+  `size`, `color`, `noshade`, `width` and `align`. `vlink` and `alink` are ignored. A `background`
+  url is kept only when relative, `http(s):`, `cid:` or `data:image/`, with quotes, parens and
+  spaces percent-encoded.
 
 ### Hints
 
@@ -210,6 +211,8 @@ several links in click tracking is **unverified**.
   misrenders in Outlook.
 - `<hr>` becomes an empty cell with a top border; gradient dividers fall back to a solid border. A
   `line-height:1px` divider renders thicker in Outlook without `mso-line-height-rule:exactly`.
+  Its legacy attributes draw it as Chromium does; with a percentage `width` it is measured
+  border-box, 2px narrower than in browsers. Inset edges are drawn solid (W001).
 - An author `<table>` passes through. The shell collapses every table's borders, so an author table
   with cell spacing or a `border` attribute gets `border-collapse:separate` inline. Centred by
   `align="center"`, auto side margins or a centring parent (`<center>`, `div align`), it keeps

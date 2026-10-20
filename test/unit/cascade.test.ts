@@ -557,4 +557,39 @@ describe("legacy attributes (presentational hints)", () => {
     const { html } = compile('<body background="https://img.example/bg.png" bgcolor="#102030"><p>x</p></body>');
     expect(html).toContain('background="https://img.example/bg.png"');
   });
+
+  test("hr size is its full thickness: 1px borders and the height between", () => {
+    expect(run('<hr size="6">', "hr").values["height"]).toBe("4px");
+    const thin = run('<hr size="1">', "hr").values;
+    expect(thin["border-bottom-width"]).toBe("0");
+    expect(thin["height"]).toBeUndefined();
+  });
+
+  test("hr color fills it and its solid borders; noshade alone is gray", () => {
+    const r = run('<hr color="#c2410c">', "hr").values;
+    expect([r["background-color"], r["border-top-color"], r["border-top-style"]]).toEqual(["#c2410c", "#c2410c", "solid"]);
+    const n = run("<hr noshade>", "hr").values;
+    expect([n["background-color"], n["border-top-color"], n["border-top-style"]]).toEqual(["gray", "gray", "solid"]);
+  });
+
+  test("hr width in px stays content-box; a percentage is border-box with the size as height", () => {
+    const px = run('<hr width="200" size="4">', "hr").values;
+    expect([px["width"], px["height"], px["box-sizing"]]).toEqual(["200px", "2px", undefined]);
+    const pc = run('<hr width="50%" size="4">', "hr").values;
+    expect([pc["width"], pc["height"], pc["box-sizing"]]).toEqual(["50%", "4px", "border-box"]);
+  });
+
+  test("hr width 0 is 1px as in Chromium; a width it can't read is left out", () => {
+    expect(run('<hr width="0">', "hr").values["width"]).toBe("1px");
+    expect(run('<hr width="abc">', "hr").values["width"]).toBeUndefined();
+  });
+
+  test("hr align sets its side margins; author css beats every hr attribute", () => {
+    const l = run('<hr align="LEFT" width="50%">', "hr").values;
+    expect([l["margin-left"], l["margin-right"]]).toEqual(["0", "auto"]);
+    const r = run('<hr align="right" width="50%">', "hr").values;
+    expect([r["margin-left"], r["margin-right"]]).toEqual(["auto", "0"]);
+    const css = run('<style>hr{width:100px;height:1px;background-color:#eee}</style><hr width="50%" size="8" color="red">', "hr").values;
+    expect([css["width"], css["height"], css["background-color"]]).toEqual(["100px", "1px", "#eee"]);
+  });
 });
