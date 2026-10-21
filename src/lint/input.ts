@@ -101,6 +101,7 @@ const URL_IN = /\burl\(\s*(["']?)([^"')]+)\1\s*\)/gi;
 // Where caniemail's first note is about something else (visibility: collapse on rows).
 const HINT: Readonly<Record<string, string>> = {
   "css-visibility": "Those clients show what it hides. To hide content everywhere use display:none, which td;dr drops from the output (I002).",
+  "css-color-scheme": "Those clients ignore it, but td;dr already took the light-dark() arms it picks; keep it, or narrow --targets.",
 };
 
 type Seen = { prop: string; loc: SrcLoc | undefined; els: Set<StyledElement>; values: Set<string> };

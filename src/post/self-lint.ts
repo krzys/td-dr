@@ -39,7 +39,6 @@ const ALLOWED: readonly Allowed[] = [
   { prop: /^-webkit-text-size-adjust$/, why: "iOS font inflation reset (apple-ios-quirks)" },
   { tag: set("table"), prop: /^height$/, value: /^\d+(\.\d+)?px$/, why: "vertical distribution in a min-height box; Yahoo reads it as min-height, which is what it means here (vertical-distribution)" },
   { prop: /^(color|background-color|border-(top|right|bottom|left)(-color)?|text-decoration-color|outline-color)$/, value: /(rgba|hsla)\(/, why: "the author's translucent colour that couldn't be flattened, already reported (W001) on input; the emitter never writes one itself, so this can't hide a bug of ours" },
-  { prop: /^(color|background-color|border-(top|right|bottom|left)(-color)?|text-decoration-color|outline-color)$/, value: /light-dark\(/, why: "the author's light-dark() colour, kept as written and reported on input (W005); the emitter never writes one itself" },
 ];
 
 const isAllowed = (tag: string, prop: string, value: string): boolean =>

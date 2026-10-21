@@ -369,9 +369,10 @@ A `light-dark()` value is lowered per screen, as browsers resolve it: the dark a
 element's `color-scheme` (inherited) lists `dark` and the reader asks for dark, or lists `dark`
 alone. Unset or `normal` is light, so without `color-scheme: light dark` on the root (or above the
 element) only the light arm is used; `only light` keeps the light arm too, and `dark` alone takes
-the dark arm on the light page as well. `color-scheme` itself is not written out (W001). The dark
-arms become dark rules like the author's own; in a `:hover` rule or a width `@media` below the
-design width there is no dark rule to hold one, so it takes the same arm in both modes (W001).
+the dark arm on the light page as well. `color-scheme` itself is not written out on a box (W001); on
+passed-through text it stays, and clients that ignore it are a W005 that says the arms are taken.
+The dark arms become dark rules like the author's own; in a `:hover` rule or a width `@media` below
+the design width there is no dark rule to hold one, so it takes the same arm in both modes (W001).
 
 | Client | Forced dark without author styles | `prefers-color-scheme` |
 |---|---|---|

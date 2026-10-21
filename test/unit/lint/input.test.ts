@@ -48,6 +48,13 @@ describe("lintInput", () => {
     expect(d?.hint).toMatch(/^Those clients show what it hides.*display:none.*I002/);
   });
 
+  it("color-scheme on text says its light-dark() arms are already taken, not to drop it", () => {
+    const [d] = run(el("p", { "color-scheme": "only light" }), { "css-color-scheme": N });
+    expect(d).toMatchObject({ code: "W005", message: "color-scheme isn't supported in Outlook" });
+    expect(d?.hint).toMatch(/light-dark\(\) arms/);
+    expect(d?.hint).not.toMatch(/drop the property/);
+  });
+
   it("a becomes I003 with the note", () => {
     const [d] = run(el("div", { opacity: "0.5" }), { "css-opacity": { status: "a", clients: ["Gmail"], notes: ["Partial."] } });
     expect(d).toMatchObject({ code: "I003", severity: "info", hint: "Partial." });
