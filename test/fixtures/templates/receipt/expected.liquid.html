@@ -15,6 +15,9 @@ img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicub
 a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
 u + #body a { color:inherit; text-decoration:none; }
 </style>
+<!--[if mso]>
+<style>p,h1{mso-line-height-rule:exactly;}</style>
+<![endif]-->
 </head>
 <body id="body" style="margin:0;padding:0;background-color:#f1f5f9;">
 <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:transparent;opacity:0">Receipt {{ order.id | escape }}: {{ order.total | escape }}&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
@@ -50,10 +53,10 @@ u + #body a { color:inherit; text-decoration:none; }
 <td bgcolor="#ffffff" style="padding:24px;background-color:#ffffff;border-radius:10px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
 <tr>
-<td style="padding:0 0 4px 0;"><h1 style="font-family:Arial, Helvetica, sans-serif;color:#0f172a;font-size:22px;font-weight:bold;line-height:28px;mso-line-height-rule:exactly;margin:0">Thanks, {{ user.name | escape }}</h1></td>
+<td style="padding:0 0 4px 0;"><h1 style="font-family:Arial, Helvetica, sans-serif;color:#0f172a;font-size:22px;font-weight:bold;line-height:28px;margin:0">Thanks, {{ user.name | escape }}</h1></td>
 </tr>
 <tr>
-<td style="padding:0 0 16px 0;"><p style="font-family:Arial, Helvetica, sans-serif;color:#64748b;font-size:14px;line-height:20px;mso-line-height-rule:exactly;margin:0">Placed on {{ order.date | escape }}</p></td>
+<td style="padding:0 0 16px 0;"><p style="font-family:Arial, Helvetica, sans-serif;color:#64748b;font-size:14px;line-height:20px;margin:0">Placed on {{ order.date | escape }}</p></td>
 </tr>
 {% if paid and paid != 0 and paid != "" %}
 <tr>
@@ -74,7 +77,7 @@ u + #body a { color:inherit; text-decoration:none; }
 <td bgcolor="#fff7ed" style="padding:14px;background-color:#fff7ed;border-radius:6px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
 <tr>
-<td style="padding:0 0 8px 0;"><p style="font-family:Arial, Helvetica, sans-serif;color:#9a3412;font-size:14px;line-height:20px;mso-line-height-rule:exactly;margin:0">Payment of {{ order.total | escape }} is still open.</p></td>
+<td style="padding:0 0 8px 0;"><p style="font-family:Arial, Helvetica, sans-serif;color:#9a3412;font-size:14px;line-height:20px;margin:0">Payment of {{ order.total | escape }} is still open.</p></td>
 </tr>
 <tr>
 <td><!--[if mso]><v:roundrect href="{{ order.payUrl | escape }}" xmlns:w="urn:schemas-microsoft-com:office:word" style="height:40px;v-text-anchor:middle;width:99px;" arcsize="15%" stroke="f" fillcolor="#ea580c"><w:anchorlock/><center style="color:#ffffff;font-family:Arial, Helvetica, sans-serif;font-size:14px;">Pay now</center></v:roundrect><![endif]-->
@@ -162,7 +165,7 @@ u + #body a { color:inherit; text-decoration:none; }
 </td>
 </tr>
 <tr>
-<td style="padding:16px 8px 0 8px;"><p style="font-family:Arial, Helvetica, sans-serif;color:#64748b;font-size:12px;text-align:center;line-height:18px;mso-line-height-rule:exactly;margin:0">Questions about {{ order.id | escape }}? <a href="mailto:{{ support.email | escape }}" style="color:#475569;text-decoration:underline">{{ support.email | escape }}</a></p></td>
+<td style="padding:16px 8px 0 8px;"><p style="font-family:Arial, Helvetica, sans-serif;color:#64748b;font-size:12px;text-align:center;line-height:18px;margin:0">Questions about {{ order.id | escape }}? <a href="mailto:{{ support.email | escape }}" style="color:#475569;text-decoration:underline">{{ support.email | escape }}</a></p></td>
 </tr>
 </table>
 </td>

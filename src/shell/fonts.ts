@@ -68,7 +68,7 @@ const declared = (fonts: FontRules, links: string[]): { names: Map<string, strin
   return { names: out, blind };
 };
 
-const MSO_TAGS = ["body", "table", "td", "th", "p", "a", "li", "span", "div", "h1", "h2", "h3", "h4", "h5", "h6"];
+export const MSO_TAGS = ["body", "table", "td", "th", "p", "a", "li", "span", "div", "h1", "h2", "h3", "h4", "h5", "h6"];
 const MSO_SELECTORS = MSO_TAGS.join(",");
 
 // Font stacks of the elements that hold text: how many do, how many of those the Outlook

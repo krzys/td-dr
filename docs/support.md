@@ -631,7 +631,10 @@ How the emitter answers:
 - **`mso-*` properties:** `mso-line-height-rule:exactly` beside every px `line-height` (never on a
   cell holding only images, or on an inline-block, which Word takes as a run); `mso-table-lspace` /
   `rspace: 0pt` against gaps beside nested tables; `mso-padding-alt` for button and spacer cells;
-  `mso-hide:all` for hidden content.
+  `mso-hide:all` for hidden content. Where every `p`, `h1`–`h6`, `a`, `span`, … of an email has
+  that rule (and saying it once is smaller), one type-selector rule in an Outlook-only head
+  `<style>` replaces the inline copies; that it reaches the same elements is checked on the HTML,
+  not rendered in Outlook. Filler cells and any tag with one element without it keep it inline.
 - **Spacing:** margins become cell padding, `margin: 0 auto` becomes `align="center"`;
   `border-collapse: collapse` avoids white seams around painted cells.
 - **Empty cells** render taller than set (and WebKit collapses a cell with no content): spacer and

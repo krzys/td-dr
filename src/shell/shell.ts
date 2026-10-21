@@ -2,6 +2,7 @@ import type { Ctx } from "../ctx.ts";
 import { ghostClose, ghostOpen, OFFICE_SETTINGS } from "../emit/mso.ts";
 import type { Emitted } from "../emit/types.ts";
 import type { DocMeta } from "../parse/html.ts";
+import { hoistLineRule } from "./line-rule.ts";
 
 const esc = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -37,6 +38,27 @@ export const shell = (emitted: Emitted, meta: DocMeta, ctx: Ctx, fontHead: strin
   // what every cell inherits where the client sets a base line height (docs/support.md#text-styles)
   const outerStyle = `width:100%;line-height:normal;${bg ? `background-color:${bg};` : ""}`;
 
+  const body = hoistLineRule(
+    [
+      // no class: Roundcube scopes head rules under its body class, which an authored one replaces (docs/support.md#the-email-shell)
+      `<body id="body" style="${bodyStyle}">`,
+      ...(meta.preheader ? [preheaderDiv(meta.preheader)] : []),
+      `<div role="article" aria-roledescription="email" lang="${lang}"${dir}>`,
+      `<table ${TABLE} width="100%"${outerAttrs} style="${outerStyle}">`,
+      '<tr><td align="center" style="padding:0;">',
+      ghostOpen(width, "center"),
+      `<table ${TABLE} width="100%" style="width:100%;max-width:${width}px;table-layout:fixed;">`,
+      // LiteHTML (and reportedly Word) carry the centring align into nested tables: the content cell states the document's side (docs/support.md#the-email-shell)
+      `<tr><td style="text-align:${meta.dir?.toLowerCase() === "rtl" ? "right" : "left"};">${emitted.html}</td></tr>`,
+      "</table>",
+      ghostClose(),
+      "</td></tr>",
+      "</table>",
+      "</div>",
+      "</body>",
+    ].join("\n"),
+  );
+
   const head = [
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
@@ -49,6 +71,7 @@ export const shell = (emitted: Emitted, meta: DocMeta, ctx: Ctx, fontHead: strin
     `<style>\n${RESET_CSS}\n</style>`,
   ];
   if (fontHead) head.push(fontHead);
+  if (body.head) head.push(body.head);
   if (emitted.headCss.length > 0) head.push(`<style>\n${emitted.headCss.join("\n")}\n</style>`);
   if (rules) head.push(`<style>\n${rules.css}\n</style>`);
 
@@ -58,22 +81,7 @@ export const shell = (emitted: Emitted, meta: DocMeta, ctx: Ctx, fontHead: strin
     "<head>",
     ...head,
     "</head>",
-    // no class: Roundcube scopes head rules under its body class, which an authored one replaces (docs/support.md#the-email-shell)
-    `<body id="body" style="${bodyStyle}">`,
-    ...(meta.preheader ? [preheaderDiv(meta.preheader)] : []),
-    `<div role="article" aria-roledescription="email" lang="${lang}"${dir}>`,
-    `<table ${TABLE} width="100%"${outerAttrs} style="${outerStyle}">`,
-    '<tr><td align="center" style="padding:0;">',
-    ghostOpen(width, "center"),
-    `<table ${TABLE} width="100%" style="width:100%;max-width:${width}px;table-layout:fixed;">`,
-    // LiteHTML (and reportedly Word) carry the centring align into nested tables: the content cell states the document's side (docs/support.md#the-email-shell)
-    `<tr><td style="text-align:${meta.dir?.toLowerCase() === "rtl" ? "right" : "left"};">${emitted.html}</td></tr>`,
-    "</table>",
-    ghostClose(),
-    "</td></tr>",
-    "</table>",
-    "</div>",
-    "</body>",
+    body.body,
     "</html>",
   ].join("\n");
 };

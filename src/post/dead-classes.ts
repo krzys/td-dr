@@ -1,9 +1,9 @@
 import { FIELD_OPEN } from "../template/tokens.ts";
 
 // After inlining, an input class only matters if a <style> block in the output selects it.
-const TAG = /<[a-zA-Z][^\s>/]*(?:"[^"]*"|'[^']*'|[^>"'])*>/g;
+export const TAG = /<[a-zA-Z][^\s>/]*(?:"[^"]*"|'[^']*'|[^>"'])*>/g;
 // one attribute at a time, so class= inside another attribute's value is never touched
-const ATTR = /(\s+)([^\s"'>/=]+)(?:(\s*=\s*)(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
+export const ATTR = /(\s+)([^\s"'>/=]+)(?:(\s*=\s*)(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
 
 // CSS escapes: up to six hex digits plus one optional space, or any other single character.
 const ESC = String.raw`\\(?:[0-9a-fA-F]{1,6}[ \t\n\r\f]?|[^\n])`;
