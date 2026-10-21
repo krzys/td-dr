@@ -39,7 +39,7 @@ located at the deepest element.
 | emit | `src/emit/` | `emit(ir, ctx) → { html, headCss, background? }`. Emitters see IR, never CSS layout properties. |
 | responsive | `src/responsive/` | Compiles each other screen and diffs it with the base ([support.md](support.md#head-styles)). |
 | shell | `src/shell/` | The document around the body ([support.md](support.md#the-email-shell)). |
-| post | `src/post/` | Removes classes no rule targets, self-lints the output (W006 means a compiler bug), reads and strips trace markers. |
+| post | `src/post/` | Removes classes no rule targets, says four written-out sides (padding, margin, border, radius) as their shorthand, self-lints the output (W006 means a compiler bug), reads and strips trace markers. |
 | template | `src/template/write.ts` | `writeTemplate(html, dialect, report)`. Nothing before it knows a dialect ([templates.md](templates.md)). |
 | wrap | `src/post/wrap.ts` | `wrapLines(html, ctx)`. The last step: keeps every line under SMTP's 998 bytes without changing what renders, or reports W019 ([support.md](support.md#size-limits)). |
 
