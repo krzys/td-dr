@@ -14,7 +14,7 @@ const SKIP = new Set(["head", "title", "style", "script", "noscript", "template"
 // always a paragraph of their own
 const PARAGRAPH = new Set(["p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "dl", "blockquote", "table", "hr", "pre", "figure"]);
 // a paragraph when they hold one, a line otherwise
-const BOX = new Set(["div", "td", "th", "tr", "center", "section", "article", "header", "footer", "main", "nav", "aside", "caption", "dt", "dd", "figcaption", "address"]);
+const BOX = new Set(["div", "tbody", "thead", "tfoot", "tr", "td", "th", "center", "section", "article", "header", "footer", "main", "nav", "aside", "caption", "dt", "dd", "figcaption", "address"]);
 const HIDDEN = /(?:^|;)\s*(?:display\s*:\s*none|mso-hide\s*:\s*all)\s*(?:!important\s*)?(?:;|$)/i;
 const DISPLAY_BLOCK = /(?:^|;)\s*display\s*:\s*(?:block|flex|grid|list-item|table)\s*(?:!important\s*)?(?:;|$)/i;
 

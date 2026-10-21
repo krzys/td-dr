@@ -214,6 +214,11 @@ describe("toText", () => {
     expect(out).toContain("\n10. b\n");
   });
 
+  it("puts a block tag before a table's first row on its own line, the row right under it", () => {
+    const html = '<table role="presentation">{{#each items}}<tr><td><table role="presentation"><tr><td><p>{{name}}</p></td></tr></table></td></tr>{{/each}}</table>';
+    expect(body(html)).toBe("{{#each items}}\n{{name}}\n\n{{/each}}\n");
+  });
+
   it("is what a compiled email reads as", () => {
     const { html } = compile('<h1>Hi</h1><p>Read <a href="https://ex.test/">this</a>.</p><ul><li>One</li><li>Two</li></ul>');
     expect(toText(html)).toBe("Hi\n==\n\nRead this (https://ex.test/).\n\n- One\n- Two\n");
