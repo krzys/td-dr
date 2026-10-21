@@ -420,6 +420,19 @@ describe("buildEmails", () => {
     expect(readdirSync(to)).toEqual(["fine.handlebars.html"]);
   });
 
+  it.each([true, false])("writes nothing for a template that would lose a field, verify %s", async (verify) => {
+    const tier = 'export const lang = "en";\nexport const template = ["handlebars"];\nexport default function Tier({ user }) {\n  return <><title>Tier</title><p className={user.tier}>Hi {user.name}</p></>;\n}\n';
+    const dir = folder({ "tier/index.jsx": tier, "tier/default.json": '{ "user": { "tier": "gold", "name": "Ada" } }', "fine/index.jsx": tier.replace("className={user.tier}", ""), "fine/default.json": '{ "user": { "name": "Ada" } }' });
+    const to = out();
+    const results = await buildEmails({ dir, root: repo, out: to, verify });
+    expect(results.map((r) => [r.email, r.dialect ?? null, r.error ?? null, r.diagnostics.map((d) => d.code)])).toEqual([
+      ["fine", "handlebars", null, []],
+      ["tier", "handlebars", "its handlebars template would lose what a field fills in (E013); nothing written", ["E013"]],
+    ]);
+    expect(results[1]!.diagnostics[0]!.message).toMatch(/^class="\{\{user\.tier\}\}" on <p> comes from a field/);
+    expect(readdirSync(to)).toEqual(["fine.handlebars.html"]);
+  });
+
   it("reports a strict compile error once per dialect, the same with verify on or off", async () => {
     const dir = folder({ "abs/index.jsx": ABSOLUTE, "abs/a.json": '{ "n": 1 }', "abs/b.json": '{ "n": 2 }' });
     const on = await buildEmails({ dir, root: repo, out: out() });

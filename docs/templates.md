@@ -233,6 +233,9 @@ its own data sets (`*.json` beside it):
 4. A difference is E016 naming the email, data set, dialect and first differing line; so is data
    that doesn't meet a dialect's needs. The file is not written. `--no-verify` skips the check.
 
+A template with an E012 or E013 error (above: a construct or field td;dr can't keep where it is) is
+not written either, verify on or off: the platform would fill it in wrong.
+
 Normalization compares what a reader sees: one line per node, whitespace collapsed (in CSS, dropped
 beside `;`, `{` and `}`, where the line wrap may break), attributes sorted; plain full-width
 padding-only wrapper tables dissolve into the surrounding cell (or become the outside gap of a

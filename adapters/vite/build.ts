@@ -23,7 +23,7 @@ export type BuildResult = {
   dialect?: DialectName;
   file?: string;
   skipped?: string;
-  error?: string; // rendering threw; nothing was written for it
+  error?: string; // rendering threw, or the template would lose a field; nothing was written for it
   assets?: string[]; // names written to <out>/assets
   diagnostics: Diagnostic[];
 };
@@ -53,7 +53,9 @@ const outFiles = (pattern: string, out: string, emails: EmailEntry[]): Map<strin
 };
 
 // Every template email, once per dialect, named by `fileName` inside `out`. Files are written even
-// with error diagnostics, like `tddr build in.html`; the caller decides what an error means.
+// with error diagnostics, like `tddr build in.html`, and the caller decides what an error means;
+// except a template that would lose what a field fills in (E012, E013): the ESP would send it wrong.
+const LOSES_FIELD = new Set(["E012", "E013"]);
 export const buildEmails = async (o: BuildOptions): Promise<BuildResult[]> => {
   const emails = findEmails(o.dir);
   const out = resolve(o.out);
@@ -83,6 +85,12 @@ export const buildEmails = async (o: BuildOptions): Promise<BuildResult[]> => {
       for (const dialect of email.template) {
         try {
           const t = templates.get(dialect) ?? (await compileTemplate(vite, email, dialect, o));
+          const lost = [...new Set(t.diagnostics.filter((d) => d.severity === "error" && LOSES_FIELD.has(d.code)).map((d) => d.code))];
+          if (lost.length) {
+            const error = `its ${dialect} template would lose what a field fills in (${lost.join(", ")}); nothing written`;
+            results.push({ email: email.name, dialect, error, diagnostics: [...checked.splice(0), ...t.diagnostics] });
+            continue;
+          }
           const file = files.get(`${email.name}\0${dialect}`)!;
           mkdirSync(dirname(file), { recursive: true });
           writeFileSync(file, t.template);
