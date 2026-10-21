@@ -199,6 +199,8 @@ const paintedCellsOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell, c
             : [
                 ["width", widthCss],
                 ["min-width", c.noShrink && fixed ? widthCss : undefined],
+                // as in columnCell: the grow column's width:100% would squeeze it to its longest word
+                ["white-space", r.nowrapAuto && "auto" in c.width ? "nowrap" : undefined],
                 ["height", minH !== undefined ? `${minH}px` : undefined],
               ]) as Array<[string, string | undefined]>),
           ["background-color", b.background],

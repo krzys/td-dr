@@ -291,7 +291,7 @@ describe("a box some screen paints or pads keeps one structure", () => {
     ["a stretched column's fill added", `${flex} @media (max-width:480px){.l{background-color:#eeeeee}}`, ".t-0 { background-color:#eeeeee !important; }"],
     ["a stretched card's padding added", `${flex} .l{background-color:#eeeeee} @media (max-width:480px){.l{padding:8px}}`, ".t-0 { padding:8px !important; }"],
     ["a stretched column's fill gone in dark", `${flex} .l{background-color:#eeeeee} @media (prefers-color-scheme:dark){.l{background-color:transparent}}`, "[data-ogsb] .t-0 { background-color:transparent !important; }"],
-    ["a stacking label's border and padding dropped", `${flex} .l{border-right:1px solid #cccccc;padding-right:8px} @media (max-width:480px){.row{flex-direction:column}.l{border:0;padding:0}}`, ".t-0 { border-right:none !important;"],
+    ["a stacking label's border and padding dropped", `${flex} .l{border-right:1px solid #cccccc;padding-right:8px} @media (max-width:480px){.row{flex-direction:column}.l{border:0;padding:0}}`, "border-right:none !important; display:block !important; width:100% !important; }"],
   ])("%s", (_name, css, rule) => {
     const out = compile(W(css, row), { lang: "en" });
     expect(out.diagnostics.filter((d) => d.code === "E017")).toEqual([]);
