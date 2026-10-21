@@ -45,6 +45,7 @@ const all = (doc: Doc<FakeEl>, tag: string) => [...doc.querySelectorAll(tag)];
 
 const response = (r: Partial<RenderResponse> & Pick<RenderResponse, "input" | "html">): RenderResponse => ({
   source: r.input,
+  text: "",
   diagnostics: [],
   assets: [],
   size: { bytes: r.html.length, limit: 102_000 },

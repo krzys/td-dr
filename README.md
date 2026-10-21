@@ -128,7 +128,7 @@ In a template render props are symbolic: printing one writes a field, `.map` a l
 `&&`, `||`, `!`, comparisons, early returns and `switch` write conditional blocks; Vue's `v-if` /
 `v-for` work the same way. `tddr/react` and `tddr/vue` also export `If`, `ElseIf`, `Else`, `Each`
 and `render(Component, props)`; `tddr/vite` exports the Vite plugin and `buildEmails`,
-`renderEmail`, `createEmailServer`, `findEmails`.
+`renderEmail` (the compiled `html` and its plain-text part, `text`), `createEmailServer`, `findEmails`.
 
 ## Support and limits
 

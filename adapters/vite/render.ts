@@ -1,6 +1,6 @@
 import { stripVTControlCharacters } from "node:util";
 import { isRunnableDevEnvironment, normalizePath, type RunnableDevEnvironment, type ViteDevServer } from "vite";
-import { compile, preview, type CompileOptions, type Diagnostic, type DialectName, type TraceEntry } from "../../src/index.ts";
+import { compile, preview, toText, type CompileOptions, type Diagnostic, type DialectName, type TraceEntry } from "../../src/index.ts";
 import { codes } from "../../src/diagnostics/codes.ts";
 import { startTags } from "../../src/template/tags.ts";
 import { placeAssets, type Placed } from "./assets.ts";
@@ -226,6 +226,7 @@ const renderTemplate = async (vite: ViteDevServer, email: EmailEntry, o: RenderO
     source,
     input: t.input,
     html,
+    text: toText(html),
     template: t.template,
     diagnostics: t.diagnostics,
     filled,
@@ -259,5 +260,5 @@ export const renderEmail = async (vite: ViteDevServer, email: EmailEntry, o: Ren
   const { component, css } = await loadEmail(vite, email);
   const placed = withAssets(vite, unmark(sourcePage(css, await renderMarkup(email, component, data, vite))).page, o);
   const out = compile(placed.page, { ...optionsFor(email, o.compile), trace: true });
-  return { source: placed.page, input: placed.page, html: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics, ...titled(out.html)], assets: placed.files, ...(out.trace && { trace: out.trace }) };
+  return { source: placed.page, input: placed.page, html: out.html, text: toText(out.html), diagnostics: [...placed.diagnostics, ...out.diagnostics, ...titled(out.html)], assets: placed.files, ...(out.trace && { trace: out.trace }) };
 };

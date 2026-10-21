@@ -63,7 +63,7 @@ beforeEach(() => {
   render = vi.fn<DevDeps["renderEmail"]>(async (_e, o) => {
     if ((o.data as { boom?: boolean }).boom) throw Object.assign(new Error("boom"), { frame: "> 1 | x", loc: { file: "/x.tsx", line: 1, column: 2 } });
     const page = `<p>${JSON.stringify(o.data)}</p>`;
-    return { source: page, input: page, html: "<table></table>", diagnostics: [], assets: [] };
+    return { source: page, input: page, html: "<table></table>", text: "", diagnostics: [], assets: [] };
   });
 });
 
@@ -93,6 +93,7 @@ describe("dev server api", () => {
       source: '<p>{"name":"Ada"}</p>',
       input: '<p>{"name":"Ada"}</p>',
       html: "<table></table>",
+      text: "",
       diagnostics: [],
       assets: [],
       size: { bytes: 15, limit: GMAIL_CLIP_BYTES },
@@ -112,6 +113,7 @@ describe("dev server api", () => {
       source: "<p>a</p>",
       input: "<p>a</p>",
       html: "<p>a</p>",
+      text: "a\n",
       template: "<p>a</p>",
       diagnostics: [],
       assets: [],
@@ -165,7 +167,7 @@ describe("dev server api", () => {
   });
 
   it("measures the compiled email in UTF-8 bytes against the compiler's clipping limit", async () => {
-    render.mockResolvedValueOnce({ source: "", input: "", html: "é".repeat(51_001), diagnostics: [], assets: [] });
+    render.mockResolvedValueOnce({ source: "", input: "", html: "é".repeat(51_001), text: "", diagnostics: [], assets: [] });
     await start();
     const r = await api("/__tddr/api/render", { method: "POST", json: { email: "welcome" } });
     expect(r.body.size).toEqual({ bytes: 102_002, limit: 102_000 });

@@ -45,6 +45,7 @@ describe("renderEmail, html mode", () => {
     expect(r.html).toMatch(/<span style="[^"]*color:#4f46e5/);
     expect(r.template).toBeUndefined();
     expect(r.filled).toBeUndefined();
+    expect(r.text).toBe("Hello Ada\n=========\n\ntea\n\ncake\n\nnew\n");
   });
 
   it("renders a Vue single-file email with its scoped styles", async () => {
@@ -72,6 +73,9 @@ describe.each(["handlebars", "liquid"] as const)("renderEmail, %s mode", (mode) 
     expect(r.template).toContain(field);
     expect(r.template).toContain(open);
     expect(text(r.html)).toBe("Hello Ada. Green tea for $9 Teapot for $30");
+    // the plain-text part of the filled email
+    expect(r.text).not.toContain("{");
+    expect(r.text.replace(/\s+/g, " ").trim()).toBe("Hello Ada. Green tea for $9 Teapot for $30");
     expect(r.source).toContain(".deal { padding: 12px; background: #fef3c7; }");
     expect(text(r.source)).toBe("Hello Ada. Green tea for $9 Teapot for $30");
   });

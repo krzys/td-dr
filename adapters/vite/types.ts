@@ -26,6 +26,7 @@ export type Rendered = {
   source: string; // the component's own markup + collected CSS as a full page, data applied
   input: string; // exactly what was compiled; diagnostic locations point into it
   html: string; // the compiled email, data applied
+  text: string; // html as its plain-text part (toText); the template's own is toText(template)
   template?: string; // the compiled template before filling (dialect modes)
   diagnostics: Diagnostic[];
   filled?: "engine" | "preview"; // dialect modes: real engine, or preview() when it isn't installed
