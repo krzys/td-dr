@@ -4,9 +4,12 @@
 // anything display:none or mso-hide:all) and Outlook-only conditionals are left out. {{ }} and {% %}
 // are kept as written, so the ESP fills the text part like the HTML; a block tag between rows gets
 // a line of its own, with any blank line before it, so a section that drops out takes its own away.
+// Given the template's dialect, fields fill unescaped (a text part has no &amp;) and a Liquid block
+// tag takes its line break with it, as Handlebars does for a tag on a line of its own.
 import { parse as parse5 } from "parse5";
 import { adapter } from "parse5-htmlparser2-tree-adapter";
 import { children, findElement, isComment, isElement, isText, type DomElement, type DomNode } from "../parse/dom.ts";
+import type { DialectName } from "../template/dialects.ts";
 
 export const TEXT_WIDTH = 78;
 
@@ -49,6 +52,17 @@ const protect = (html: string, tags: string[]): string => {
     .replace(/&(?:#0*123|#[xX]0*7[bB]|lbrace|lcub);/g, OPEN_BRACE)
     .replace(/&(?:#0*125|#[xX]0*7[dD]|rbrace|rcub);/g, CLOSE_BRACE);
 };
+
+// {{x}} -> {{{x}}}, {{~x}} -> {{~{x}}}; not a block tag, a comment, a partial or an escaped \{{
+const HB_FIELD = /(?<![\\{])(\\*)\{\{(~?)(?!\s*(?:[{#/^!>&*~]|else\b))((?:(?!\}\})[\s\S])*?)(~?)\}\}/g;
+// {{ x | escape }} -> {{ x }}: Liquid escapes nothing unless asked
+const LIQUID_ESCAPE = /(\{\{-?(?:(?!\}\})[\s\S])*?)\s*\|\s*escape\s*(-?\}\})/g;
+const unescaped = (html: string, template: DialectName | undefined): string =>
+  template === "handlebars"
+    ? html.replace(HB_FIELD, (m, bs: string, open: string, inner: string, close: string) => (bs.length % 2 ? m : `${bs}{{${open}{${inner}}${close}}}`))
+    : template === "liquid"
+      ? html.replace(LIQUID_ESCAPE, "$1 $2")
+      : html;
 
 const braces = (s: string): string =>
   s
@@ -106,7 +120,7 @@ const wrap = (line: string, width: number): string[] => {
 };
 
 type Part = { lines: string[]; gap: number; wrapped: boolean };
-type State = { tags: string[]; lastHref?: string | undefined; inLink: boolean };
+type State = { tags: string[]; lastHref?: string | undefined; inLink: boolean; template?: DialectName | undefined };
 
 // Lines and the gap before each run of them: 1 a line break, 2 a blank line, the larger of what
 // the two sides ask for. After a block tag the next line follows directly.
@@ -239,7 +253,7 @@ const render = (n: DomNode, o: Out): void => {
     if (!n.data.startsWith(TAG_MARK)) return;
     const tag = st.tags[Number(n.data.slice(TAG_MARK.length))] ?? "";
     if (inlineSide(n, -1) || inlineSide(n, 1)) o.text(tag);
-    else o.push([tag], 1, 1, { tag: true });
+    else o.push([st.template === "liquid" ? tag.replace(/\s*(?<!-)%\}$/, " -%}") : tag], 1, 1, { tag: true });
     return;
   }
   if (!isElement(n) || hidden(n)) return;
@@ -337,9 +351,11 @@ const closest = (el: DomElement, name: string): DomElement | undefined => {
   return undefined;
 };
 
-export const toText = (html: string): string => {
-  const st: State = { tags: [], inLink: false };
-  const doc = parse5(protect(html, st.tags), { treeAdapter: adapter });
+export type TextOptions = { template?: DialectName }; // the dialect the email was compiled for
+
+export const toText = (html: string, options: TextOptions = {}): string => {
+  const st: State = { tags: [], inLink: false, template: options.template };
+  const doc = parse5(protect(unescaped(html, options.template), st.tags), { treeAdapter: adapter });
   const body = findElement(doc, (el) => el.name === "body") ?? doc;
   const lines = sub(st, TEXT_WIDTH, (o) => renderChildren(body, o));
   const text = lines.join("\n").replace(/\u00a0/g, " ");

@@ -587,7 +587,10 @@ line (`|` between the cells of a data table). A link or button says `label (url)
 that is the label; a `mailto:` or `tel:` address is said once. Images give their alt; empty alt and
 spacers give nothing. The preheader, `display: none` and `mso-hide: all` content and Outlook-only
 conditionals are left out. `{{ }}` and `{% %}` stay as written, a block tag between rows on a line of its
-own; a field the template HTML-escapes stays escaped in the text, so `&` arrives as `&amp;`.
+own. Given the dialect the email was compiled for, `toText(html, { template: "handlebars" })` (or
+`"liquid"`) has the ESP fill fields unescaped, `{{{x}}}` and `{{ x }}` without `| escape`, so `&` arrives
+as `&`, and a Liquid block tag takes its line break with it (`-%}`), as Handlebars does for a tag on a
+line of its own. Without it a field the template HTML-escapes stays escaped in the text.
 
 ## Outlook and MSO
 

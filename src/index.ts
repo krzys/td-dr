@@ -10,7 +10,7 @@ export type { DialectName } from "./template/dialects.ts";
 export { preview } from "./template/preview.ts";
 export { field } from "./template/tokens.ts";
 export { writeString } from "./template/write.ts";
-export { toText } from "./post/plain-text.ts";
+export { toText, type TextOptions } from "./post/plain-text.ts";
 export { defineConfig, type TddrConfig } from "./config.ts";
 
 export type { TraceEntry } from "./post/trace.ts";

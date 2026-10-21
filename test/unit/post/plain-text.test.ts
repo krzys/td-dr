@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { compile, toText } from "../../../src/index.ts";
+import { compile, toText, type DialectName } from "../../../src/index.ts";
+import { dataSets, expand, goldenName, templateDialects } from "../../harness/template-fixture.ts";
+import { isActive, loadFixtures } from "../../harness/fixture-runner.ts";
 
 const golden = (path: string) => readFileSync(new URL(`../../fixtures/${path}`, import.meta.url), "utf8");
 const BLOCK_TAG = /(?<!\\)\{\{~?\s*(?:[#^/]|else\b)[\s\S]*?\}\}|\{%[\s\S]*?%\}/g;
@@ -102,6 +104,33 @@ describe("toText on goldens", () => {
         for (const f of text.match(/\{\{[^}]*\}?\}?/g) ?? []) expect(f, `${name} ${dialect}`).toMatch(/\}\}$/);
       }
     }
+  });
+
+  it("a template's text part fills unescaped, the same in both dialects", () => {
+    // every string with an & and a < in it, as a name or a note would
+    const special = (v: unknown): unknown =>
+      typeof v === "string" ? `${v} & <i>` : Array.isArray(v) ? v.map(special) : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, special(x)])) : v;
+    // literal-braces aside: there a brace beside a field gets a space in Handlebars only
+    const both = loadFixtures().filter((f) => isActive(f) && f.intent.expect === "compile" && templateDialects(f)?.length === 2 && f.name !== "literal-braces");
+    expect(both.length).toBeGreaterThan(30);
+    for (const f of both) {
+      const dialects = templateDialects(f)!;
+      for (const [set, props] of dataSets(f)) {
+        const data = special(props) as Record<string, unknown>;
+        const fill = (d: DialectName) => expand(toText(golden(`${f.feature}/${f.name}/${goldenName(dialects, d)}`), { template: d }), d, data);
+        const [hb, liquid] = [fill("handlebars"), fill("liquid")];
+        // the same lines but where the tags' own lengths wrap them
+        const unwrapped = (t: string) => t.replace(/(?<!\n)\n(?!\n)/g, " ");
+        expect(unwrapped(liquid), `${f.name} ${set}`).toBe(unwrapped(hb));
+        expect(hb, `${f.name} ${set}`).not.toMatch(/&(?:amp|lt|gt|quot|#x?[0-9a-f]+);/i);
+        expect(hb, `${f.name} ${set}`).not.toMatch(/\n\n\n/);
+      }
+    }
+    const receipt = (d: DialectName, props: string) =>
+      expand(toText(golden(`templates/receipt/expected.${d}.html`), { template: d }), d, special(JSON.parse(golden(`templates/receipt/${props}`))) as Record<string, unknown>);
+    expect(receipt("handlebars", "props.json")).toContain("\nThanks, Ada & <i>\n");
+    expect(receipt("handlebars", "props.json")).toContain("\nPlaced on May 3, 2026 & <i>\n\nPaid with Card 4242 & <i>. No further action needed.\n\nSencha tea & <i>\n");
+    expect(receipt("liquid", "props.due.json")).toContain("\nPlaced on June 9, 2026 & <i>\n\nPayment of $9.00 & <i> is still open.\n\nPay now (https://shop.test/pay/A-2001 & <i>)\n\nMatcha & <i>\n");
   });
 
   it("literal-braces: escapes stay, an entity brace beside a field doesn't make {{{", () => {
@@ -222,6 +251,14 @@ describe("toText", () => {
   it("keeps a tag that closes beside an inline tag on that line", () => {
     const html = '<table role="presentation"><tr><td>{{name}}{{#if a}}{{#if b}}<b> (b)</b>{{/if}}{{/if}}\n</td></tr></table><p>next</p>';
     expect(body(html)).toBe("{{name}}{{#if a}}{{#if b}} (b){{/if}}{{/if}}\n\nnext\n");
+  });
+
+  it("given the dialect, writes fields the engine fills unescaped, leaving block tags and escapes", () => {
+    const hb = '<p>{{a}} {{ b.c }} {{~d~}} {{{e}}} {{&f}} \\{{g}} \\\\{{h}} {{!note}}</p><p>{{#if x}}y{{else}}z{{/if}}</p>';
+    expect(toText(hb, { template: "handlebars" })).toBe("{{{a}}} {{{ b.c }}} {{~{d}~}} {{{e}}} {{&f}} \\{{g}} \\\\{{{h}}} {{!note}}\n\n{{#if x}}y{{else}}z{{/if}}\n");
+    expect(toText(hb)).toContain("{{a}} {{ b.c }}");
+    const liquid = '<p>{{ a | escape }} {{ "{" }} {{- b | default: "x" | escape -}}</p><table role="presentation">{% if x %}<tr><td>y</td></tr>{%- endif -%}</table>';
+    expect(toText(liquid, { template: "liquid" })).toBe('{{ a }} {{ "{" }} {{- b | default: "x" -}}\n\n{% if x -%}\ny\n{%- endif -%}\n');
   });
 
   it("is what a compiled email reads as", () => {
