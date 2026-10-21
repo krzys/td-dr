@@ -6,7 +6,8 @@ import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
 import type { DomElement } from "../parse/dom.ts";
 import { fontFace, fontImport, isSilent, supportsHolds, unsafeFace } from "./at-rules.ts";
-import { asksDark, inMedia, keepsTextLive, TOP, usableQueries, type EnvScope } from "./conditions.ts";
+import { hasLightDark } from "./colors.ts";
+import { asksDark, hoverCombined, inMedia, keepsTextLive, TOP, usableQueries, type EnvScope } from "./conditions.ts";
 import type { Decl, Declare, ViewportNotes } from "./declarations.ts";
 import { canInline, matchRule, type Select, type Sel } from "./match.ts";
 import type { MediaQuery } from "./media.ts";
@@ -34,7 +35,7 @@ export type Collected = {
   registered: Map<string, Registered>;
   fonts: FontRules;
   queries: MediaQuery[]; // of @media some env can satisfy, in source order
-  dark: boolean; // a dark-mode rule lands
+  dark: boolean; // a dark-mode rule or a light-dark() value lands
   hover: boolean; // a :hover rule some env applies
   liveText: boolean; // vw text that can apply below the design width
   order: number; // declarations seen, so style="" ones come after
@@ -54,6 +55,18 @@ const register = (run: Run, name: string): number => {
   return run.layers.length - 1;
 };
 
+// Hover and narrower width styles have no dark twin (docs/support.md#dark-mode), so light-dark() there takes one arm.
+const oneArm = (own: readonly Declaration[], where: string, scope: Scope, run: Run): void => {
+  for (const n of own) {
+    if (!hasLightDark(n.value)) continue;
+    run.ctx.diagnostics.report("W001", {
+      message: `${n.prop}: light-dark() in ${where} takes the same arm in light and dark mode`,
+      hint: "Hover and width styles can't be combined with a dark mode query; give the rule a colour that reads in both, or put the light-dark() in a plain rule.",
+      loc: locAt(scope.origin, n),
+    });
+  }
+};
+
 const styleRule = (rule: Rule, scope: Scope, run: Run): void => {
   const own = rule.nodes.filter((n): n is Declaration => n.type === "decl");
   const hasContent = own.some((n) => n.prop.toLowerCase() === "content");
@@ -62,6 +75,8 @@ const styleRule = (rule: Rule, scope: Scope, run: Run): void => {
   if (parents?.length === 0) return;
   const m = matchRule(rule, parents, own.length, hasContent, scope.env, run.env, locAt(scope.origin, rule), run.select, run.ctx);
   if (m.hoverSeen) run.out.hover = true;
+  if (scope.env.possible && m.hoverLands && !hoverCombined(scope.env)) oneArm(own, "a :hover rule", scope, run);
+  else if (scope.env.possible && scope.env.width && scope.env.below && m.sels.some((sel) => sel.hits.length > 0)) oneArm(own, "a width @media", scope, run);
   walk(rule, { ...scope, env: { ...scope.env, hover: scope.env.hover || m.hoverLands }, depth: scope.depth + 1, rule: m.sels }, run);
 };
 
@@ -142,6 +157,7 @@ const walk = (container: Container, scope: Scope, run: Run): void => {
   });
   const sels = scope.rule ?? [];
   if (asksDark(scope.env) && decls.length > 0 && sels.length > 0) run.out.dark = true;
+  if (scope.env.possible && decls.some((d) => hasLightDark(d.value)) && sels.some((sel) => sel.hits.length > 0)) run.out.dark = true;
   if (keepsTextLive(scope.env) && decls.some((d) => d.textVw) && sels.some((sel) => sel.hits.length > 0)) run.out.liveText = true;
   if (!scope.env.live) return;
   const applied = sels.filter((sel) => sel.kind === "static");

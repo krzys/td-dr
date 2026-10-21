@@ -1,0 +1,14 @@
+<style>
+  :root { color-scheme: light dark; --card: light-dark(#ffffff, #1d2126); --ink: light-dark(#1f2328, #e6edf3); }
+  .wrap { max-width: 600px; margin: 0 auto; padding: 24px; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; }
+  .card { background-color: var(--card); color: var(--ink); padding: 20px; border: 1px solid light-dark(#d0d7de, #30363d); }
+  .title { margin: 0 0 8px; font-size: 22px; line-height: 28px; font-weight: bold; color: light-dark(hsl(212 92% 45%), #58a6ff); }
+  .note { margin: 16px 0 0; padding: 12px; color-scheme: only light; background-color: light-dark(#fff8c5, #3b2e00); color: light-dark(#3b2e00, #fff8c5); }
+</style>
+<div class="wrap">
+  <div class="card">
+    <div class="title">Trail report</div>
+    <p style="margin: 0;">Both colour schemes come from one declaration each.</p>
+  </div>
+  <p class="note">This note is light in either scheme.</p>
+</div>

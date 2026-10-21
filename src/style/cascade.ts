@@ -145,7 +145,7 @@ export const cascade = (doc: ParsedDoc, ctx: Ctx, env: Env): CascadeOutput => {
     },
     vwOf: (el) => vwIn(won.elements.get(el), () => directionOf(el)),
     pseudoOf: (host) => pseudo.get(host) ?? [],
-    conditions: conditionsOf(rules.queries, { dark: rules.dark, hover: rules.hover, liveText: rules.liveText || inline.liveText }, width),
+    conditions: conditionsOf(rules.queries, { dark: rules.dark || inline.dark, hover: rules.hover, liveText: rules.liveText || inline.liveText }, width),
     fonts: rules.fonts,
   };
 };

@@ -87,6 +87,7 @@ E008s fail the build.
 | `em`, `rem`, `%` font sizes | px. `rem` is the root's computed font size (16px by default); in media queries `em` / `rem` are 16px. |
 | `vw`, `vmin`, `vmax`, `clamp()`, `min()`, `max()` | Resolved at the [design width](#design-width) (I006). Text sizes stay live in a narrow-screen head rule; layout values are fixed. `vh` is E006. |
 | `hsl()`, `oklch()`, `color-mix()`, other modern colours (`rgb()` with commas stays; in space syntax it is lowered too) | Hex or `rgba()`. Translucent colours are flattened over a known solid backdrop; over an image or gradient they stay as written (W001). |
+| `light-dark()` | The light arm inline, the dark arm a [dark rule](#dark-mode); one without two arms is W001. |
 | Logical properties, `dir` | Physical sides by the resolved direction ([right-to-left](#right-to-left-text)). |
 | `::before` / `::after` with static `content` | Written as text. Other pseudo-elements, and `::before` under a state (`:hover::before`), warn (W001). |
 | `@media` width and `prefers-color-scheme`, `:hover` | [Head styles](#head-styles). Other media features warn. Other states (`:focus`, `:default`, `:invalid`…) are skipped (W001), not syntax errors. |
@@ -305,13 +306,13 @@ rule with ` !important`.
 
 ### Screens
 
-The cascade evaluates `@media` and `:hover` against a screen (viewport, dark, hover). The base is
-desktop: wide (an unbounded viewport, so no `max-width` query matches), light, no hover. The
-author's rules decide the others: one per width range their queries split (`min-width`,
-`max-width`, range syntax, `screen` / `all`, `and`; the screen's viewport is the range's maximum),
-one dark and one hover, both at desktop width. Each screen is compiled from the same parse and
-diffed with the base tag by tag (`src/responsive/`); the changed declarations become classes
-`t-<n>`, width rules widest first.
+The cascade evaluates `@media`, `:hover` and `light-dark()` against a screen (viewport, dark,
+hover). The base is desktop: wide (an unbounded viewport, so no `max-width` query matches), light,
+no hover. The author's rules decide the others: one per width range their queries split
+(`min-width`, `max-width`, range syntax, `screen` / `all`, `and`; the screen's viewport is the
+range's maximum), one dark (also for a `light-dark()` value) and one hover, both at desktop width.
+Each screen is compiled from the same parse and diffed with the base tag by tag
+(`src/responsive/`); the changed declarations become classes `t-<n>`, width rules widest first.
 
 Every compile has one structure ([how](architecture.md#several-screens-one-structure)): an element
 shown on some screens only is kept everywhere and hidden where it is `none`, and a row that stacks
@@ -363,6 +364,14 @@ head rules with `[data-ogsc]` (colour) / `[data-ogsb]` (background) mirrors for 
 Outlook apps (selectors `[attr] .cls`, never `.cls[attr]`), plus the colour-scheme metas. Apple
 Mail may invert pure `#ffffff` when the meta is present without dark styles, hence metas only with
 dark rules. Gmail's dark mode can't be controlled from CSS.
+
+A `light-dark()` value is lowered per screen, as browsers resolve it: the dark arm only where the
+element's `color-scheme` (inherited) lists `dark` and the reader asks for dark, or lists `dark`
+alone. Unset or `normal` is light, so without `color-scheme: light dark` on the root (or above the
+element) only the light arm is used; `only light` keeps the light arm too, and `dark` alone takes
+the dark arm on the light page as well. `color-scheme` itself is not written out (W001). The dark
+arms become dark rules like the author's own; in a `:hover` rule or a width `@media` below the
+design width there is no dark rule to hold one, so it takes the same arm in both modes (W001).
 
 | Client | Forced dark without author styles | `prefers-color-scheme` |
 |---|---|---|

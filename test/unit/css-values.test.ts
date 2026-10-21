@@ -117,6 +117,14 @@ describe("colour lowering", () => {
     expect(lowerColors("1px solid oklch(0.5 0.1 100)")).toBe("1px solid #71640b");
   });
 
+  test("light-dark() takes the arm for the scheme, arms lowered too", () => {
+    expect(lowerColors("light-dark(#fff, #000)")).toBe("#fff");
+    expect(lowerColors("light-dark(#fff, #000)", undefined, "dark")).toBe("#000");
+    expect(lowerColors("1px solid light-dark(rgb(1, 2, 3), hsl(0 0% 20%))", undefined, "dark")).toBe("1px solid #333333");
+    expect(lowerColors("light-dark(light-dark(#111, #222), #333)")).toBe("#111");
+    expect(lowerColors("light-dark(#fff)")).toBe("light-dark(#fff)");
+  });
+
   test("plain values are untouched", () => {
     expect(lowerColors("#abc")).toBe("#abc");
     expect(lowerColors("rgb(1, 2, 3)")).toBe("rgb(1, 2, 3)");
@@ -151,6 +159,12 @@ describe("computeValues", () => {
     expect(style.color).toBeUndefined();
     expect(codesOf(ctx)).toEqual(["W001"]);
     expect(ctx.diagnostics.list()[0]?.hint).toMatch(/hex/);
+  });
+
+  test("a light-dark() that has no two arms is dropped with a W001", () => {
+    const { style, ctx } = run({ color: "light-dark(#fff)" });
+    expect(style.color).toBeUndefined();
+    expect(codesOf(ctx)).toEqual(["W001"]);
   });
 
   test("colour-looking text in strings and urls is kept", () => {

@@ -5,6 +5,7 @@ import type { ParsedDoc } from "../parse/html.ts";
 import { removedControl } from "../sanitize/sanitize.ts";
 import { backdropOf, flattenStyle, translucentLeft, type RGB } from "./alpha.ts";
 import { cascade } from "./cascade.ts";
+import type { Scheme } from "./colors.ts";
 import { computeValues } from "./inherit.ts";
 import { materialize, type CascadedElement } from "./materialize.ts";
 import { INITIAL_FONT_SIZE, isLive, parsePx, publicValue, relativeLive } from "./units.ts";
@@ -60,6 +61,17 @@ const liveSize = (style: ComputedStyle, authored: string | undefined, parent: Co
   return live ? { ...style, "font-size": live } : style;
 };
 
+// color-scheme is inherited; light-dark() takes the dark arm only where it lists dark and the reader
+// asks for dark, or lists dark alone. Unset is normal, which is light (docs/support.md#dark-mode).
+const schemeOf = (own: string | undefined, up: string | undefined): string | undefined => {
+  const v = own?.trim().toLowerCase();
+  return v === undefined || v === "inherit" || v === "unset" || v === "revert" ? up : v;
+};
+const usedScheme = (colorScheme: string | undefined, dark: boolean): Scheme => {
+  const k = colorScheme?.split(/\s+/) ?? [];
+  return k.includes("dark") && (dark || !k.includes("light")) ? "dark" : "light";
+};
+
 // Elements are told apart across parses by where they start in the source.
 export const elementKey = (loc: { line: number; col: number } | undefined): string | undefined => (loc ? `${loc.line}:${loc.col}` : undefined);
 
@@ -73,15 +85,18 @@ export const computeStyles = (doc: ParsedDoc, ctx: Ctx, env: Env = DESKTOP, show
 
   // so `html { font-family }` reaches body; rem is the root's font-size everywhere below it
   const root = doc.body.parent;
-  const rootRaw = root && isElement(root) ? computeValues(query.styleOf(root), undefined, ctx, locOf(root), "root") : undefined;
+  const rootScheme = root && isElement(root) ? schemeOf(query.styleOf(root).values["color-scheme"], undefined) : undefined;
+  const rootRaw = root && isElement(root) ? computeValues(query.styleOf(root), undefined, ctx, locOf(root), "root", usedScheme(rootScheme, env.dark)) : undefined;
   const rem = parsePx(rootRaw?.["font-size"]) ?? INITIAL_FONT_SIZE;
 
   // children inherit the authored colours (`raw`); what's emitted is flattened over the backdrop
-  const element = (el: CascadedElement, parentRaw: ComputedStyle | undefined, parent: ComputedStyle | undefined, behind: RGB | undefined, vwVars: ReadonlySet<string>): StyledElement => {
+  // `upScheme`: the color-scheme it inherits
+  const element = (el: CascadedElement, parentRaw: ComputedStyle | undefined, parent: ComputedStyle | undefined, behind: RGB | undefined, vwVars: ReadonlySet<string>, upScheme: string | undefined): StyledElement => {
     const loc = el.loc;
     const c = el.cascaded;
     const key = elementKey(loc);
-    const computed = liveSize(currentColor(blockify(computeValues(c, parentRaw, ctx, loc, rem), parentRaw)), c.values["font-size"], parentRaw);
+    const scheme = schemeOf(c.values["color-scheme"], upScheme);
+    const computed = liveSize(currentColor(blockify(computeValues(c, parentRaw, ctx, loc, rem, usedScheme(scheme, env.dark)), parentRaw)), c.values["font-size"], parentRaw);
     // the items below are laid out as a row's, so a row blockifies them
     const asRow = key === undefined ? undefined : stacked?.get(key)?.(computed);
     const raw = asRow?.style ?? computed;
@@ -107,7 +122,7 @@ export const computeStyles = (doc: ParsedDoc, ctx: Ctx, env: Env = DESKTOP, show
       if (v !== undefined) declared[p] = v;
     }
     const kids: StyledNode[] = [];
-    for (const n of el.children) kids.push(n.type === "element" ? element(n, raw, style, inner, vars) : { ...n });
+    for (const n of el.children) kids.push(n.type === "element" ? element(n, raw, style, inner, vars, scheme) : { ...n });
     const shownAs = key === undefined ? undefined : shownElsewhere?.get(key);
     const hidden = shownAs !== undefined && style["display"] === "none";
     const out: StyledElement = {
@@ -134,5 +149,5 @@ export const computeStyles = (doc: ParsedDoc, ctx: Ctx, env: Env = DESKTOP, show
   }
   const body = materialize(doc.body, query, doc.stateOnly);
   // the source is seen on a white page unless html says otherwise
-  return { body: element(body, rootRaw, rootStyle, backdropOf(rootStyle ?? {}, [255, 255, 255]), rootVars), conditions, fonts };
+  return { body: element(body, rootRaw, rootStyle, backdropOf(rootStyle ?? {}, [255, 255, 255]), rootVars, rootScheme), conditions, fonts };
 };

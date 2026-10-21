@@ -251,6 +251,10 @@ describe("blockRule", () => {
       const hr = run({ height: "4px", overflow: "hidden" }, { declared: { height: "4px" }, tag: "hr" });
       expect(hr.box.minHeight).toBe(4);
     });
+    test("color-scheme says it was read for light-dark(), not ignored", () => {
+      const { ctx } = run({ "color-scheme": "only light" }, { declared: { "color-scheme": "only light" } });
+      expect(ctx.diagnostics.list().map((d) => [d.code, d.message])).toEqual([["W001", "color-scheme: only light is not written out; it only picks the light-dark() arms"]]);
+    });
     test("inherited and consumed ones are fine", () => {
       const declared = { color: "#111111", "font-size": "14px", "padding-top": "4px", display: "block", "background-color": "#fff" };
       expect(codesOf(run({}, { declared }).ctx)).toEqual([]);

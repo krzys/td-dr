@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "color-scheme isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 13,
+      "col": 3
+    }
+  }
+]

@@ -58,8 +58,9 @@ located at the deepest element.
 
 ### Several screens, one structure
 
-Author `@media`, dark and `:hover` rules can't be carried through the IR, because passes move
-properties between elements. So the pipeline compiles once per screen and compares outputs:
+Author `@media`, dark and `:hover` rules and `light-dark()` values can't be carried through the
+IR, because passes move properties between elements. So the pipeline compiles once per screen and
+compares outputs:
 
 1. The input is parsed and sanitized once; every screen cascades the same document.
 2. A quiet probe cascade finds the design width; the screens the author's rules distinguish are

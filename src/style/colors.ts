@@ -4,7 +4,7 @@
 import { transform } from "lightningcss";
 import { mapUnprotected, PROTECTED } from "./units.ts";
 
-export const MODERN_COLOR = /(?<![\w-])(?:oklch|oklab|lab|lch|hwb|color|color-mix)\(/i;
+export const MODERN_COLOR = /(?<![\w-])(?:oklch|oklab|lab|lch|hwb|color|color-mix|light-dark)\(/i;
 // what we lower: the modern ones, hsl() in either syntax (LiteHTML can't parse it, Word isn't known to),
 // and rgb() in space syntax (older clients only read commas; alpha.ts reads the rgba() it becomes)
 const LOWERED = /(?<![\w-])(oklch|oklab|lab|lch|hwb|color|color-mix|hsla?|rgba?)\(/gi;
@@ -78,10 +78,32 @@ const lowerOne = (fn: string): string | undefined => {
   return out || undefined;
 };
 
+export type Scheme = "light" | "dark";
+export const hasLightDark = (value: string): boolean => /(?<![\w-])light-dark\(/i.test(unquoted(value));
+
+// light-dark(a, b) -> the arm for the used colour scheme (docs/support.md#dark-mode); a malformed one is left
+const chooseArm = (part: string, scheme: Scheme): string => {
+  const m = /(?<![\w-])light-dark\(/i.exec(part);
+  if (!m) return part;
+  const open = m.index + m[0].length;
+  let depth = 1;
+  let comma = -1;
+  let end = open;
+  for (; end < part.length; end++) {
+    if (part[end] === "(") depth++;
+    else if (part[end] === ")" && --depth === 0) break;
+    else if (part[end] === "," && depth === 1 && comma < 0) comma = end;
+  }
+  if (end >= part.length || comma < 0) return part;
+  const arm = (scheme === "dark" ? part.slice(comma + 1, end) : part.slice(open, comma)).trim();
+  return chooseArm(part.slice(0, m.index) + arm + part.slice(end + 1), scheme);
+};
+
 // Returns the value with colours lowered; one we can't lower comes back unchanged
 // (computeValues drops it with a W001). `current` is what currentColor means here.
-export const lowerColors = (value: string, current?: string): string =>
-  mapUnprotected(value, (part) => {
+export const lowerColors = (value: string, current?: string, scheme: Scheme = "light"): string =>
+  mapUnprotected(value, (raw) => {
+    const part = chooseArm(raw, scheme);
     let out = "";
     let at = 0;
     LOWERED.lastIndex = 0;

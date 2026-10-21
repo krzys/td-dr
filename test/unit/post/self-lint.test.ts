@@ -130,6 +130,7 @@ describe("selfLint", () => {
       expect.stringContaining("calc("),
     ]);
     expect(lint(page("<p>x</p>", "<style>@media (max-width:600px) { .a { color:oklch(0 0 0) } }</style>"))).toHaveLength(1);
+    expect(lint(page('<table role="presentation"><tr><td style="color:light-dark(#000, #fff)">x</td></tr></table>'))).toHaveLength(1);
   });
 
   it("leaves leftovers in author pass-through to the input lint", () => {

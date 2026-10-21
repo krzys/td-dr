@@ -279,3 +279,41 @@ describe("conditions", () => {
     expect(compile("p{color:red}").doc.fonts).toEqual({ imports: [], faces: [] });
   });
 });
+
+describe("light-dark()", () => {
+  test("the light arm, and the dark arm on the dark screen where color-scheme lists dark", () => {
+    const css = ":root{color-scheme:light dark; --ink:light-dark(#111111, #eeeeee)} p{color:var(--ink); border-top:1px solid light-dark(hsl(0 0% 80%), #333333)}";
+    const light = compile(css);
+    expect(light.color).toBe("#111111");
+    expect(find(light.doc.body, "p")?.style["border-top-color"]).toBe("#cccccc");
+    expect(light.doc.conditions.dark).toBe(true);
+    const dark = compile(css, env({ dark: true }));
+    expect(dark.color).toBe("#eeeeee");
+    expect(find(dark.doc.body, "p")?.style["border-top-color"]).toBe("#333333");
+    expect(codesOf(dark.ctx)).toEqual([]);
+  });
+
+  test("color-scheme decides, inherited: normal and only light keep the light arm, dark alone the dark one", () => {
+    const at = (scheme: string, e: Env) => compile(`div{${scheme}} p{color:light-dark(#111111, #eeeeee)}`, e, "<div><p>x</p></div>").color;
+    expect(at("", env({ dark: true }))).toBe("#111111");
+    expect(at("color-scheme:only light", env({ dark: true }))).toBe("#111111");
+    expect(at("color-scheme:light dark", env({ dark: true }))).toBe("#eeeeee");
+    expect(at("color-scheme:dark", DESKTOP)).toBe("#eeeeee");
+  });
+
+  test("in a :hover rule or a narrower width rule it has no dark rule to go to, and says so", () => {
+    const root = ":root{color-scheme:light dark}";
+    const messages = (css: string, body?: string) => compile(root + css, DESKTOP, body).ctx.diagnostics.list().map((d) => `${d.code} ${d.message}`);
+    const a = '<a class="cta" href="https://x.example/">go</a>';
+    expect(messages("a.cta:hover{background-color:light-dark(#ffffff, #000000)}", a)).toEqual(["W001 background-color: light-dark() in a :hover rule takes the same arm in light and dark mode"]);
+    expect(messages("@media (max-width:480px){p{color:light-dark(red, blue)}}")).toEqual(["W001 color: light-dark() in a width @media takes the same arm in light and dark mode"]);
+    // at or above the design width the dark screen covers it; a :hover that lands nowhere says nothing
+    expect(messages("@media (min-width:700px){p{color:light-dark(red, blue)}} a.none:hover{color:light-dark(red, blue)}", a)).toEqual([]);
+    expect(messages("@media (prefers-color-scheme:dark){p{color:light-dark(red, blue)}}")).toEqual([]);
+  });
+
+  test("a style attribute asks for the dark screen too", () => {
+    expect(compile("", DESKTOP, '<p style="color:light-dark(#111111, #eeeeee)">x</p>').doc.conditions.dark).toBe(true);
+    expect(compile("div p{color:light-dark(#111111, #eeeeee)}").doc.conditions.dark).toBe(false);
+  });
+});

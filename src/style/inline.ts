@@ -3,14 +3,17 @@ import postcss, { CssSyntaxError } from "postcss";
 import type { Ctx } from "../ctx.ts";
 import { findAllElements, locOf, type DomElement } from "../parse/dom.ts";
 import type { ParsedDoc } from "../parse/html.ts";
+import { hasLightDark } from "./colors.ts";
 import type { Decl, Declare, ViewportNotes } from "./declarations.ts";
 
 export type InlineDecls = { el: DomElement; decls: Decl[] };
 
-// In document order. `liveText`: one of them is vw text (docs/support.md#design-width).
-export const styleAttributes = (doc: ParsedDoc, declare: Declare, notes: ViewportNotes, ctx: Ctx): { found: InlineDecls[]; liveText: boolean } => {
+// In document order. `liveText`: one of them is vw text (docs/support.md#design-width);
+// `dark`: one is a light-dark() value (docs/support.md#dark-mode).
+export const styleAttributes = (doc: ParsedDoc, declare: Declare, notes: ViewportNotes, ctx: Ctx): { found: InlineDecls[]; liveText: boolean; dark: boolean } => {
   const found: InlineDecls[] = [];
   let liveText = false;
+  let dark = false;
   for (const el of findAllElements(doc.document, (e) => e.attribs["style"] !== undefined)) {
     let root;
     try {
@@ -32,11 +35,12 @@ export const styleAttributes = (doc: ParsedDoc, declare: Declare, notes: Viewpor
         for (const d of declare(n, () => locOf(el))) {
           notes(d, locOf(el));
           if (d.textVw) liveText = true;
+          if (hasLightDark(d.value)) dark = true;
           decls.push(d);
         }
       }
     });
     found.push({ el, decls });
   }
-  return { found, liveText };
+  return { found, liveText, dark };
 };

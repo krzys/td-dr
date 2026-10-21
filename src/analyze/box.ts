@@ -100,7 +100,9 @@ export const reportDropped = (el: StyledElement, ctx: Ctx): void => {
       }
       continue;
     }
-    ctx.diagnostics.report("W001", { message: `${prop}: ${value} is dropped`, loc: el.loc });
+    // the cascade reads it for light-dark() (docs/support.md#dark-mode)
+    const why = prop === "color-scheme" ? " is not written out; it only picks the light-dark() arms" : " is dropped";
+    ctx.diagnostics.report("W001", { message: `${prop}: ${value}${why}`, loc: el.loc });
   }
 };
 

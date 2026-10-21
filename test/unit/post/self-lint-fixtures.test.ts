@@ -12,11 +12,14 @@ describe("selfLint on real output", () => {
   }
 });
 
-describe("selfLint on author values kept as written", () => {
-  it("light-dark() is reported on input (W005), not as a compiler bug", () => {
+describe("selfLint on author values that are lowered", () => {
+  it("light-dark() reaches neither the output (W006) nor the input lint (W005)", () => {
     const html = '<!doctype html><html><head><style>.card{background-color:light-dark(#ffffff,#1d2126)}</style></head><body><div class="card" style="padding:16px">Hi</div></body></html>';
-    const codes = compile(html).diagnostics.map((d) => `${d.code} ${d.message}`);
+    const out = compile(html);
+    const codes = out.diagnostics.map((d) => `${d.code} ${d.message}`);
     expect(codes.filter((c) => c.startsWith("W006"))).toEqual([]);
-    expect(codes.some((c) => c.startsWith("W005 light-dark()"))).toBe(true);
+    expect(codes.filter((c) => c.startsWith("W005 light-dark()"))).toEqual([]);
+    expect(out.html).not.toContain("light-dark(");
+    expect(out.html).toContain("#ffffff");
   });
 });

@@ -2,7 +2,7 @@ import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
 import { isInherited, LEGACY_ALIGN } from "./props.ts";
 import { expandDeclaration, parsePending, toPhysical } from "./shorthands.ts";
-import { hasModernColor, lowerColors } from "./colors.ts";
+import { hasModernColor, lowerColors, type Scheme } from "./colors.ts";
 import { formatPx, INITIAL_FONT_SIZE, parsePx, reduceMath, resolveFontSize, toPx, type FontSizes } from "./units.ts";
 import { hasVar, resolveCustomProps, substituteVars } from "./vars.ts";
 import type { Cascaded, ComputedStyle } from "./types.ts";
@@ -21,6 +21,7 @@ export const computeValues = (
   ctx: Ctx,
   loc?: SrcLoc,
   rem: number | "root" = INITIAL_FONT_SIZE,
+  scheme: Scheme = "light",
 ): ComputedStyle => {
   const out: Record<string, string> = {};
   for (const [p, v] of Object.entries(parent ?? {})) if (isInherited(p)) out[p] = v;
@@ -106,12 +107,12 @@ export const computeValues = (
   // currentColor is the element's own colour; inside color itself it's the parent's
   const parentColor = parent?.["color"];
   const colorDecl = plain.findLast(([p]) => p === "color");
-  const own = colorDecl && lowerColors(colorDecl[1].trim(), parentColor);
+  const own = colorDecl && lowerColors(colorDecl[1].trim(), parentColor, scheme);
   const current = own && !hasModernColor(own) ? own : out["color"];
 
   for (const [p, v] of plain) {
     if (p === "font-size") continue;
-    const t = reduceMath(lowerColors(v.trim(), p === "color" ? parentColor : current), sizes);
+    const t = reduceMath(lowerColors(v.trim(), p === "color" ? parentColor : current, scheme), sizes);
     if (hasModernColor(t)) {
       report("W001", `${p} dropped: "${t}" can't be turned into a colour email clients read`, COLOR_HINT);
       continue;
