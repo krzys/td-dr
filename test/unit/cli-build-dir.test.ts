@@ -138,15 +138,30 @@ describe("tddr build <folder>", () => {
     expect(file.err()).toContain("--no-verify applies to a folder build");
   });
 
-  it("--text writes each template's plain-text part next to it", async () => {
+  it("--text writes each template's plain-text part next to it, its fields filled unescaped", async () => {
+    vi.mocked(buildEmails).mockResolvedValue([...ok, { email: "badge", dialect: "liquid", file: "/p/dist/emails/badge.liquid.html", diagnostics: [] }]);
     const written: Record<string, string> = {};
     const t = io();
-    t.io.readFile = (p) => (p === "/p/dist/emails/badge.handlebars.html" ? "<h1>Hi {{user.name}}</h1>" : "");
+    const html: Record<string, string> = {
+      "/p/dist/emails/badge.handlebars.html": "<h1>Hi {{user.name}}</h1>",
+      "/p/dist/emails/badge.liquid.html": "<h1>Hi {{ user.name | escape }}</h1>",
+    };
+    t.io.readFile = (p) => html[p] ?? "";
     t.io.writeFile = (p, s) => void (written[p] = s);
     expect(await run(["build", "emails", "--text"], t.io)).toBe(0);
-    expect(written).toEqual({ "/p/dist/emails/badge.handlebars.txt": "Hi {{user.name}}\n================\n" });
+    expect(written).toEqual({
+      "/p/dist/emails/badge.handlebars.txt": "Hi {{{user.name}}}\n==================\n",
+      "/p/dist/emails/badge.liquid.txt": "Hi {{ user.name }}\n==================\n",
+    });
     expect(t.out()).toBe(
-      ["wrote /p/dist/emails/badge.handlebars.html", "wrote /p/dist/emails/badge.handlebars.txt", "skipped plain: not a template", ""].join("\n"),
+      [
+        "wrote /p/dist/emails/badge.handlebars.html",
+        "wrote /p/dist/emails/badge.handlebars.txt",
+        "skipped plain: not a template",
+        "wrote /p/dist/emails/badge.liquid.html",
+        "wrote /p/dist/emails/badge.liquid.txt",
+        "",
+      ].join("\n"),
     );
   });
 

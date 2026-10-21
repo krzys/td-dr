@@ -6,7 +6,7 @@ import { parseArgs } from "node:util";
 import { loadConfig } from "./config-file.ts";
 import type { TddrConfig } from "./config.ts";
 import { LANG_TAG } from "./ctx.ts";
-import { compile, toText, type Diagnostic } from "./index.ts";
+import { compile, toText, type Diagnostic, type DialectName } from "./index.ts";
 import { jsonReport, sarifReport, type Reported } from "./diagnostics/report.ts";
 import { decodeCss, decodeHtml } from "./parse/decode.ts";
 import { UnknownTargetError } from "./targets/capabilities.ts";
@@ -101,7 +101,7 @@ type BuildEmails = (o: {
   verify?: boolean;
   compile: { strict: boolean; allowSvg?: boolean; targets?: string[]; width?: number; lang?: string };
 }) => Promise<
-  Array<{ email: string; entry?: string; dialect?: string; file?: string; skipped?: string; error?: string; assets?: string[]; diagnostics: Diagnostic[] }>
+  Array<{ email: string; entry?: string; dialect?: DialectName; file?: string; skipped?: string; error?: string; assets?: string[]; diagnostics: Diagnostic[] }>
 >;
 
 // "file:line:col: severity code: message", then the other places of one said for several, then the hint;
@@ -146,9 +146,9 @@ const verdict = (errors: boolean, warnings: number, maxWarnings: number | undefi
 const textFile = (html: string): string => `${html.replace(/\.html?$/i, "")}.txt`;
 
 // the plain-text part beside an HTML file the build wrote
-const writeText = async (file: string, io: CliIO, report: Reporter): Promise<void> => {
+const writeText = async (file: string, io: CliIO, report: Reporter, template?: DialectName): Promise<void> => {
   const txt = textFile(file);
-  await io.writeFile(txt, toText(text(await io.readFile(file), decodeHtml)));
+  await io.writeFile(txt, toText(text(await io.readFile(file), decodeHtml), template ? { template } : {}));
   report.progress(`wrote ${txt}\n`);
 };
 
@@ -194,7 +194,7 @@ const buildDir = async (
     if (r.file) report.progress(`wrote ${r.file}\n`);
     if (r.file && values.text) {
       try {
-        await writeText(r.file, io, report);
+        await writeText(r.file, io, report, r.dialect);
       } catch (e) {
         io.stderr(`tddr: ${(e as Error).message}\n`);
         return 2;
