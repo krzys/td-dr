@@ -35,10 +35,10 @@ const edgeIndex = (el: StyledElement, from: "first" | "last"): number | undefine
 
 export const hasRadius = (el: StyledElement): boolean => CORNERS.some((c) => Number.parseFloat(el.style[`border-${c}-radius`] ?? "0") > 0);
 
-// Only a stack or row becomes a box cell that can hold the clip. Links, images and text blocks (and the
-// painted-onto-the-cell paths they take) never do, so for them overflow stays a dropped property.
+// Only a stack or row becomes a box cell that can hold the clip, and a text block, whose box moves to a
+// wrapping stack's cell (passThrough). Links and images never do, so for them overflow stays a dropped property.
 const lowersToCell = (el: StyledElement): boolean =>
-  !INLINE_TAGS.has(el.tag) && !isTextBlock(el) && (isContainer(el) || isFlex(el) || isGrid(el));
+  !INLINE_TAGS.has(el.tag) && el.tag !== "hr" && (isTextBlock(el) || isContainer(el) || isFlex(el) || isGrid(el));
 
 const roundsEdges = (el: StyledElement): boolean =>
   clipsOverflow(el) && isContainer(el) && !/flex|grid/.test(el.style["display"] ?? "") && (edgeIndex(el, "first") !== undefined || edgeIndex(el, "last") !== undefined);

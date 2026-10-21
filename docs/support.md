@@ -221,7 +221,9 @@ table's spare height between the spacer rows is **unverified**.
 `overflow: hidden` is lowered in three shapes only; anything else is W001:
 
 1. A rounded box whose first or last child touches the edge: the child gets the corner radii.
-2. One line wider than its box (`white-space: nowrap`): a fixed-layout table whose cell clips.
+2. One line wider than its box (`white-space: nowrap`), on a block or a text element (`<p>`, a
+   heading): a fixed-layout table whose cell clips. A text element keeps `text-overflow` inline; on
+   a block it is dropped (W001).
 3. A fixed-size painted box with one smaller centred image (an icon in a circle): the image's cell
    is the box.
 

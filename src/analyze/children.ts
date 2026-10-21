@@ -212,8 +212,8 @@ export const passThrough = (source: StyledElement, ctx: Ctx): Node => {
   const line = onLine && el.parentStyle ? el.parentStyle : el.style;
   const inline: InlineNode = withLoc({ kind: "inline", html, style: textStyle(line), ...(restated ? { restated } : {}), margin: zeroSides() }, el.loc);
   if (!box) return { ...inline, margin };
-  const { padding, border, background, backgroundImage, minHeight, radius, width, maxWidth, align } = box;
-  const painted = !!background || !!backgroundImage || !!minHeight || !!radius || Object.keys(border ?? {}).length > 0;
+  const { padding, border, background, backgroundImage, minHeight, radius, clip, width, maxWidth, align } = box;
+  const painted = !!background || !!backgroundImage || !!minHeight || !!radius || !!clip || Object.keys(border ?? {}).length > 0;
   const sized = !!width || !!maxWidth || !!align;
   const hasPadding = padding.top || padding.right || padding.bottom || padding.left;
   if (!painted && !sized && !hasPadding) return { ...inline, margin };

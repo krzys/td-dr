@@ -196,8 +196,15 @@ describe("overflow: hidden", () => {
     expect(msgs.some((m) => /^W001 overflow: hidden is dropped/.test(m))).toBe(true);
   });
 
-  test("a text block (a <p>) is passed through: no clip is claimed", () => {
-    noClip(el("p", { display: "block", ...long({ width: "100px" }) }, [text("a very long line")]));
+  test("a text block (a <p>) clips its line on the cell its box moves to, and keeps text-overflow inline", () => {
+    const { node, messages } = run(el("p", { display: "block", ...long({ width: "100px", "text-overflow": "ellipsis" }) }, [text("a very long line")]));
+    expect(node).toMatchObject({ kind: "stack", box: { clip: true }, children: [{ kind: "inline" }] });
+    expect(JSON.stringify(node)).toContain("text-overflow:ellipsis");
+    expect(messages.filter((m) => m.startsWith("W003 overflow"))).toHaveLength(1);
+  });
+
+  test("a list keeps its box, so it never claims a clip", () => {
+    noClip(el("ul", { display: "block", ...long({}) }, [el("li", { display: "list-item" }, [text("a very long line")])]));
   });
 
   test("a flex item with nowrap + overflow gets box.clip", () => {
