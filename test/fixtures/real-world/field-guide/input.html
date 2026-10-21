@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pinewick Outfitters: the autumn field guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+@layer tokens, base, components, utilities;
+
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: oklch(0.62 0.16 45);
+}
+
+@layer tokens {
+  :root {
+    color-scheme: light dark;
+    --ink: oklch(0.24 0.02 250);
+    --paper: oklch(0.985 0.008 85);
+    --moss: oklch(0.52 0.09 140);
+    --bark: hsl(25 35% 32%);
+    --muted: color-mix(in oklch, var(--ink) 55%, var(--paper));
+    --line: color-mix(in srgb, var(--ink) 12%, transparent);
+    --card: light-dark(#ffffff, #1d2126);
+    --track: light-dark(#e1e0dc, #2e3033);
+    --radius: 0.875rem;
+    --space: 24px;
+  }
+}
+
+@layer base {
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 1rem/1.55 Inter, "Helvetica Neue", Arial, sans-serif;
+  }
+  h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-optical-sizing: auto; text-wrap: balance; margin: 0; }
+  h2 { font-size: 1.625rem; line-height: 1.2; letter-spacing: -0.01em; }
+  h3 { font-size: 1.0625rem; line-height: 1.3; }
+  p { margin: 0 0 1em; text-wrap: pretty; }
+  a { color: var(--accent); }
+  img { max-width: 100%; }
+}
+
+@layer components {
+  .letter {
+    max-width: 600px;
+    margin-inline: auto;
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px var(--space);
+    border-block-end: 1px solid var(--line);
+
+    & .nav { display: flex; gap: 18px; font-size: 0.8125rem; font-weight: 600; }
+    & .nav a { color: var(--ink); text-decoration: none; }
+    & .nav a:hover { color: var(--accent); text-decoration: underline wavy; }
+  }
+
+  .hero {
+    background:
+      linear-gradient(180deg, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0.55)),
+      url("https://img.example/600x400.png") center / cover no-repeat,
+      var(--bark);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 160px 32px 32px;
+    color: #fff;
+
+    & .glass {
+      background: rgb(255 255 255 / 0.14);
+      border: 1px solid rgb(255 255 255 / 0.3);
+      border-radius: 12px;
+      padding: 18px 20px;
+      max-width: 28rem;
+    }
+    & .kicker { font-size: 0.6875rem; letter-spacing: 0.18em; text-transform: uppercase; font-variant: small-caps; opacity: 0.85; }
+    & h1 { font-size: clamp(28px, 7vw, 44px); line-height: 1.05; text-shadow: 0 2px 12px rgb(0 0 0 / 0.4); }
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    &:hover { background: color-mix(in oklch, var(--accent) 80%, black); }
+  }
+
+  .section { padding: 28px var(--space); }
+  .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--moss); margin: 0 0 6px; }
+
+  .products { display: flex; gap: 12px; margin-top: 16px; }
+  .product {
+    flex: 1 1 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--card);
+
+    &:nth-child(odd) { background: color-mix(in oklch, var(--moss) 6%, var(--card)); }
+    &:has(.badge--sale) { border-color: var(--accent); }
+    &:not(.is-sold) .stock { color: var(--moss); }
+    & img { display: block; width: 100%; height: auto; }
+    & .body { padding: 12px 14px 14px; }
+    & .name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    & .blurb { font-size: 0.8125rem; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    & .price { font-variant-numeric: tabular-nums; font-weight: 700; }
+    & .was { text-decoration: line-through; color: var(--muted); font-weight: 400; margin-inline-start: 6px; }
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px 0;
+    background: var(--ink);
+    color: var(--paper);
+    clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+  }
+  .badge--sale { background: var(--accent); }
+
+  .article { text-align: justify; }
+  .pull {
+    margin: 0 0 1em;
+    padding-inline-start: 14px;
+    border-inline-start: 3px solid var(--accent);
+    font-style: italic;
+    overflow-wrap: break-word;
+  }
+  .side { display: flex; gap: 16px; align-items: stretch; margin-top: 20px; }
+  .side .label { font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); border-inline-end: 1px solid var(--line); padding-inline-end: 8px; }
+  .side .copy { flex: 1; }
+  .em { text-emphasis: filled circle var(--accent); text-emphasis-position: under right; }
+  mark { background: color-mix(in oklch, var(--accent) 25%, transparent); color: inherit; padding: 0 2px; border-radius: 2px; }
+  abbr[title] { text-decoration: underline dotted; }
+  .long { overflow-wrap: anywhere; word-break: break-word; font-size: 0.8125rem; }
+
+  .steps { list-style: none; padding: 0; margin: 0; }
+  .steps li { display: flex; gap: 12px; align-items: baseline; margin-bottom: 10px; }
+  .steps .n { font-family: Fraunces, Georgia, serif; font-weight: 700; color: var(--accent); min-width: 20px; }
+  .checks { padding-inline-start: 22px; margin: 12px 0 0; }
+  .checks li { list-style-image: url("https://img.example/12x12.png"); }
+
+  .specs { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.8125rem; line-height: 20px; caption-side: bottom; empty-cells: hide; }
+  .specs caption { padding-top: 8px; color: var(--muted); font-size: 0.75rem; text-align: start; }
+  .specs th, .specs td { padding: 8px 10px; text-align: start; border-block-end: 1px solid var(--line); }
+  .specs tr:nth-child(even) td { background: color-mix(in oklch, var(--ink) 4%, transparent); }
+  .specs td:last-child { text-align: end; font-variant-numeric: tabular-nums; width: 74px; }
+  .specs thead th { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+
+  .stats { display: grid; grid-template-columns: 120px 1fr; gap: 20px; align-items: center; }
+  .pie { width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(var(--accent) 0 62%, var(--moss) 62% 85%, var(--track) 85% 100%); }
+  .bar { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; margin: 6px 0 12px; }
+  .bar span { display: block; height: 10px; width: 62%; background: linear-gradient(90deg, var(--moss), var(--accent)); border-radius: inherit; }
+  .bar--b span { width: 23%; }
+
+  .event { display: flex; gap: 14px; padding: 14px 0; border-block-start: 1px dashed var(--line); }
+  .event .date { flex: 0 0 auto; width: 4.5em; text-align: center; border: 1px solid var(--line); border-radius: 8px; padding: 6px 0; line-height: 1.1; }
+  .event .day { display: block; font-family: Fraunces, Georgia, serif; font-size: 1.5rem; font-weight: 700; }
+  .event .mon { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  details { margin-top: 6px; font-size: 0.8125rem; }
+  summary { font-weight: 600; color: var(--accent); }
+
+  .rtl { direction: rtl; text-align: start; padding: 16px var(--space); margin-block: 0; background: color-mix(in oklch, var(--moss) 8%, var(--card)); border-inline-start: 4px solid var(--moss); }
+
+  .reel { display: flex; flex-wrap: wrap; gap: 12px; padding-bottom: 6px; }
+  .reel a { flex: 0 0 140px; }
+  .reel img { display: block; width: 140px; height: 140px; border-radius: 10px; }
+
+  .footer {
+    padding: 24px var(--space) 32px;
+    background: var(--ink);
+    color: color-mix(in oklch, var(--paper) 75%, transparent);
+    font-size: 0.75rem;
+    & a { color: var(--paper); }
+    & .cols { display: flex; gap: 24px; }
+    & .cols > * { flex: 1; }
+    & .social { display: flex; gap: 10px; margin-top: 12px; }
+    & .social img { width: 24px; height: 24px; border-radius: 50%; }
+    & .tiny { font-size: 10px; opacity: 0.7; }
+  }
+}
+
+@layer utilities {
+  .center { text-align: center; }
+  .muted { color: var(--muted); }
+  .mt { margin-top: 16px; }
+  .sr-only { display: inline-block; width: 1px; height: 1px; overflow: hidden; white-space: nowrap; font-size: 1px; line-height: 1px; color: var(--ink); }
+}
+
+@media (max-width: 600px) {
+  .masthead .nav { display: none; }
+  .hero { padding: 120px 20px 20px; }
+  .side { flex-direction: column; }
+  .side .label { border: 0; padding: 0; }
+  .stats { grid-template-columns: 1fr; }
+  .footer .cols { flex-direction: column; gap: 12px; }
+}
+@media (max-width: 420px) {
+  :root { --space: 16px; }
+  h2 { font-size: 1.375rem; }
+  .products { flex-direction: column; }
+  .product { flex-basis: auto; }
+}
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e9edf1; --paper: #121417; --line: rgb(255 255 255 / 0.12); }
+  .logo-light { display: none; }
+  .logo-dark { display: inline-block !important; }
+}
+</style>
+</head>
+<body>
+<div style="display: none; max-height: 0; overflow: hidden;" data-email="preheader">Twelve trails, three new jackets and the gear list we pack every October.&#8199;&#847;&zwnj;&nbsp;&#8199;&#847;&zwnj;&nbsp;&#8199;&#847;&zwnj;&nbsp;</div>
+
+<div class="letter">
+  <header class="masthead">
+    <a href="https://pinewick.example/?utm_source=email&amp;utm_medium=newsletter&amp;utm_campaign=autumn-26">
+      <picture>
+        <source srcset="https://img.example/132x28-dark.png" media="(prefers-color-scheme: dark)">
+        <img class="logo-light" src="https://img.example/132x28.png" srcset="https://img.example/264x56.png 2x" width="132" height="28" alt="Pinewick Outfitters">
+      </picture>
+      <img class="logo-dark" src="https://img.example/132x28-dark.png" width="132" height="28" alt="Pinewick Outfitters" style="display:none">
+    </a>
+    <nav class="nav" aria-label="Shop">
+      <a href="https://pinewick.example/new">New</a>
+      <a href="https://pinewick.example/trail">Trail</a>
+      <a href="https://pinewick.example/camp">Camp</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="glass">
+      <p class="kicker">Issue 14 · Autumn 2026</p>
+      <h1>Shorter days, longer trails</h1>
+      <p>Our autumn field guide: twelve routes worth the drive, the layers that earned a place in the pack, and a proper way to dry wet boots.</p>
+      <a class="btn" href="https://pinewick.example/guide">Read the guide&nbsp;→</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">Shop the edit</p>
+    <h2>Layers that pull their weight</h2>
+    <div class="products">
+      <div class="product">
+        <img src="https://img.example/360x240.png" width="360" height="240" alt="Ridgeline insulated jacket in rust">
+        <div class="body">
+          <span class="badge badge--sale">−25%</span>
+          <p class="name">Ridgeline insulated jacket, recycled ripstop shell</p>
+          <p class="blurb">Synthetic fill that stays warm when damp, two-way zip, a hood that fits over a helmet and packs into its own chest pocket.</p>
+          <p class="price">€149<span class="was">€199</span></p>
+          <p class="stock">In stock</p>
+        </div>
+      </div>
+      <div class="product is-sold">
+        <img src="https://img.example/360x240.png" width="360" height="240" alt="Fernway merino base layer in charcoal">
+        <div class="body">
+          <span class="badge">Sold out</span>
+          <p class="name">Fernway merino base layer</p>
+          <p class="blurb">190 g/m² merino, flatlock seams, thumb loops.</p>
+          <p class="price">€79</p>
+          <p class="stock">Back in November</p>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://img.example/360x240.png" width="360" height="240" alt="The Tarn rain shell packed into its pocket">
+        <div class="body">
+          <span class="badge">New</span>
+          <p class="name">Tarn 2.5-layer rain shell</p>
+          <p class="blurb">Fully taped seams, pit zips, 210 g.</p>
+          <p class="price">€119</p>
+          <p class="stock">In stock</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="journal">
+    <p class="eyebrow">From the journal</p>
+    <h2>Twelve routes worth the drive</h2>
+    <div class="article mt">
+      <p>October is the month the crowds thin out and the light goes gold by four. We asked the shop staff for the routes they keep coming back to, and the answers ran from a two-hour ridge loop to a three-day hut traverse. A few rules first: start early, carry a head torch even if you plan to be down by lunch, and tell someone where you are going.</p>
+      <p class="pull" lang="de">„Der Weg ist das Ziel“, sagte der Donaudampfschifffahrtsgesellschaftskapitän, und das gilt besonders im Herbst.</p>
+      <p>The full list is on <a href="https://pinewick.example/journal/twelve-routes-worth-the-drive-autumn-2026?utm_source=email&amp;utm_medium=newsletter&amp;utm_content=article-inline-link">our journal</a>, with <abbr title="GPS Exchange Format">GPX</abbr> files for each. Look for the <mark>new hut</mark> on route nine, and pack micro&shy;spikes for anything above 1,800 m after mid-month. Our team in Kyoto added one too: <span lang="ja">紅葉の季節は早朝が一番静かです。</span> <span class="em">Go early.</span></p>
+    </div>
+    <div class="side">
+      <p class="label" aria-hidden="true">Field notes</p>
+      <div class="copy">
+        <h3>A proper way to dry wet boots</h3>
+        <p class="muted">Pull the insoles, stuff with newspaper, change it every few hours, and keep them well away from the radiator. Leather cracks; glue lets go. Patience is cheaper than a new pair. 🥾 👩‍👩‍👧‍👦 👍🏽 🏳️‍🌈 café&#x301; naïve</p>
+        <p class="long">Map: https://maps.example/?q=47.3769,8.5417&amp;layers=terrain,huts,water&amp;zoom=13&amp;share=ZXhhbXBsZS1yb3V0ZS1uaW5lLXRoZS1sb25nLW9uZQ</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">Before you go</p>
+    <h2>The October checklist</h2>
+    <ol class="steps mt">
+      <li><span class="n">01</span><span>Check the forecast twice: the night before and at the trailhead.</span></li>
+      <li><span class="n">02</span><span>Pack a warm layer you think you won't need.</span></li>
+      <li><span class="n">03</span><span>Charge the head torch, then pack the spare batteries anyway.</span></li>
+    </ol>
+    <ul class="checks">
+      <li>Map and compass, even with a phone</li>
+      <li>1 litre of water per three hours</li>
+      <li>Emergency blanket</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">Compare</p>
+    <h2>Which shell?</h2>
+    <table class="specs mt">
+      <caption>Weights are for a men's medium. Prices include VAT.</caption>
+      <thead><tr><th scope="col">Shell</th><th scope="col">Layers</th><th scope="col">Weight</th><th scope="col">Price</th></tr></thead>
+      <tbody>
+        <tr><td>Tarn</td><td>2.5</td><td>210 g</td><td>€119</td></tr>
+        <tr><td>Ridgeline</td><td>3</td><td>395 g</td><td>€149</td></tr>
+        <tr><td>Fernway wind</td><td></td><td>95 g</td><td>€69</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">Your year in the hills</p>
+    <div class="stats">
+      <div class="pie" role="img" aria-label="62% hiking, 23% camping, 15% other"></div>
+      <div>
+        <p class="muted" style="margin:0">Hiking · 62%</p>
+        <div class="bar"><span></span></div>
+        <p class="muted" style="margin:0">Camping · 23%</p>
+        <div class="bar bar--b"><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">In the shop</p>
+    <h2>Come and say hello</h2>
+    <div class="event">
+      <div class="date"><span class="day">07</span><span class="mon">Nov</span></div>
+      <div>
+        <h3>Boot fitting evening</h3>
+        <p class="muted" style="margin:0">Friday 7 November 2026, 18:00–20:30 · 14 Harbour Street, Leith, Edinburgh EH6 6QA</p>
+        <details open>
+          <summary>What to bring</summary>
+          <p>The socks you hike in, and your current boots if you have them.</p>
+        </details>
+      </div>
+    </div>
+    <div class="event">
+      <div class="date"><span class="day">21</span><span class="mon">Nov</span></div>
+      <div>
+        <h3>Navigation basics, half day</h3>
+        <p class="muted" style="margin:0">Book on <a href="tel:+441315550192">0131 555 0192</a>, by <a href="sms:+447700900123?body=NAV%20basics">text</a> or <a href="mailto:shop@pinewick.example?subject=Navigation%20basics&amp;body=Hi%2C%20">email</a>. <a href="#journal">Read the routes first</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="rtl" dir="rtl" lang="he">
+    <h3>גם בעברית</h3>
+    <p style="margin:0">המדריך המלא זמין עכשיו גם בעברית. שאלות? כתבו ל־<bdi>shop@pinewick.example</bdi> או דברו עם <bdi lang="ar">ليلى</bdi> בחנות.</p>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">Seen on the trail</p>
+    <div class="reel">
+      <a href="https://pinewick.example/community/1"><img src="https://img.example/280x280.png" width="140" height="140" alt="Tent at dawn by a loch"></a>
+      <a href="https://pinewick.example/community/2"><img src="https://img.example/280x280.png" width="140" height="140" alt="Ridge in cloud"></a>
+      <a href="https://pinewick.example/community/3"><img src="https://img.example/280x280.png" width="140" height="140" alt="Boots drying by a stove"></a>
+      <a href="https://pinewick.example/community/4"><img src="https://img.example/280x280.png" width="140" height="140" alt="Map on a rock"></a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="cols">
+      <div>
+        <p><strong style="color:var(--paper)">Pinewick Outfitters</strong><br>14 Harbour Street, Edinburgh EH6 6QA</p>
+        <div class="social">
+          <a href="https://pinewick.example/social/a"><img src="https://img.example/48x48.png" width="24" height="24" alt="Pinewick on photo sharing"></a>
+          <a href="https://pinewick.example/social/b"><img src="https://img.example/48x48.png" width="24" height="24" alt="Pinewick on video"></a>
+          <a href="https://pinewick.example/social/c"><img src="https://img.example/48x48.png" width="24" height="24" alt="Pinewick on the forum"></a>
+        </div>
+      </div>
+      <div>
+        <p>You're getting this because you joined the field guide list. <a href="https://pinewick.example/preferences?u=8f3a&amp;l=autumn">Choose what you get</a> or <a href="https://pinewick.example/unsubscribe?u=8f3a&amp;l=autumn">unsubscribe</a>.</p>
+        <p class="tiny">Prices valid until 30 November 2026 while stock lasts. <span class="sr-only">End of email.</span></p>
+      </div>
+    </div>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,600 @@
+[
+  {
+    "code": "I007",
+    "severity": "info",
+    "message": "<picture> sources dropped, the <img> is used",
+    "hint": "A <picture> compiles as its <img>, so every client shows that one; Apple Mail, which picks a <source>, loses the choice too. Size the <img> for every client.",
+    "loc": {
+      "line": 232,
+      "col": 7
+    }
+  },
+  {
+    "code": "I006",
+    "severity": "info",
+    "message": "7vw resolved to 42px at the design width (600px)",
+    "hint": "vw, vmin and vmax were turned into px at the design width (the width option, else the email's root container width, else 600). Text sizes (font-size, line-height, letter-spacing...) stay live on phones that read media queries; layout values (width, padding, margin, gap) are fixed at the design width, so use % or px where they should flex.",
+    "loc": {
+      "line": 89,
+      "col": 12
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Translucent colour kept as written (background-color: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.3)): it sits over a gradient, photo or colour td;dr can't resolve",
+    "hint": "Outlook ignores rgba(); use a solid colour here.",
+    "loc": {
+      "line": 246,
+      "col": 5
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "<details> has no disclosure widget in most email clients: its content shows expanded",
+    "hint": "Apple Mail may keep it collapsible; elsewhere the summary and content are always visible. Drop <details> or write the content as plain blocks.",
+    "loc": {
+      "line": 359,
+      "col": 9
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (23 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 229,
+      "col": 1
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "max-width is only partly supported in Outlook Windows (2 places)",
+    "hint": "Partial. Only works on `<table>` elements.",
+    "loc": {
+      "line": 234,
+      "col": 9
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "linear-gradient() isn't supported in Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Android (3 places)",
+    "hint": "Gradients can be created in VML using `type=\"gradient\"` on a `<v:fill>`. See [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element#gradient-fill).",
+    "loc": {
+      "line": 245,
+      "col": 3
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "an rgba() colour isn't supported in Outlook Windows (3 places)",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 245,
+      "col": 3
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "text-wrap isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (46 places)",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 247,
+      "col": 7
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "letter-spacing is only partly supported in Outlook Windows (20 places)",
+    "hint": "Partial. Big negative values are rendered differently from CSS standards.",
+    "loc": {
+      "line": 247,
+      "col": 7
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "opacity isn't supported in Gmail Mobile Webmail, Outlook Windows (2 places)",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 247,
+      "col": 7
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "text-shadow isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 248,
+      "col": 7
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (22 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 261,
+      "col": 11
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "clip-path isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (3 places)",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 261,
+      "col": 11
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "text-overflow isn't supported in Outlook Windows, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail iOS, Gmail Android (3 places)",
+    "hint": "Partial. Not supported with non Google accounts.",
+    "loc": {
+      "line": 262,
+      "col": 11
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "overflow isn't supported in Outlook Windows; partly in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook.com, Apple Mail macOS, Apple Mail iOS, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (4 places)",
+    "hint": "Partial. `overflow-block` & `overflow-inline` not supported.",
+    "loc": {
+      "line": 263,
+      "col": 11
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "text-decoration is only partly supported in Gmail iOS, Gmail Android, Outlook Windows (2 places)",
+    "hint": "Partial. Not supported with non Google accounts.",
+    "loc": {
+      "line": 264,
+      "col": 32
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "text-align is only partly supported in Gmail Android, Gmail Mobile Webmail, Outlook Windows, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (6 places)",
+    "hint": "Partial. Doesn't support the `match-parent` value.",
+    "loc": {
+      "line": 294,
+      "col": 5
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "overflow-wrap isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Mobile Webmail, Apple Mail macOS, Apple Mail iOS (2 places)",
+    "hint": "Buggy. Requires `word-break:normal` to reset Apple Mail default style (See [issue#394](https://github.com/hteumeuleu/caniemail/issues/394).)",
+    "loc": {
+      "line": 296,
+      "col": 7
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "<abbr> isn't supported in Outlook Windows, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Buggy. Element's content are still kept.",
+    "loc": {
+      "line": 297,
+      "col": 216
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "<mark> isn't supported in Outlook Windows, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook.com",
+    "hint": "Unsupported opening and closing tags are stripped.",
+    "loc": {
+      "line": 297,
+      "col": 290
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "text-emphasis isn't supported in Gmail Android, Gmail Mobile Webmail, Outlook Windows, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 297,
+      "col": 469
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "text-emphasis-position isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 297,
+      "col": 469
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "word-break isn't supported in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook.com, Apple Mail macOS, Apple Mail iOS",
+    "hint": "Buggy. Supported but a `word-wrap:break-word` is applied, making it look like `break-all`.",
+    "loc": {
+      "line": 304,
+      "col": 9
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "min-width isn't supported in Outlook Windows (3 places)",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 313,
+      "col": 11
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "list-style-image isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (3 places)",
+    "hint": "Not supported, but the proprietary `mso-bullet-image` property can be used instead on `<li>`. Outlook 2007 and 2010 only support `.ico` and `.gif` file formats.",
+    "loc": {
+      "line": 318,
+      "col": 7
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "width is only partly supported in Outlook Windows (7 places)",
+    "hint": "Partial. Not supported on `<body>`, `<span>`, `<div>`, `<p>` or `<img>` elements.",
+    "loc": {
+      "line": 327,
+      "col": 5
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "caption-side isn't supported in Outlook Windows",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 327,
+      "col": 5
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "empty-cells isn't supported in Outlook Windows, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Mobile Webmail",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 327,
+      "col": 5
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "conic-gradient() isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 341,
+      "col": 7
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "height isn't supported in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Outlook Windows (3 places)",
+    "hint": "Buggy. Replaces `height` by `min-height`.",
+    "loc": {
+      "line": 344,
+      "col": 26
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "background-image isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (2 places)",
+    "hint": "Background images can be used in VML. See [backgrounds.cm](https://backgrounds.cm/) and [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element).",
+    "loc": {
+      "line": 344,
+      "col": 26
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "<bdi> isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (2 places)",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 376,
+      "col": 73
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #d16022: found 3.8:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 250,
+      "col": 7
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #fdfaf4 on #d16022: found 3.7:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 261,
+      "col": 11
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #707c78 on #f4f6f3: found 3.9:1, needs 4.5:1 (3 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 263,
+      "col": 11
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #707c78 on #ffffff: found 4.3:1, needs 4.5:1 (11 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 273,
+      "col": 11
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #d16022 on #ffffff: found 3.8:1, needs 4.5:1 (9 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 297,
+      "col": 30
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 11px is very small (10 places)",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 247,
+      "col": 7
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 10px is very small",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 401,
+      "col": 9
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "overflow: hidden is dropped: content that sticks out of this box will show instead of being cut off, and a painted child sticks out past the rounded top-left, top-right corner",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 229,
+      "col": 1
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook button size is estimated; give the button a px width",
+    "hint": "Outlook draws rounded buttons with a fixed-size shape, so td;dr guesses it from the text.",
+    "loc": {
+      "line": 250,
+      "col": 7
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Outlook gets no photo when a background has several layers or mixes a url with a gradient",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 245,
+      "col": 3
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "overflow: hidden is dropped: content that sticks out of this box will show instead of being cut off, and a painted child sticks out past the rounded bottom-right, bottom-left corner (3 places)",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 258,
+      "col": 7
+    },
+    "locs": [
+      {
+        "line": 258,
+        "col": 7
+      },
+      {
+        "line": 268,
+        "col": 7
+      },
+      {
+        "line": 278,
+        "col": 7
+      }
+    ]
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "overflow: hidden cuts the line off in most clients; Outlook ignores it, so the line may wrap or stretch the table there (3 places)",
+    "hint": "Outlook Windows has no overflow clipping. Keep the content within the width, or accept that Outlook shows all of it.",
+    "loc": {
+      "line": 262,
+      "col": 11
+    },
+    "locs": [
+      {
+        "line": 262,
+        "col": 11
+      },
+      {
+        "line": 272,
+        "col": 11
+      },
+      {
+        "line": 282,
+        "col": 11
+      }
+    ]
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top (3 places)",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 313,
+      "col": 7
+    },
+    "locs": [
+      {
+        "line": 313,
+        "col": 7
+      },
+      {
+        "line": 314,
+        "col": 7
+      },
+      {
+        "line": 315,
+        "col": 7
+      }
+    ]
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Outlook shows the gradient's first colour, #d16022",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 341,
+      "col": 7
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "height: 10px is dropped (2 places)",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 344,
+      "col": 9
+    },
+    "locs": [
+      {
+        "line": 344,
+        "col": 9
+      },
+      {
+        "line": 346,
+        "col": 9
+      }
+    ]
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "overflow: hidden is dropped: content that sticks out of this box will show instead of being cut off, and nothing is clipped to its rounded corners (2 places)",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 344,
+      "col": 9
+    },
+    "locs": [
+      {
+        "line": 344,
+        "col": 9
+      },
+      {
+        "line": 346,
+        "col": 9
+      }
+    ]
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch in a wrapping row",
+    "hint": "Wrapped items are separate inline blocks, so painted cards of different heights on one line stay ragged. Use align-items: flex-start to make that explicit.",
+    "loc": {
+      "line": 381,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "extra space is left under the last line of this wrapping row",
+    "hint": "The row gap becomes bottom spacing on every item; a padding-bottom of 12px on the row absorbs it.",
+    "loc": {
+      "line": 381,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "items in this wrapping row sit up to 6px in from its edges, and a line that fills the row loses that from its first and last item",
+    "hint": "Email has no negative margins, so the row's side padding has to absorb half the gap at each edge. Add padding: 0 6px to the row.",
+    "loc": {
+      "line": 381,
+      "col": 5
+    }
+  },
+  {
+    "code": "I008",
+    "severity": "info",
+    "message": "Web font kept: Fraunces, Inter",
+    "hint": "Apple Mail, iOS and Samsung load it; Gmail, Yahoo and Outlook show the next font in the stack."
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Font stacks fall back to different fonts (Helvetica Neue, Georgia); Outlook for Windows uses the most used fallback, Helvetica Neue, for all of them",
+    "hint": "Use the same web-safe font after the web font in every stack.",
+    "loc": {
+      "line": 248,
+      "col": 7
+    }
+  }
+]
