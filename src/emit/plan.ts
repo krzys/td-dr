@@ -1,5 +1,5 @@
 // Which structure a node gets: the questions the emitters ask before they write anything.
-import { contentWidth, isOutlookOnlyCol, resolvedWidthOf, type Align, type Box, type Column, type ImageNode, type Node, type RowNode, type StackNode, type VAlign } from "../ir/index.ts";
+import { contentWidth, isOutlookOnlyCol, resolvedWidthOf, unwrapHide, type Align, type Box, type Column, type ImageNode, type Node, type RowNode, type StackNode, type VAlign } from "../ir/index.ts";
 import { templateChildren } from "../ir/helpers.ts";
 import { borderDecls, paddingValue } from "./attrs.ts";
 import { shownCols } from "./mso.ts";
@@ -58,10 +58,9 @@ export const hugs = (n: RowNode): boolean =>
 // stretches to the row's height like every cell does, and its gutters become
 // spacer cells (padding would paint the gap).
 export const paintedChild = (c: Column): StackNode | undefined => {
-  const ch = c.child;
+  // under a hide wrapper (analyze/hide.ts) the card is still the cell; row.ts hides what is in it
+  const ch = unwrapHide(c.child).node;
   if (!c.stretch || ch.kind !== "stack" || !isFullWidth(ch.box) || ch.box.clip) return undefined; // a clip needs boxCell's inner cell
-  // a hide wrapper (analyze/hide.ts) keeps a cell of its own: the card cell carries no hide
-  if (ch.box.hide !== undefined) return undefined;
   if (!ch.box.keepCell && !ch.box.background && !ch.box.backgroundImage && borderDecls(ch.box.border).length === 0) return undefined;
   if (c.padding && (c.padding.top || c.padding.bottom)) return undefined;
   return ch;

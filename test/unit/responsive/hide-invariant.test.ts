@@ -57,9 +57,12 @@ describe("an element hidden on some screens only", () => {
   });
 
   it("a grid item keeps its track, its background and its gutter", () => {
-    const out = compile(page('<div class="grid"><div class="cell">One</div><div class="cell k">Two</div></div>', RULE)).html;
+    const html = '<div class="grid"><div class="cell">One</div><div class="cell k">Two</div></div>';
+    const out = compile(page(html, RULE)).html;
     expect(out.match(/bgcolor="#eeeeee"/g)).toHaveLength(2);
-    expect(out.match(/<td [^>]*width="(?:292|300)"/g)).toHaveLength(2);
-    expect(out.match(/padding-left:8px/g)).toHaveLength(1);
+    expect(out.match(/<td [^>]*width="292"/g)).toHaveLength(2);
+    // the gap is a spacer cell on each side, as without the rule
+    expect(out.match(/padding-left:8px/g)).toHaveLength(2);
+    expect(body(out).match(/<td width="8" [^>]*>&nbsp;<\/td>/g)).toEqual(body(compile(page(html, "")).html).match(/<td width="8" [^>]*>&nbsp;<\/td>/g));
   });
 });

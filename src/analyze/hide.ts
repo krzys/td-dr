@@ -6,6 +6,3 @@ import type { SrcLoc } from "../ir/types.ts";
 // normal column and the hide goes on that column instead. Only this sets box.hide, so it marks the wrapper.
 export const hideWrap = (node: Node, hide: "hidden" | "shown", loc?: SrcLoc): Node =>
   withLoc<Node>({ kind: "stack", box: { ...emptyBox(), hide }, children: [node], gap: 0, collapse: true }, loc ?? node.loc);
-
-export const unwrapHide = (node: Node): { node: Node; hide?: "hidden" | "shown" } =>
-  node.kind === "stack" && node.box.hide !== undefined ? { node: node.children[0]!, hide: node.box.hide } : { node };

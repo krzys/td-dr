@@ -333,7 +333,7 @@ the base didn't.
   `<!--[if !mso]><!-->…<!--<![endif]-->`, as `display:none` doesn't reach nested tables in Outlook.
   A client that ignores `display:none` (Gmail Mobile Webmail per caniemail) shows every copy.
   A hidden row item lets a grow column take its room; otherwise its cell keeps its width (W014
-  unless it is last). In a wrapping row the fluid column is hidden and Outlook keeps an empty ghost
+  unless it is last), unpainted, and a painted one still stretches to the row on the screens that show it. In a wrapping row the fluid column is hidden and Outlook keeps an empty ghost
   cell; a column hidden on desktop beside a growing one relies on `mso-hide:all` for Outlook to drop
   the cell (**unverified**). Margins of a hidden block aren't collapsed through it; keep spacing in
   padding when hiding.

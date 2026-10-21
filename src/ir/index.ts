@@ -1,5 +1,5 @@
 export type * from "./types.ts";
-export { sides, zeroSides, addSides, emptyBox, mapChildren, childNodes, withLoc, locKey, isOutlookOnlyCol, OUTLOOK_ONLY_OPEN, OUTLOOK_ONLY_CLOSE } from "./helpers.ts";
+export { sides, zeroSides, addSides, emptyBox, mapChildren, childNodes, withLoc, locKey, isOutlookOnlyCol, OUTLOOK_ONLY_OPEN, OUTLOOK_ONLY_CLOSE, unwrapHide } from "./helpers.ts";
 export type { EmitReady, Padded, Resolved } from "./phase.ts";
 export { checkEmitReady, resolvedWidthOf } from "./phase.ts";
 export type { Fluid } from "./geometry.ts";

@@ -1,6 +1,6 @@
 // A row: one table row of column cells, or fluid-hybrid columns with Outlook ghost tables when it wraps
 // (fluid.ts). Columns of a row that stacks on some screen are written so a head rule can turn them into blocks.
-import { borderX, borderY, gutterX, isOutlookOnlyCol, ratioPct, roundPct, type Column, type RowNode, type StackItem, type StackNode } from "../ir/index.ts";
+import { borderX, borderY, gutterX, isOutlookOnlyCol, ratioPct, roundPct, unwrapHide, type Column, type RowNode, type StackItem, type StackNode } from "../ir/index.ts";
 import { borderDecls, HIDE_DECLS, imageDecls, legacyColor, paddingValue, radiusValue, styleString, type Attrs, type Decls } from "./attrs.ts";
 import { boxCell, ghosted, tableTag } from "./box.ts";
 import { conditional } from "./conditional.ts";
@@ -142,11 +142,15 @@ const paintedCellsOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell, c
   const right = c.padding?.right ?? 0;
   const inner = c.resolved ? c.resolved.px - left - right : undefined;
   const b = card.box;
+  // a column hidden here by its wrapper keeps its cell and width, so the columns beside it stay put; only
+  // the paint and the content go (analyze/flex-row.ts hideColumns)
+  const hide = unwrapHide(c.child).hide;
+  const paint = hide !== "hidden";
   const fixed = "px" in c.width;
   const flexible = "grow" in c.width && r.hasPx; // takes whatever the fixed columns leave
   // share of the row per px of this column, so cell + gutters add up to resolved.pct
   const perPx = c.resolved && !fixed && !flexible ? c.resolved.pct / c.resolved.px : undefined;
-  const bx = borderX(b);
+  const bx = paint ? borderX(b) : 0;
   const widthCss =
     flexible || inner === undefined
       ? columnWidthCss(c, r)
@@ -160,19 +164,18 @@ const paintedCellsOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell, c
   // that cell unpadded, so a screen can pad it (or not) without another structure.
   const { decls, html } = boxContent(inContent(e), card);
   const pad = paddingValue(b.padding);
-  const padCell = pad !== undefined || !!b.keepCell;
-  const content = padCell
-    ? `\n${withBody(tableOpen(e, "100%", [["width", "100%"]]), tr(wrap(e, "td", [["style", styleString([["padding", pad], ...decls])]], html)))}\n`
-    : html;
+  const padCell = pad !== undefined || !!b.keepCell || hide !== undefined;
+  const padded = wrap(e, "td", [["style", styleString([["padding", pad], ...decls, ...(paint ? [] : HIDE_DECLS)])]], paint ? html : ifNotMso(html));
+  const content = padCell ? `\n${withBody(tableOpen(e, "100%", [["width", "100%"]]), tr(padded))}\n` : html;
   // A stretched cell can't hold Outlook's VML rect (its height is the row's), so a photo shows as bgcolor there.
-  if (b.backgroundImage?.url !== undefined) {
+  if (paint && b.backgroundImage?.url !== undefined) {
     e.ctx.diagnostics.report("W001", {
       message: "Outlook shows the background colour in stretched columns, not the photo",
       hint: "VML needs a px height; a column that stretches to its row has none. Give the card its own row to get the photo.",
       loc: card.loc,
     });
   }
-  const minH = b.minHeight ? Math.max(0, b.minHeight - borderY(b)) : undefined;
+  const minH = paint && b.minHeight ? Math.max(0, b.minHeight - borderY(b)) : undefined;
   const td = wrap(
     e,
     "td",
@@ -181,8 +184,8 @@ const paintedCellsOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell, c
       ["height", minH],
       ["valign", c.valign],
       ["align", blocked && c.align ? "left" : c.align],
-      ["bgcolor", legacyColor(b.background)],
-      ["background", b.backgroundImage?.url],
+      ["bgcolor", paint ? legacyColor(b.background) : undefined],
+      ["background", paint ? b.backgroundImage?.url : undefined],
       [
         "style",
         styleString([
@@ -205,10 +208,9 @@ const paintedCellsOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell, c
                 ["white-space", r.nowrapAuto && "auto" in c.width ? "nowrap" : undefined],
                 ["height", minH !== undefined ? `${minH}px` : undefined],
               ]) as Array<[string, string | undefined]>),
-          ["background-color", b.background],
-          ...imageDecls(b),
-          ...borderDecls(b.border),
-          ["border-radius", radiusValue(b)],
+          ...((paint
+            ? [["background-color", b.background], ...imageDecls(b), ...borderDecls(b.border), ["border-radius", radiusValue(b)]]
+            : []) as Decls),
           ...(padCell ? [] : decls),
           ...(c.hidden ? HIDE_DECLS : []),
           ...(stack === "gone" ? STACK_GONE : []),

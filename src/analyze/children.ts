@@ -1,5 +1,5 @@
 import type { Ctx } from "../ctx.ts";
-import { locKey, withLoc, zeroSides, type InlineNode, type Node, type Sides } from "../ir/index.ts";
+import { locKey, unwrapHide, withLoc, zeroSides, type InlineNode, type Node, type Sides } from "../ir/index.ts";
 import { INHERITED, lineHeightPx, textAlignOf } from "../style/props.ts";
 import type { ComputedStyle, StyledElement, StyledNode } from "../style/types.ts";
 import { INLINE_TAGS, isHidden, isInlineLevel, isTransparent } from "./classify.ts";
@@ -7,7 +7,7 @@ import { buildBox, reportDropped } from "./box.ts";
 import { bleedsParent, legacyAlign, negativeMarginHint } from "./box-geometry.ts";
 import { firstStop, firstStopRaw, isGradientText } from "./box-paint.ts";
 import { warnFloatWrapStops } from "./float.ts";
-import { hideWrap, unwrapHide } from "./hide.ts";
+import { hideWrap } from "./hide.ts";
 import type { Item } from "./order.ts";
 import { lintTree } from "./lint.ts";
 import { ownStyle, serializeStyled } from "./serialize-styled.ts";

@@ -63,3 +63,7 @@ export const OUTLOOK_ONLY_CLOSE = "<!--/tddr:outlook-only-->";
 
 // A data-email="outlook-only" row item: its whole cell exists in Outlook only (docs/support.md#outlook-only-content).
 export const isOutlookOnlyCol = (c: Column): boolean => c.child.kind === "conditional" && c.child.target === "mso";
+
+// A node under its hide wrapper (analyze/hide.ts hideWrap, the only setter of box.hide) and that hide.
+export const unwrapHide = (node: Node): { node: Node; hide?: "hidden" | "shown" } =>
+  node.kind === "stack" && node.box.hide !== undefined ? { node: node.children[0]!, hide: node.box.hide } : { node };
