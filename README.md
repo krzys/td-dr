@@ -52,7 +52,8 @@ for (const d of diagnostics) console.log(d.severity, d.code, d.message, d.loc);
 A diagnostic is `{ code, severity, message, hint?, loc?: { line, col, file? }, locs? }`: `E…` errors,
 `W…` warnings, `I…` notes ([all codes](docs/support.md#diagnostic-codes)). One said the same way at
 several places comes once, as "… (N places)" at the first, with every place in `locs`. The package also exports
-`preview(html, props)`, `field(path)` and `writeString(text, dialect)` for templates.
+`preview(html, props)`, `field(path)` and `writeString(text, dialect)` for templates, and
+`toText(html)`, which turns a compiled email into its plain-text part ([how](docs/support.md#plain-text-part)).
 
 ## Command line
 

@@ -578,6 +578,17 @@ does `text-align: start | end` on text (not on inline button placement, which pu
 right whatever the direction). Text with a direction set states its side, since the shell's content
 cell states the document's. Flex rows and grids are not mirrored (W001): write items in visual order.
 
+### Plain-text part
+
+`toText(html)` reads a compiled email as the text/plain alternative, wrapped at 78 columns (never
+inside a URL or a field). Headings stand apart (`h1` and `h2` underlined), paragraphs are separated
+by a blank line, lists get `- ` or `1. `, and layout tables read in order, a row of short cells on one
+line (`|` between the cells of a data table). A link or button says `label (url)`, or the URL alone when
+that is the label; a `mailto:` or `tel:` address is said once. Images give their alt; empty alt and
+spacers give nothing. The preheader, `display: none` and `mso-hide: all` content and Outlook-only
+conditionals are left out. `{{ }}` and `{% %}` stay as written, a block tag between rows on a line of its
+own; a field the template HTML-escapes stays escaped in the text, so `&` arrives as `&amp;`.
+
 ## Outlook and MSO
 
 Outlook for Windows (2007–2019 and classic 365) renders with Word. The new Outlook is a web engine
