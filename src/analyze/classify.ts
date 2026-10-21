@@ -48,6 +48,10 @@ const hasBorder = (el: StyledElement): boolean =>
 
 const padOf = (el: StyledElement, side: (typeof SIDES)[number]): number => Number.parseFloat(el.style[`padding-${side}`] ?? "0") || 0;
 
+// A fill or a border, and padding: what ctx.otherScreens compares across screens (painted).
+export const paints = (el: StyledElement): boolean => hasFill(el) || hasBorder(el);
+export const hasPadding = (el: StyledElement): boolean => SIDES.some((s) => padOf(el, s) > 0);
+
 // Content-sized links need side padding to look like buttons; a block or fixed-width link is
 // already a box, so vertical padding alone makes it one.
 const padded = (el: StyledElement): boolean => {
@@ -61,7 +65,7 @@ const padded = (el: StyledElement): boolean => {
 // A plain <div> label (a button's text) is not.
 const isLayout = (c: StyledElement): boolean =>
   isFlex(c) || isGrid(c) ||
-  (isContainer(c) && (hasFill(c) || hasBorder(c) || SIDES.some((s) => padOf(c, s) > 0) || (c.style["width"] ?? "auto") !== "auto" ||
+  (isContainer(c) && (paints(c) || SIDES.some((s) => padOf(c, s) > 0) || (c.style["width"] ?? "auto") !== "auto" ||
     c.children.some((k) => k.type === "element" && !isInlineLevel(k))));
 
 // An inline-block link sits on a line next to its siblings; lowering it would stack them.
@@ -81,7 +85,7 @@ export const looksLikeButton = (el: StyledElement): boolean => {
   if (el.tag !== "a" || el.attrs["href"] === undefined || isLinkBox(el)) return false;
   if (el.attrs["data-email"] === "button") return true;
   const d = el.style["display"];
-  return (d === "inline-block" || d === "block") && (hasFill(el) || hasBorder(el)) && padded(el);
+  return (d === "inline-block" || d === "block") && paints(el) && padded(el);
 };
 
 // Just an image, maybe wrapped in a link: <img> or <a><img></a> (whitespace aside).

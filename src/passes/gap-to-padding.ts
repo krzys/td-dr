@@ -162,7 +162,7 @@ const growShares = (row: RowNode): number[] | undefined => {
 const paintedCard = (c: Column): boolean => {
   if (!c.stretch || c.child.kind !== "stack") return false;
   const b = c.child.box;
-  return !!(b.background || b.backgroundImage || ["top", "right", "bottom", "left"].some((s) => b.border?.[s as "top"]?.width));
+  return !!(b.keepCell || b.background || b.backgroundImage || ["top", "right", "bottom", "left"].some((s) => b.border?.[s as "top"]?.width));
 };
 
 const lowerGrowRow = (row: RowNode): RowNode | undefined => {

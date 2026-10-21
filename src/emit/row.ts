@@ -156,10 +156,12 @@ const paintedCellsOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell, c
           ? `${roundPct(inner * perPx)}%`
           : columnWidthCss(c, r);
   // The cell paints and stretches; the card's padding sits on an inner cell so the
-  // outer width means the same thing in every browser.
+  // outer width means the same thing in every browser. A card another screen paints keeps
+  // that cell unpadded, so a screen can pad it (or not) without another structure.
   const { decls, html } = boxContent(inContent(e), card);
   const pad = paddingValue(b.padding);
-  const content = pad
+  const padCell = pad !== undefined || !!b.keepCell;
+  const content = padCell
     ? `\n${withBody(tableOpen(e, "100%", [["width", "100%"]]), tr(wrap(e, "td", [["style", styleString([["padding", pad], ...decls])]], html)))}\n`
     : html;
   // A stretched cell can't hold Outlook's VML rect (its height is the row's), so a photo shows as bgcolor there.
@@ -203,7 +205,7 @@ const paintedCellsOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell, c
           ...imageDecls(b),
           ...borderDecls(b.border),
           ["border-radius", radiusValue(b)],
-          ...(pad ? [] : decls),
+          ...(padCell ? [] : decls),
           ...(c.hidden ? HIDE_DECLS : []),
           ...(stack === "gone" ? STACK_GONE : []),
         ]),

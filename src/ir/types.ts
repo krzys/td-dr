@@ -36,6 +36,9 @@ export type Box = {
   width?: { px: number } | { pct: number }; // pct of the parent's content box
   // where the node sits in the space its parent gives it (margin: auto, align-items…)
   align?: Align;
+  // Painted on some screen (ctx.otherScreens.painted): its cell stays on every screen, unpainted where the
+  // screen paints nothing, so a screen that adds or drops the paint keeps one structure.
+  keepCell?: boolean;
   // A wrapper around a node that is display:none on some screens only: its cell is emitted hidden
   // where it is "hidden", and present but plain where it is "shown", so every compile has one structure.
   hide?: "hidden" | "shown";

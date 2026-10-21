@@ -281,6 +281,36 @@ describe("what the head styles assume is checked", () => {
   });
 });
 
+// docs/architecture.md#several-screens-one-structure: what some screen paints keeps its cell on all of them
+describe("a box some screen paints or pads keeps one structure", () => {
+  const W = (css: string, body: string) => `<style>.wrap{max-width:600px;margin:0 auto}${css}</style><div class="wrap">${body}</div>`;
+  const row = '<div class="row"><div class="l">Label</div><div class="c">Copy</div></div>';
+  const flex = ".row{display:flex;gap:16px} .c{flex:1}";
+  it.each([
+    ["a stretched column's fill dropped", `${flex} .l{background-color:#eeeeee} @media (max-width:480px){.l{background:none}}`, ".t-0 { background-color:transparent !important; }"],
+    ["a stretched column's fill added", `${flex} @media (max-width:480px){.l{background-color:#eeeeee}}`, ".t-0 { background-color:#eeeeee !important; }"],
+    ["a stretched card's padding added", `${flex} .l{background-color:#eeeeee} @media (max-width:480px){.l{padding:8px}}`, ".t-0 { padding:8px !important; }"],
+    ["a stretched column's fill gone in dark", `${flex} .l{background-color:#eeeeee} @media (prefers-color-scheme:dark){.l{background-color:transparent}}`, "[data-ogsb] .t-0 { background-color:transparent !important; }"],
+    ["a stacking label's border and padding dropped", `${flex} .l{border-right:1px solid #cccccc;padding-right:8px} @media (max-width:480px){.row{flex-direction:column}.l{border:0;padding:0}}`, ".t-0 { border-right:none !important;"],
+  ])("%s", (_name, css, rule) => {
+    const out = compile(W(css, row), { lang: "en" });
+    expect(out.diagnostics.filter((d) => d.code === "E017")).toEqual([]);
+    expect(out.html).toContain(rule);
+  });
+
+  // a box painted alike everywhere gets no cell the base would not give it
+  const bodyOf = (html: string) => html.slice(html.indexOf("<body")).replace(/ class="[^"]*"/g, "");
+  it.each([
+    ["a width screen", "@media (max-width:480px){h1{font-size:20px}}"],
+    ["a dark screen", "@media (prefers-color-scheme:dark){h1{color:#ffffff}}"],
+  ])("a box painted alike on every screen is emitted as without %s", (_name, screen) => {
+    const css = `${flex} .l,.c{background-color:#eeeeee}`;
+    const plain = compile(W(css, `<h1>Title</h1>${row}`), { lang: "en" });
+    const out = compile(W(css + screen, `<h1>Title</h1>${row}`), { lang: "en" });
+    expect(bodyOf(out.html)).toBe(bodyOf(plain.html));
+  });
+});
+
 describe("ordinary style changes on a plain block still become overrides", () => {
   const W = (css: string, body = '<div class="a">One</div>') => `<style>.wrap{max-width:600px;margin:0 auto}${css}</style><div class="wrap">${body}</div>`;
   it.each([

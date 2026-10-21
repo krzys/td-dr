@@ -12,7 +12,7 @@ const bare = (s: StackNode): boolean => {
     !s.justify &&
     !p.top && !p.right && !p.bottom && !p.left &&
     !m.top && !m.right && !m.bottom && !m.left &&
-    !box.hide && !box.border && !box.background && !box.backgroundImage && !box.minHeight && !box.radius && !box.radii &&
+    !box.keepCell && !box.hide && !box.border && !box.background && !box.backgroundImage && !box.minHeight && !box.radius && !box.radii &&
     !box.clip && !box.maxWidth && !box.width && !box.align
   );
 };

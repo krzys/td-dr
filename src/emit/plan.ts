@@ -6,10 +6,10 @@ import { shownCols } from "./mso.ts";
 
 // The box paints, pads or hides something, so it needs a cell of its own.
 export const hasBoxCell = (b: Box): boolean =>
-  b.hide !== undefined || paddingValue(b.padding) !== undefined || !!b.background || !!b.backgroundImage || !!b.minHeight || !!b.radius || !!b.clip || borderDecls(b.border).length > 0;
+  !!b.keepCell || b.hide !== undefined || paddingValue(b.padding) !== undefined || !!b.background || !!b.backgroundImage || !!b.minHeight || !!b.radius || !!b.clip || borderDecls(b.border).length > 0;
 
 export const isPaddingOnly = (b: Box): boolean =>
-  !b.hide && !b.background && !b.backgroundImage && !b.minHeight && !b.radius && !b.clip && borderDecls(b.border).length === 0 && !b.width && !b.maxWidth && !b.align;
+  !b.keepCell && !b.hide && !b.background && !b.backgroundImage && !b.minHeight && !b.radius && !b.clip && borderDecls(b.border).length === 0 && !b.width && !b.maxWidth && !b.align;
 
 export const isFullWidth = (b: Box): boolean => !b.width && !b.maxWidth && !b.align;
 
@@ -60,7 +60,9 @@ export const hugs = (n: RowNode): boolean =>
 export const paintedChild = (c: Column): StackNode | undefined => {
   const ch = c.child;
   if (!c.stretch || ch.kind !== "stack" || !isFullWidth(ch.box) || ch.box.clip) return undefined; // a clip needs boxCell's inner cell
-  if (!ch.box.background && !ch.box.backgroundImage && borderDecls(ch.box.border).length === 0) return undefined;
+  // a hide wrapper (analyze/hide.ts) keeps a cell of its own: the card cell carries no hide
+  if (ch.box.hide !== undefined) return undefined;
+  if (!ch.box.keepCell && !ch.box.background && !ch.box.backgroundImage && borderDecls(ch.box.border).length === 0) return undefined;
   if (c.padding && (c.padding.top || c.padding.bottom)) return undefined;
   return ch;
 };

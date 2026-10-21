@@ -337,6 +337,9 @@ the base didn't.
   cell; a column hidden on desktop beside a growing one relies on `mso-hide:all` for Outlook to drop
   the cell (**unverified**). Margins of a hidden block aren't collapsed through it; keep spacing in
   padding when hiding.
+- **Paint:** a fill or a border may be added, changed or dropped (dark included); the box keeps
+  its cell on every screen, unpainted where a screen has none, and a stretched card keeps its inner
+  padding cell, so its padding may change too.
 - **Vertical distribution:** a min-height column may switch between `center` and `flex-end`, or
   between the `space-*` values ([height and vertical distribution](#height-and-vertical-distribution)).
 - **Stack a row:** each column cell becomes `display:block;width:100%`, gutters drop, the column

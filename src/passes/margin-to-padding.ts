@@ -15,7 +15,7 @@ const convert = (input: Node): Node => {
   if (node.kind === "stack" || node.kind === "row") {
     const { box } = node;
     const painted =
-      box.background !== undefined || box.backgroundImage !== undefined || box.minHeight !== undefined || box.radius !== undefined || (box.border && Object.keys(box.border).length > 0);
+      !!box.keepCell || box.background !== undefined || box.backgroundImage !== undefined || box.minHeight !== undefined || box.radius !== undefined || (box.border && Object.keys(box.border).length > 0);
     const sized = (box.width !== undefined || box.maxWidth !== undefined) && margin.left + margin.right > 0;
     if (!painted && !sized) {
       return { ...node, box: { ...box, padding: addSides(box.padding, margin), margin: zeroSides() } };

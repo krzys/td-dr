@@ -2,7 +2,7 @@
 // (box-geometry.ts), its paint (box-paint.ts) and what survives of its clipping (box-clip.ts), and
 // the declarations none of them carry, reported dropped.
 import type { Ctx } from "../ctx.ts";
-import type { Box, Node } from "../ir/index.ts";
+import { locKey, type Box, type Node } from "../ir/index.ts";
 import { INHERITED, INITIAL, get } from "../style/props.ts";
 import type { StyledElement } from "../style/types.ts";
 import { CLIPS, clipMode, hasRadius, lineClip, unclippedCorners } from "./box-clip.ts";
@@ -45,6 +45,7 @@ export const buildBox = (el: StyledElement, ctx: Ctx, implied: ImpliedSize = {})
   const corners = cornersOf(el, ctx, outerSize(el, frame, implied));
   const clip = lineClip(el, ctx);
   const widths = widthsOf(el, ctx, frame);
+  const keepCell = el.loc !== undefined && !!ctx.otherScreens?.painted.has(locKey(el.loc));
   return {
     padding,
     margin,
@@ -55,6 +56,7 @@ export const buildBox = (el: StyledElement, ctx: Ctx, implied: ImpliedSize = {})
     ...corners,
     ...(clip ? { clip } : {}),
     ...widths,
+    ...(keepCell ? { keepCell } : {}),
   };
 };
 
@@ -68,7 +70,7 @@ export const withoutWidth = (box: Box): Box => {
 
 // Nothing in it paints or takes room of its own, so with no content there is nothing left of it.
 export const isBareBox = (b: Box): boolean =>
-  !b.background && !b.backgroundImage && !b.minHeight && !b.radius && !b.clip && !(b.border && Object.keys(b.border).length > 0) &&
+  !b.keepCell && !b.background && !b.backgroundImage && !b.minHeight && !b.radius && !b.clip && !(b.border && Object.keys(b.border).length > 0) &&
   b.padding.top === 0 && b.padding.right === 0 && b.padding.bottom === 0 && b.padding.left === 0;
 
 // Longhands a shorthand like `background: #fff` expands to; resetting them is not a loss.

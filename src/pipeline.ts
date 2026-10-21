@@ -16,6 +16,7 @@ import { fontHead } from "./shell/fonts.ts";
 import { shell } from "./shell/shell.ts";
 import { computeStyles } from "./style/computed.ts";
 import { widthDecision } from "./analyze/design-width.ts";
+import { hasPadding, paints } from "./analyze/classify.ts";
 import { get } from "./style/props.ts";
 import { DESKTOP, type StyledElement, type Unstack } from "./style/types.ts";
 import type { Code } from "./diagnostics/codes.ts";
@@ -63,6 +64,10 @@ const respacedIn = (was: StyledElement, el: StyledElement): boolean => {
   return a !== b && SPACED.has(a) && SPACED.has(b);
 };
 
+// a box painted on one screen and not on another, or padded on one only while painted (ctx.otherScreens.painted)
+const repainted = (was: StyledElement, el: StyledElement): boolean =>
+  paints(was) !== paints(el) || (paints(el) && hasPadding(was) !== hasPadding(el));
+
 // What the other screens do differently (ctx.otherScreens).
 const otherScreens = (desktop: StyledElement, screens: readonly Screen[]): OtherScreens => {
   const index = (el: StyledElement, out = new Map<string, StyledElement>()): Map<string, StyledElement> => {
@@ -75,14 +80,16 @@ const otherScreens = (desktop: StyledElement, screens: readonly Screen[]): Other
   const relaidBelow = new Map<string, number>();
   const sideBorders = new Set([...base].filter(([, el]) => sideBorder(el)).map(([key]) => key));
   const respaced = new Set<string>();
+  const painted = new Set<string>();
   for (const { variant, styled } of screens) {
     for (const [key, el] of index(styled)) {
       const was = base.get(key);
+      if (was && repainted(was, el)) painted.add(key);
       if (variant.kind === "width" && was && LAYOUT.some((p) => get(was.style, p) !== get(el.style, p))) relaidBelow.set(key, Math.max(relaidBelow.get(key) ?? 0, variant.env.viewport));
       if (was && respacedIn(was, el)) respaced.add(key);
     }
   }
-  return { relaidBelow, sideBorders, respaced };
+  return { relaidBelow, sideBorders, respaced, painted };
 };
 
 // Gmail drops the rules past 16 KB of head <style>, the reset included.
