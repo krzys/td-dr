@@ -238,8 +238,34 @@ const inlineSide = (n: DomNode, dir: -1 | 1): boolean => {
   return inline(s);
 };
 
+// Two inline items with nothing between them in the source are still apart on the page when either
+// keeps a horizontal margin or padding, is an inline-block, or they are items of a flex row or grid:
+// "€149" and a struck-through "€199" beside it. <b>W</b>ord stays a word.
+const INLINE_BLOCK = /(?:^|;)\s*display\s*:\s*inline-(?:block|flex|grid|table)\b/i;
+const ROW = /(?:^|;)\s*display\s*:\s*(?:inline-)?(?:flex|grid)\b/i;
+const BOX_SIDE = /(?:^|;)\s*(margin|padding)(-left|-right|-inline(?:-start|-end)?)?\s*:\s*([^;]*)/gi;
+const sideways = (css: string): boolean => {
+  for (const [, , side, value] of css.matchAll(BOX_SIDE)) {
+    const v = value!.replace(/!important/i, "").trim().split(/\s+/);
+    const sides = side ? (side === "-inline" ? [v[0], v[1]] : [v[0]]) : [v[1] ?? v[0], v[3]];
+    if (sides.some((x) => x !== undefined && Number.parseFloat(x) > 0)) return true;
+  }
+  return false;
+};
+const item = (n: DomNode): boolean => (isText(n) ? !!n.data.trim() : isElement(n) && n.name !== "br" && inline(n));
+const spaced = (n: DomNode): boolean => isElement(n) && (INLINE_BLOCK.test(style(n)) || sideways(style(n)));
+const apart = (parent: DomNode, a: DomNode, b: DomNode): boolean =>
+  item(a) && item(b) && !(isText(a) && /\s$/.test(a.data)) && !(isText(b) && /^\s/.test(b.data)) && (spaced(a) || spaced(b) || (isElement(parent) && ROW.test(style(parent))));
+
 const renderChildren = (n: DomNode, o: Out): void => {
-  for (const c of children(n)) render(c, o);
+  let prev: DomNode | undefined;
+  for (const c of children(n)) {
+    if (!isComment(c)) {
+      if (prev && apart(n, prev, c)) o.text(" ");
+      prev = c;
+    }
+    render(c, o);
+  }
 };
 
 const render = (n: DomNode, o: Out): void => {

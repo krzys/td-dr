@@ -584,7 +584,9 @@ cell states the document's. Flex rows and grids are not mirrored (W001): write i
 inside a URL or a field). Headings stand apart (`h1` and `h2` underlined), paragraphs are separated
 by a blank line, lists get `- ` or `1. `, and layout tables read in order, a row of short cells on one
 line (`|` between the cells of a data table). A link or button says `label (url)`, or the URL alone when
-that is the label; a `mailto:` or `tel:` address is said once. Images give their alt; empty alt and
+that is the label; a `mailto:` or `tel:` address is said once. Inline items with nothing between them
+get a space when the page sets them apart (a side margin or padding, `inline-block`, items of a flex
+row or grid), so a price and the old price beside it don't run together; `<b>W</b>ord` stays a word. Images give their alt; empty alt and
 spacers give nothing. The preheader, `display: none` and `mso-hide: all` content and Outlook-only
 conditionals are left out. `{{ }}` and `{% %}` stay as written, a block tag between rows on a line of its
 own. Given the dialect the email was compiled for, `toText(html, { template: "handlebars" })` (or

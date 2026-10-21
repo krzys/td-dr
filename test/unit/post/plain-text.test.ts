@@ -253,6 +253,15 @@ describe("toText", () => {
     expect(body(html)).toBe("{{name}}{{#if a}}{{#if b}} (b){{/if}}{{/if}}\n\nnext\n");
   });
 
+  it("parts inline items the page sets apart, not a word split across tags", () => {
+    expect(body('<p><b>€149</b><s style="margin-left:8px">€199</s></p>')).toBe("€149 €199\n");
+    expect(body('<p><span style="padding:0 4px">A</span><span>B</span>C</p>')).toBe("A BC\n");
+    expect(body('<p><span style="display:inline-block">I</span><span>J</span></p>')).toBe("I J\n");
+    expect(body('<div style="display:flex"><span>X</span><span>Y</span></div>')).toBe("X Y\n");
+    expect(body('<p><b>W</b>ord, <i>t</i><b>w</b>o <span style="margin:0 auto">o</span>k</p>')).toBe("Word, two ok\n");
+    expect(body('<p><b>€149</b> <s style="margin-left:8px">€199</s></p>')).toBe("€149 €199\n");
+  });
+
   it("given the dialect, writes fields the engine fills unescaped, leaving block tags and escapes", () => {
     const hb = '<p>{{a}} {{ b.c }} {{~d~}} {{{e}}} {{&f}} \\{{g}} \\\\{{h}} {{!note}}</p><p>{{#if x}}y{{else}}z{{/if}}</p>';
     expect(toText(hb, { template: "handlebars" })).toBe("{{{a}}} {{{ b.c }}} {{~{d}~}} {{{e}}} {{&f}} \\{{g}} \\\\{{{h}}} {{!note}}\n\n{{#if x}}y{{else}}z{{/if}}\n");
@@ -264,5 +273,7 @@ describe("toText", () => {
   it("is what a compiled email reads as", () => {
     const { html } = compile('<h1>Hi</h1><p>Read <a href="https://ex.test/">this</a>.</p><ul><li>One</li><li>Two</li></ul>');
     expect(toText(html)).toBe("Hi\n==\n\nRead this (https://ex.test/).\n\n- One\n- Two\n");
+    const price = compile('<style>.old{margin-left:8px;text-decoration:line-through}</style><p><b>€149</b><span class="old">€199</span></p>');
+    expect(toText(price.html)).toBe("€149 €199\n");
   });
 });
