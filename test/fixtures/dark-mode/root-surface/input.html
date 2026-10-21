@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Root surface</title>
+<style>
+  :root { --paper: #f6f1e7; --ink: #2b2620; }
+  body { margin: 0; padding: 24px 0; background-color: var(--paper); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+  .card { max-width: 520px; margin: 0 auto; padding: 24px; background-color: #ffffff; }
+  .card h1 { margin: 0 0 8px; font-size: 22px; line-height: 28px; }
+  .card p { margin: 0; font-size: 16px; line-height: 24px; }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #ece6dc; }
+    body { background-color: #15130f; }
+    .card { background-color: #24211c; }
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Evening notes</h1>
+    <p>A card on a warm paper page. In dark mode the page, the card and the ink all change.</p>
+  </div>
+</body>
+</html>

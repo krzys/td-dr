@@ -23,7 +23,8 @@ const preheaderDiv = (text: string): string => {
 };
 
 // The head rules for phones, dark mode and hover (src/responsive); the dark meta is only for pages with dark rules.
-export type HeadRules = { css: string; dark: boolean };
+// `page` is the page table's class where a screen repaints the page.
+export type HeadRules = { css: string; dark: boolean; page?: string };
 
 export const shell = (emitted: Emitted, meta: DocMeta, ctx: Ctx, fontHead: string, rules?: HeadRules): string => {
   const lang = esc(meta.lang ?? ctx.options.lang ?? "en");
@@ -32,7 +33,7 @@ export const shell = (emitted: Emitted, meta: DocMeta, ctx: Ctx, fontHead: strin
   const bg = emitted.background ? esc(emitted.background) : undefined;
 
   const bodyStyle = `margin:0;padding:0;${bg ? `background-color:${bg};` : ""}`;
-  const outerBg = bg ? ` bgcolor="${bg}"` : "";
+  const outerAttrs = `${rules?.page ? ` class="${rules.page}"` : ""}${bg ? ` bgcolor="${bg}"` : ""}`;
   // what every cell inherits where the client sets a base line height (docs/support.md#text-styles)
   const outerStyle = `width:100%;line-height:normal;${bg ? `background-color:${bg};` : ""}`;
 
@@ -61,7 +62,7 @@ export const shell = (emitted: Emitted, meta: DocMeta, ctx: Ctx, fontHead: strin
     `<body id="body" style="${bodyStyle}">`,
     ...(meta.preheader ? [preheaderDiv(meta.preheader)] : []),
     `<div role="article" aria-roledescription="email" lang="${lang}"${dir}>`,
-    `<table ${TABLE} width="100%"${outerBg} style="${outerStyle}">`,
+    `<table ${TABLE} width="100%"${outerAttrs} style="${outerStyle}">`,
     '<tr><td align="center" style="padding:0;">',
     ghostOpen(width, "center"),
     `<table ${TABLE} width="100%" style="width:100%;max-width:${width}px;table-layout:fixed;">`,

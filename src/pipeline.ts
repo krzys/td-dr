@@ -104,16 +104,16 @@ type Screen = { variant: Variant; styled: StyledElement };
 // The compiles tell elements apart by their trace markers, so each tag says which author element it came from.
 const tracing = (ctx: Ctx): Ctx => (ctx.options.trace ? ctx : { ...ctx, options: { ...ctx.options, trace: true } });
 
-// The desktop compile, with what the author's rules alone make of that screen (as `Screen.styled`).
-type Base = Compiled & { styled: StyledElement };
+// The desktop compile, with what the author's rules alone make of that screen (as `Screen.styled`) and its page colour.
+type Base = Compiled & { styled: StyledElement; background: string | undefined };
 
 // One other screen, compiled from the shared parse on a quiet ctx.
-const compileScreen = (doc: ParsedDoc, given: Ctx, screen: Screen, shared: Shared): Compiled & { diagnostics: Diagnostic[] } => {
+const compileScreen = (doc: ParsedDoc, given: Ctx, screen: Screen, shared: Shared): Compiled & { background: string | undefined; diagnostics: Diagnostic[] } => {
   const ctx = tracing(quiet(given));
   const { body } = computeStyles(doc, ctx, screen.variant.env, shared.keep, shared.stacked);
   const marked = markTree(body);
-  const html = emit(runPasses(analyze(marked.tree, ctx), ctx), ctx).html;
-  return { html, elements: marked.found, diagnostics: ctx.diagnostics.list() };
+  const { html, background } = emit(runPasses(analyze(marked.tree, ctx), ctx), ctx);
+  return { html, background, elements: marked.found, diagnostics: ctx.diagnostics.list() };
 };
 
 // What a screen says, said once for all the screens that say it, led by which ones they are.
@@ -149,7 +149,9 @@ const responsive = (doc: ParsedDoc, ctx: Ctx, base: Base, screens: readonly Scre
       sayOnce(dropped, d, screen.variant, sameError(unlabelled));
       continue;
     }
-    found.push({ variant: screen.variant, overrides: diff.overrides });
+    // the page colour is the shell's, outside the diffed html (docs/support.md#dark-mode)
+    const repaint = screen.variant.kind !== "hover" && compiled.background !== base.background;
+    found.push({ variant: screen.variant, overrides: diff.overrides, ...(repaint ? { page: compiled.background ?? "transparent" } : {}) });
     // what only the screens say: once, however many screens say it
     for (const d of compiled.diagnostics) if (!reported.some((r) => sameDiagnostic(r, d))) sayOnce(forwarded, d, screen.variant, sameDiagnostic);
   }
@@ -200,7 +202,7 @@ const stages = (input: string, given: Ctx): Traced => {
   const marked = markTree(styled);
   const traced = tracing(ctx);
   const emitted = emit(runPasses(analyze(marked.tree, traced), traced), traced);
-  const head = shared ? responsive(parsed, ctx, { html: emitted.html, elements: marked.found, styled: probe.body }, screens, shared) : undefined;
+  const head = shared ? responsive(parsed, ctx, { html: emitted.html, elements: marked.found, styled: probe.body, background: emitted.background }, screens, shared) : undefined;
   const page = shell({ ...emitted, html: head?.html ?? emitted.html }, parsed.meta, ctx, fontHead(fonts, parsed.meta.fontLinks ?? [], styled, ctx), head);
   headStyleCheck(page, ctx);
   const posted = post(page, ctx);

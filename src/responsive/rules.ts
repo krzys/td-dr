@@ -2,8 +2,10 @@
 import type { Decls, Override, Tag } from "./diff.ts";
 import type { Variant } from "./variants.ts";
 
-export type Found = { variant: Variant; overrides: Override[] };
-export type Head = { html: string; css: string; dark: boolean };
+// `page`: a width or dark screen's page colour where it differs from the desktop one ("transparent" for none)
+export type Found = { variant: Variant; overrides: Override[]; page?: string };
+// `page`: the class for the shell's page table, which repaints with the body
+export type Head = { html: string; css: string; dark: boolean; page?: string };
 
 export const className = (n: number): string => `t-${n.toString(36)}`;
 
@@ -62,23 +64,29 @@ export const addClasses = (html: string, tags: readonly Tag[], classes: Readonly
 
 export const buildHead = (html: string, tags: readonly Tag[], found: readonly Found[]): Head | undefined => {
   const { classes, made } = assign(found);
-  if (classes.size === 0) return undefined;
-  const dark = found.some((f, v) => f.variant.kind === "dark" && made[v]!.length > 0);
+  // the body and page table are the shell's (docs/support.md#the-email-shell): the body takes no class, the table one past the elements'
+  const page = found.some((f) => f.page !== undefined) ? className(made.reduce((n, m) => n + m.length, 0)) : undefined;
+  if (classes.size === 0 && !page) return undefined;
+  const surface = (f: Found): Made[] => (page && f.page !== undefined ? [{ name: page, decls: [["background-color", f.page]] }] : []);
+  const dark = found.some((f, v) => f.variant.kind === "dark" && made[v]!.length + surface(f).length > 0);
   const blocks: string[] = dark ? [":root { color-scheme: light dark; supported-color-schemes: light dark; }"] : [];
   const mirrors: string[] = [];
   const hover: string[] = [];
   found.forEach((f, v) => {
     const rules = made[v]!;
-    if (rules.length === 0) return;
     if (f.variant.kind === "hover") return void hover.push(...rules.map((m) => rule(`.${m.name}:hover`, m.decls)));
-    blocks.push(`${f.variant.media} {\n${rules.map((m) => `  ${rule(`.${m.name}`, m.decls)}`).join("\n")}\n}`);
+    const own = surface(f);
+    const all = [...own, ...rules];
+    if (all.length === 0) return;
+    const lines = [...own.map((m) => rule("body", m.decls)), ...all.map((m) => rule(`.${m.name}`, m.decls))];
+    blocks.push(`${f.variant.media} {\n${lines.map((l) => `  ${l}`).join("\n")}\n}`);
     if (f.variant.kind !== "dark") return;
-    for (const m of rules) {
+    for (const m of all) {
       for (const [attr, prop] of MIRRORS) {
         const d = m.decls.filter(([p]) => p === prop);
         if (d.length > 0) mirrors.push(rule(`${attr} .${m.name}`, d));
       }
     }
   });
-  return { html: addClasses(html, tags, classes), css: [...blocks, ...mirrors, ...hover].join("\n"), dark };
+  return { html: addClasses(html, tags, classes), css: [...blocks, ...mirrors, ...hover].join("\n"), dark, ...(page ? { page } : {}) };
 };

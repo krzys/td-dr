@@ -374,6 +374,11 @@ passed-through text it stays, and clients that ignore it are a W005 that says th
 The dark arms become dark rules like the author's own; in a `:hover` rule or a width `@media` below
 the design width there is no dark rule to hold one, so it takes the same arm in both modes (W001).
 
+The page colour (the root container's background, a `body` rule included) is the
+[shell](#the-email-shell)'s. Where the dark screen resolves it differently, the dark block repaints
+`body` and the page table's class (with its `[data-ogsb]` mirror); a narrower screen's page colour
+goes in its width block the same way. A colour only one screen has is `transparent` on the others.
+
 | Client | Forced dark without author styles | `prefers-color-scheme` |
 |---|---|---|
 | Gmail web | no change | ❌ |
@@ -509,7 +514,8 @@ u + #body a { color:inherit; text-decoration:none; }
 - `lang` comes from `<html lang>` (or its `xml:lang`), else the `lang` option (or a component's
   `export const lang`), else `en` with I009; it and `dir` go on `<html>` and the article wrapper, as
   some clients strip `<html>` attributes. The root container's background becomes the page
-  background. `<title>` is the source's title, empty otherwise, with I015 when the source is a whole
+  background, repainted per screen by the head rules ([dark mode](#dark-mode)); the page table then
+  has a class. `<title>` is the source's title, empty otherwise, with I015 when the source is a whole
   page (it writes its own `<html>` or `<head>`) or a component; a fragment placed in a page of its
   own isn't reported.
 - Gmail turns `<body>` into a `<div>`, so the background lives on the wrapper table; `u + #body`

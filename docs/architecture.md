@@ -70,10 +70,11 @@ compares outputs:
    narrower screen lays out differently, so the base doesn't warn about breaks that screen
    replaces; boxes with a side border on the base, which get their own table everywhere; columns
    another screen spaces with another `space-*` value, which get the same spacer rows everywhere).
-4. The base compile (wide, light, no hover) is the output. Each other screen compiles on a quiet
-   ctx with trace markers and is diffed tag by tag; changes become classes and head rules. What a
-   screen says that the base doesn't is reported once for all the screens saying it, led by them
-   (`scopeOf` in `src/responsive/variants.ts`).
+4. The base compile (wide, light, no hover) is the output. Each other screen compiles on a quiet ctx
+   with trace markers and is diffed tag by tag; changes become classes and head rules. What a screen
+   says that the base doesn't is reported once for all the screens saying it, led by them (`scopeOf`
+   in `src/responsive/variants.ts`). The page colour sits in the shell, outside the diffed html, so
+   a width or dark screen that changes it gets rules for the body and the page table's class.
 
 ## Layout IR
 
