@@ -46,14 +46,18 @@ const msoWidth = (col: Column, inner: number): ResolvedWidth | undefined => {
   return px === undefined ? undefined : { px, pct: inner > 0 ? (px / inner) * 100 : 0 };
 };
 
-const resolve = (node: Node, available: number, ctx: Ctx, screen: Fluid): Node => {
+// A flex-shrink: 0 column the row scaled down (arithmetic-resolver W003) is narrower here than in the source.
+const squeezedCol = (col: Column, r: ResolvedWidth): boolean => !!col.noShrink && "px" in col.width && r.px < col.width.px - 0.5;
+
+// `squeezed`: the subtree sits in such a column, so a fluid image its slot clamps is one the source shows whole.
+const resolve = (node: Node, available: number, ctx: Ctx, screen: Fluid, squeezed = false): Node => {
   switch (node.kind) {
     case "stack": {
       const resolvedWidth = boxWidth(node, available, ctx);
       node = clamp(node, resolvedWidth);
       const inner = slotOf(node.box, resolvedWidth);
       const narrow = screenSlot(node.box, screen);
-      return { ...node, resolvedWidth, children: node.children.map((c) => resolve(c, inner, ctx, narrow)) };
+      return { ...node, resolvedWidth, children: node.children.map((c) => resolve(c, inner, ctx, narrow, squeezed)) };
     }
     case "row": {
       const resolvedWidth = boxWidth(node, available, ctx);
@@ -72,14 +76,14 @@ const resolve = (node: Node, available: number, ctx: Ctx, screen: Fluid): Node =
           // its own width where it has one, else its content shrinks to fit the row (autoSpace is 0 in full rows and grids)
           const own = msoWidth(col, inner);
           const slot = columnSlot(col, own ?? null, narrow, true);
-          return own ? { ...col, resolved: own, child: resolve(col.child, Math.max(0, own.px - gutterX(col)), ctx, slot) } : { ...col, resolved: null, child: resolve(col.child, Math.max(0, inner - gutterX(col)), ctx, slot) };
+          return own ? { ...col, resolved: own, child: resolve(col.child, Math.max(0, own.px - gutterX(col)), ctx, slot, squeezed) } : { ...col, resolved: null, child: resolve(col.child, Math.max(0, inner - gutterX(col)), ctx, slot, squeezed) };
         }
         const r = widths[k++] ?? null;
         const narrowCol = columnSlot(col, r, narrow, wrap);
         // the table sizes it: auto columns (and grow ones beside them) get whatever the fixed ones leave
-        if (!r) return { ...col, resolved: null, child: resolve(col.child, autoSpace, ctx, narrowCol) };
+        if (!r) return { ...col, resolved: null, child: resolve(col.child, autoSpace, ctx, narrowCol, squeezed) };
         const slot = Math.max(0, r.px - gutterX(col));
-        return { ...col, resolved: r, child: resolve(col.child, slot, ctx, narrowCol) };
+        return { ...col, resolved: r, child: resolve(col.child, slot, ctx, narrowCol, squeezed || squeezedCol(col, r)) };
       });
       return { ...node, resolvedWidth, cols };
     }
@@ -91,6 +95,12 @@ const resolve = (node: Node, available: number, ctx: Ctx, screen: Fluid): Node =
             message: `image wider than its column (${node.width} > ${slot})`,
             loc: node.loc,
           });
+          // max-width:100% clamps it where the source keeps it whole: the height follows the width, as the
+          // source's square stays square (a fixed height on a clamped image distorts it there too, so elsewhere it stays)
+          if (squeezed && node.fluid) {
+            const width = Math.floor(slot);
+            return { ...node, width, ...(node.height ? { height: Math.round((node.height * width) / node.width) } : {}) };
+          }
         }
         return node;
       }
@@ -109,9 +119,9 @@ const resolve = (node: Node, available: number, ctx: Ctx, screen: Fluid): Node =
       return { ...node, box: { ...box, maxWidth: Math.min(box.maxWidth ?? Infinity, available) } };
     }
     case "conditional":
-      return { ...node, child: resolve(node.child, available, ctx, screen) };
+      return { ...node, child: resolve(node.child, available, ctx, screen, squeezed) };
     case "template":
-      return mapChildren(node, (c) => resolve(c, available, ctx, screen));
+      return mapChildren(node, (c) => resolve(c, available, ctx, screen, squeezed));
     default:
       return node;
   }

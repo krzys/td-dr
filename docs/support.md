@@ -413,6 +413,10 @@ so the gap under it is the source's; authored `display:block` and flex or grid i
   `hspace` / `vspace` for symmetric px margins (uneven ones stay CSS-only, W005). Only text in the
   same block wraps; an image that is its own block gets the attribute and nothing wraps, and a
   floated image taller than its paragraph doesn't wrap the next block (W001).
+- **Clamped:** an image wider than its column is W004. With `max-width: 100%` it fills the column,
+  and a fixed `height` stays, as in the browser. In a `flex-shrink: 0` column that the row scaled
+  down (W003), where the source keeps it whole, it takes the column's width (attribute too) and
+  its height scales with it, so it keeps its ratio.
 - **Margins:** Outlook ignores margins on images; in an image cell the margin becomes cell padding,
   which Outlook honours.
 - **`<picture>`** compiles as its `<img>` (I007): Gmail, Outlook and Yahoo ignore `<source>`, and

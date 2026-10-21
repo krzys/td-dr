@@ -88,6 +88,23 @@ describe("resolve-widths", () => {
     expect(codesOf(ctx)).toEqual(["W004"]);
   });
 
+  test("a fluid image in a flex-shrink: 0 column the row scaled down keeps its ratio", () => {
+    const ctx = testCtx();
+    const pic = (width: number, height: number) => img({ width, height, fluid: true });
+    const out = resolveWidths.run(givenPadded(row([col({ px: 400 }, pic(400, 100), { noShrink: true }), col({ px: 400 }, stack({}, [pic(400, 400)]), { noShrink: true })])), ctx) as RowNode;
+    expect(out.cols[0]!.child).toMatchObject({ width: 300, height: 75, fluid: true });
+    expect((out.cols[1]!.child as StackNode).children[0]).toMatchObject({ width: 300, height: 300 });
+    expect(codesOf(ctx)).toEqual(["W003", "W004", "W004"]);
+  });
+
+  test("a fluid image clamped where the source clamps it too keeps its fixed height", () => {
+    const ctx = testCtx();
+    const image = img({ width: 400, height: 100, fluid: true });
+    const out = resolveWidths.run(givenPadded(row([col({ px: 400 }, image), col({ px: 400 }, img({ fluid: true }))])), ctx) as RowNode;
+    expect(out.cols[0]!.child).toBe(image);
+    expect(codesOf(ctx)).toContain("W004");
+  });
+
   test("recurses through conditionals", () => {
     const out = resolveWidths.run(givenPadded({ kind: "conditional", target: "mso", child: stack({}) }), testCtx());
     expect((out as { child: StackNode }).child.resolvedWidth).toBe(600);
