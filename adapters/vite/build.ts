@@ -61,7 +61,7 @@ export const buildEmails = async (o: BuildOptions): Promise<BuildResult[]> => {
   const emails = findEmails(o.dir);
   const out = resolve(o.out);
   const files = outFiles(o.fileName ?? FILE_NAME, out, emails);
-  const vite = await createEmailServer({ root: resolve(o.root ?? process.cwd()) });
+  const vite = await createEmailServer({ root: resolve(o.root ?? process.cwd()), locate: true });
   const results: BuildResult[] = [];
   try {
     for (const email of emails) {

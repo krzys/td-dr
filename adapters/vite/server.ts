@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { createServer, type PluginOption, type ViteDevServer } from "vite";
+import { markVue } from "./locate.ts";
 import { importOptional } from "./optional.ts";
 import { tddr } from "./plugin.ts";
 
@@ -15,7 +16,8 @@ const defaultPlugins = async (root: string): Promise<PluginOption[]> => {
   return found.flatMap((m) => (m ? [m.default()] : []));
 };
 
-export const createEmailServer = async (o: { root: string; configFile?: string | false }): Promise<ViteDevServer> => {
+// `locate`: components mark the tags they render, for a build to say component lines (adapters/vite/locate.ts)
+export const createEmailServer = async (o: { root: string; configFile?: string | false; locate?: boolean }): Promise<ViteDevServer> => {
   const root = resolve(o.root);
   const configFile = typeof o.configFile === "string" ? resolve(o.configFile) : o.configFile;
   const ownConfig = configFile !== false && (configFile !== undefined || CONFIG_FILES.some((f) => existsSync(join(root, f))));
@@ -28,7 +30,7 @@ export const createEmailServer = async (o: { root: string; configFile?: string |
     server: { middlewareMode: true, ws: false },
     // nothing is served to a browser, so there are no client deps to pre-bundle
     optimizeDeps: { noDiscovery: true },
-    plugins: [...(ownConfig ? [] : await defaultPlugins(root)), tddr()],
+    plugins: [...(ownConfig ? [] : await defaultPlugins(root)), tddr(), ...(o.locate ? [markVue()] : [])],
     ...(ownConfig ? {} : { oxc: { jsx: { runtime: "automatic" as const } } }),
   });
 };

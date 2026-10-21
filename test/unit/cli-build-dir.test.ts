@@ -82,6 +82,34 @@ describe("tddr build <folder>", () => {
     );
   });
 
+  it("says a diagnostic a Vue component marked at its line, and the other places once each", async () => {
+    const row = (line: number) => ({ file: `${process.cwd()}/emails/card/Row.vue`, line, col: 3 });
+    vi.mocked(buildEmails).mockResolvedValue([
+      {
+        email: "card",
+        entry: `${process.cwd()}/emails/card/App.vue`,
+        dialect: "handlebars",
+        file: "/p/dist/emails/card.handlebars.html",
+        diagnostics: [
+          { code: "E002", severity: "error", message: "position: absolute on <p> is not supported (3 places)", loc: row(6), locs: [row(6), row(9), { line: 40, col: 1 }] },
+          { code: "W001", severity: "warning", message: "m", loc: { line: 12, col: 5 }, locs: [{ line: 12, col: 5 }, { line: 30, col: 2 }] },
+        ],
+      },
+    ]);
+    const t = io();
+    expect(await run(["build", "emails"], t.io)).toBe(1);
+    expect(t.err()).toBe(
+      [
+        "emails/card/Row.vue:6:3 (handlebars): error E002: position: absolute on <p> is not supported (3 places)",
+        // a place in the rendered page is left out
+        "  also at: 9:3",
+        // a page line is said as the email's file
+        "emails/card/App.vue (handlebars): warning W001: m",
+        "",
+      ].join("\n"),
+    );
+  });
+
   it("exits 0 with warnings only", async () => {
     vi.mocked(buildEmails).mockResolvedValue([
       { email: "badge", dialect: "liquid", file: "/x.html", diagnostics: [{ code: "W008", severity: "warning", message: "big" }] },

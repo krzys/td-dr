@@ -73,11 +73,12 @@ tddr dev emails                                                # preview server,
 | `--base-url <url>` | Folder builds and dev: where images are hosted; a build copies them to `<out>/assets`. |
 | `--port <n>`, `--host <h>` | Dev server address. |
 
-A file build prints each diagnostic to stderr as `file:line:col: severity CODE: message` (a folder
-build prefixes the email's file and the dialect instead, as its lines are in the rendered page, not
-the component), then `  hint: …`. The exit code is 1 when an error is reported (the output is still
-written, empty after E018, bar a folder build's template that fails its equivalence check or loses
-a field: E016, E012, E013) and 2 for usage errors.
+A file build prints each diagnostic to stderr as `file:line:col: severity CODE: message`, then
+`  hint: …`. A folder build adds the dialect after the place, and says a Vue email's diagnostic on
+an element at that element's `.vue` line; any other is said at the email's file, as its line is in
+the rendered page, not the component. The exit code is 1 when an error is reported (the output is
+still written, empty after E018, bar a folder build's template that fails its equivalence check or
+loses a field: E016, E012, E013) and 2 for usage errors.
 
 **Folder builds.** An emails folder holds one email per subfolder (`index.jsx` / `index.tsx`,
 `App.vue`) or per file (`welcome.jsx`, `digest.vue`), each default-exporting its component. Every

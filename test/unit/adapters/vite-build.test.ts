@@ -85,6 +85,18 @@ describe("buildEmails", () => {
     expect(readFileSync(fine.file!, "utf8")).toContain("<title>Welcome</title>");
   });
 
+  it("says a Vue email's diagnostic at the component line it came from", async () => {
+    const vue = resolve(import.meta.dirname, "../../vite-build-vue");
+    const [card, grid] = await buildEmails({ dir: vue, root: vue, out: out() });
+    const row = { file: join(vue, "card/Row.vue"), line: 6, col: 3 };
+    // Row renders twice: two places in the email, one line in the component
+    expect(card!.diagnostics.find((d) => d.code === "E002")).toMatchObject({ message: "position: absolute on <p> is not supported (2 places)", loc: row, locs: [row] });
+    // the marks are taken out before compiling
+    expect(readFileSync(card!.file!, "utf8")).not.toContain("data-tddr-at");
+    // a loop's block is said at the element the v-for is on
+    expect(grid!.diagnostics.find((d) => d.code === "E012")).toMatchObject({ message: "<tddr-each> on an item of a row or grid", loc: { file: join(vue, "grid/App.vue"), line: 10, col: 5 } });
+  });
+
   it("says a Vue email wasn't compiled when the root can't load the Vue plugin", async () => {
     // a folder outside the repo: nothing there resolves @vitejs/plugin-vue
     const root = mkdtempSync(join(tmpdir(), "tddr-no-vue-"));

@@ -8,6 +8,7 @@ import { collectCss } from "./css.ts";
 import { engine } from "./engines.ts";
 import { dataObject } from "./find.ts";
 import { placeFrame } from "./frames.ts";
+import { inComponents, unmark } from "./locate.ts";
 import { EMAIL_ENV } from "./plugin.ts";
 import type { AssetFile, EmailEntry, Framework, RenderOptions, Rendered } from "./types.ts";
 
@@ -108,11 +109,13 @@ export const compileTemplate = async (
     throw new Error(`${email.name} is not written as a ${dialect} template (${listed})`);
   }
   const { component, css } = await loadEmail(vite, email);
-  const markup = await templateMarkup(email, component, vite);
-  // compiling the page itself keeps diagnostic locations pointing into text the dev server can show
-  const placed = withAssets(vite, sourcePage(css, markup), o);
+  const { page, marks } = unmark(sourcePage(css, await templateMarkup(email, component, vite)));
+  // compiling the page itself keeps diagnostic locations pointing into text the dev server can show;
+  // a build's marked components say theirs (adapters/vite/locate.ts)
+  const placed = withAssets(vite, page, o);
   const out = compile(placed.page, { ...optionsFor(email, o.compile), template: dialect });
-  return { input: placed.page, template: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics, ...titled(out.html)], assets: placed.files, ...(out.trace && { trace: out.trace }) };
+  const diagnostics = [...inComponents(page, marks, placed.diagnostics), ...inComponents(placed.page, marks, out.diagnostics), ...titled(out.html)];
+  return { input: placed.page, template: out.html, diagnostics, assets: placed.files, ...(out.trace && { trace: out.trace }) };
 };
 
 // a compiled template filled by the dialect's engine; without it, preview() stands in.
@@ -244,7 +247,7 @@ export const renderReference = async (
   loaded?: { component: unknown; css: string },
 ): Promise<{ html: string; diagnostics: Diagnostic[] }> => {
   const { component, css } = loaded ?? (await loadEmail(vite, email));
-  const placed = withAssets(vite, sourcePage(css, await renderMarkup(email, component, data, vite)), o);
+  const placed = withAssets(vite, unmark(sourcePage(css, await renderMarkup(email, component, data, vite))).page, o);
   // the html render itself: JS semantics, no dialect's data needs
   const out = compile(preview(placed.page, data, { dialects: [] }), optionsFor(email, o.compile));
   return { html: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics] };
@@ -254,7 +257,7 @@ export const renderEmail = async (vite: ViteDevServer, email: EmailEntry, o: Ren
   if (o.mode !== "html") return renderTemplate(vite, email, o, o.mode);
   const data = props(email, o.data);
   const { component, css } = await loadEmail(vite, email);
-  const placed = withAssets(vite, sourcePage(css, await renderMarkup(email, component, data, vite)), o);
+  const placed = withAssets(vite, unmark(sourcePage(css, await renderMarkup(email, component, data, vite))).page, o);
   const out = compile(placed.page, { ...optionsFor(email, o.compile), trace: true });
   return { source: placed.page, input: placed.page, html: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics, ...titled(out.html)], assets: placed.files, ...(out.trace && { trace: out.trace }) };
 };

@@ -36,6 +36,12 @@ data (formatted money and dates, booleans) and branch in the markup. Functions c
 must be pure; the rewrite can't see into them, and the [equivalence check](#the-equivalence-check)
 catches a difference when the email has data sets.
 
+A folder build says the other diagnostics of a Vue email, the ones on an element (E002 on a
+`<p>`), at the `.vue` line and column of that element, and an E012 on a loop or condition at the
+first element it repeats or shows (a component's own first element when the `v-for` is on the
+component); one a component renders several times keeps its count and is said at that line once. JSX gives the build no such hook, so a React email's
+diagnostic, and one on no element, is said at the email's file.
+
 `tddr/react` and `tddr/vue` also export `If` / `ElseIf` / `Else` (prop `when`) and `Each` (prop
 `of`; children as a function, or a scoped slot in Vue) as an escape hatch.
 

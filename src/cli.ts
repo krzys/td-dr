@@ -76,15 +76,18 @@ type BuildEmails = (o: {
   verify?: boolean;
   compile: { strict: boolean; allowSvg?: boolean; targets?: string[]; width?: number; lang?: string };
 }) => Promise<
-  Array<{ email: string; entry?: string; dialect?: string; file?: string; skipped?: string; error?: string; assets?: string[]; diagnostics: Array<{ severity: string; code: string; message: string; hint?: string }> }>
+  Array<{ email: string; entry?: string; dialect?: string; file?: string; skipped?: string; error?: string; assets?: string[]; diagnostics: Diagnostic[] }>
 >;
 
-// "file:line:col: severity code: message", then the other places of one said for several, then the hint
-const formatDiagnostic = (d: Diagnostic, file: string): string => {
-  const where = d.loc ? `${d.loc.file ?? file}:${d.loc.line}:${d.loc.col}` : file;
+// "file:line:col: severity code: message", then the other places of one said for several, then the hint;
+// a folder build's dialect follows the place
+const formatDiagnostic = (d: Diagnostic, file: string, dialect?: string): string => {
+  const where = `${d.loc ? `${d.loc.file ?? file}:${d.loc.line}:${d.loc.col}` : file}${dialect ? ` (${dialect})` : ""}`;
   const others = (d.locs ?? []).slice(1).map((l) => `${l.file && l.file !== d.loc?.file ? `${l.file}:` : ""}${l.line}:${l.col}`);
   return `${where}: ${d.severity} ${d.code}: ${d.message}\n${others.length > 0 ? `  also at: ${others.join(", ")}\n` : ""}${d.hint ? `  hint: ${d.hint}\n` : ""}`;
 };
+
+const rel = (file: string): string => relative(process.cwd(), file).replaceAll("\\", "/");
 
 const buildDir = async (
   dir: string,
@@ -111,8 +114,7 @@ const buildDir = async (
   }
   let failed = false;
   for (const r of results) {
-    // a diagnostic's line is in the rendered page, so the place said is the email's file
-    const where = r.entry ? relative(process.cwd(), r.entry).replaceAll("\\", "/") : r.email;
+    const where = r.entry ? rel(r.entry) : r.email;
     const what = r.dialect ? `${where} (${r.dialect})` : where;
     if (r.skipped) io.stdout(`skipped ${r.email}: ${r.skipped}\n`);
     if (r.error) {
@@ -122,8 +124,12 @@ const buildDir = async (
     }
     if (r.file) io.stdout(`wrote ${r.file}\n`);
     for (const d of r.diagnostics) {
-      io.stderr(`${what}: ${d.severity} ${d.code}: ${d.message}\n`);
-      if (d.hint) io.stderr(`  hint: ${d.hint}\n`);
+      // a line in the rendered page is in no file anyone wrote, so that place is said as the email's
+      // file; one a Vue component marked, in the component (docs/templates.md#native-component-code)
+      const { loc, locs, ...rest } = d;
+      const inFiles = locs?.filter((l) => l.file).map((l) => ({ ...l, file: rel(l.file!) }));
+      const said: Diagnostic = loc?.file ? { ...rest, loc: { ...loc, file: rel(loc.file) }, ...(inFiles && { locs: inFiles }) } : rest;
+      io.stderr(formatDiagnostic(said, where, r.dialect));
       failed ||= d.severity === "error";
     }
   }
