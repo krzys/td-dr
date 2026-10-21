@@ -79,7 +79,7 @@ E008s fail the build.
 | Feature | Handling |
 |---|---|
 | Selectors, specificity, `!important`, inheritance, shorthands | Full cascade, inlined. |
-| `@layer`, nesting, `@property` initial values | Resolved. |
+| `@layer`, nesting, `@property` initial values | Resolved. Rules nested more than 128 deep (`CSS_NESTING_DEPTH` in `src/limits.ts`) are ignored with a W002. |
 | `@supports` | Evaluated statically for email; false blocks skipped; an unparsable condition is W002. |
 | `var()`, `calc()` | Resolved. `calc(P% ± Npx)` stays a width on flex items; other mixed `calc()` is E006. |
 | `em`, `rem`, `%` font sizes | px. `rem` is the root's computed font size (16px by default); in media queries `em` / `rem` are 16px. |
@@ -753,7 +753,7 @@ even in strict mode.
 | E016 | Filled template differs from the HTML render, or a data set doesn't meet a dialect's data needs (folder builds). |
 | E017 | A media, dark or hover rule changes the structure, text or attributes ([what a screen may change](#what-a-screen-may-change)). |
 | W001 | Dropped or changed: no email-safe way to keep it exactly. |
-| W002 | Invalid CSS (a syntax error, or a value such as a negative gap); ignored. |
+| W002 | Invalid CSS (a syntax error, a value such as a negative gap, or rules nested over 128 deep); ignored. |
 | W003 | Approximated layout ([approximations](#approximations)). |
 | W004 | Fixed width larger than its slot; clamped. |
 | W005 | Authored CSS some target clients don't support (names them). |

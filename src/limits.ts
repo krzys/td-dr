@@ -18,3 +18,7 @@ export const byteLength = (s: string): number => Buffer.byteLength(s, "utf8");
 export const formatKB = (bytes: number): string => `${(bytes / 1000).toFixed(1)} KB`;
 
 export const formatBytes = (bytes: number): string => `${bytes.toLocaleString("en-US")} bytes`;
+
+// td;dr's own: rules nested deeper are ignored with a W002, since flattening a level costs
+// stack and time for every level above it.
+export const CSS_NESTING_DEPTH = 128;

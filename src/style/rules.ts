@@ -13,6 +13,7 @@ import { propertyRule, type Registered } from "./registered.ts";
 import { hasPseudoElement } from "./selectors.ts";
 import { locAt, parseSheet } from "./sheet.ts";
 import type { Env, FontRules } from "./types.ts";
+import { CSS_NESTING_DEPTH } from "../limits.ts";
 
 // tier: 0 the UA sheet, 1 author
 export type Sheet = { css: string; tier: number; origin: SrcLoc | undefined };
@@ -36,8 +37,9 @@ export type Collected = {
 
 export type RuleInputs = { env: Env; designWidth: number; select: Select; declare: Declare; notes: ViewportNotes; ctx: Ctx };
 
-type Scope = { tier: number; layer: number; path: string; origin: SrcLoc | undefined; env: EnvScope; rule?: readonly Sel[] };
-type Run = RuleInputs & { canInline: (selector: string) => boolean; layers: string[]; anonymous: number; out: Collected };
+// depth: the rules and at-rules with a body around this one
+type Scope = { tier: number; layer: number; path: string; origin: SrcLoc | undefined; env: EnvScope; depth: number; rule?: readonly Sel[] };
+type Run = RuleInputs & { canInline: (selector: string) => boolean; layers: string[]; anonymous: number; tooDeep: boolean; out: Collected };
 
 const register = (run: Run, name: string): number => {
   const at = run.layers.indexOf(name);
@@ -54,7 +56,7 @@ const styleRule = (rule: Rule, scope: Scope, run: Run): void => {
   if (parents?.length === 0) return;
   const m = matchRule(rule, parents, own.length, hasContent, scope.env, run.env, locAt(scope.origin, rule), run.select, run.ctx);
   if (m.hoverSeen) run.out.hover = true;
-  walk(rule, { ...scope, env: { ...scope.env, hover: scope.env.hover || m.hoverLands }, rule: m.sels }, run);
+  walk(rule, { ...scope, env: { ...scope.env, hover: scope.env.hover || m.hoverLands }, depth: scope.depth + 1, rule: m.sels }, run);
 };
 
 const atRule = (node: AtRule, scope: Scope, run: Run): void => {
@@ -68,9 +70,9 @@ const atRule = (node: AtRule, scope: Scope, run: Run): void => {
     if (ok.length === 0) return;
     const env = inMedia(ok, scope.env, run.env, run.designWidth);
     if (env.possible) run.out.queries.push(...ok);
-    walk(node, { ...scope, env }, run);
+    walk(node, { ...scope, env, depth: scope.depth + 1 }, run);
   } else if (name === "supports") {
-    if (supportsHolds(node, loc, run.canInline, ctx)) walk(node, scope, run);
+    if (supportsHolds(node, loc, run.canInline, ctx)) walk(node, { ...scope, depth: scope.depth + 1 }, run);
   } else if (name === "layer") {
     const prefix = scope.path ? `${scope.path}.` : "";
     if (!node.nodes) {
@@ -78,7 +80,7 @@ const atRule = (node: AtRule, scope: Scope, run: Run): void => {
       return;
     }
     const full = prefix + (node.params.trim() || `<anonymous ${run.anonymous++}>`);
-    walk(node, { ...scope, layer: register(run, full), path: full }, run);
+    walk(node, { ...scope, layer: register(run, full), path: full, depth: scope.depth + 1 }, run);
   } else if (name === "font-face") {
     const unsafe = unsafeFace(node);
     if (unsafe) ctx.diagnostics.report("I001", { ...unsafe, loc });
@@ -99,7 +101,11 @@ const atRule = (node: AtRule, scope: Scope, run: Run): void => {
 const walk = (container: Container, scope: Scope, run: Run): void => {
   const decls: OrderedDecl[] = [];
   container.each((node: ChildNode) => {
-    if (node.type === "decl") {
+    if (node.type !== "decl" && "nodes" in node && node.nodes && scope.depth >= CSS_NESTING_DEPTH) {
+      // once per sheet: what's inside is as deep or deeper
+      if (!run.tooDeep) run.ctx.diagnostics.report("W002", { message: `Rules nested more than ${CSS_NESTING_DEPTH} deep were ignored`, hint: "They parsed, but rules past this depth are dropped; flatten the nesting.", loc: locAt(scope.origin, node) });
+      run.tooDeep = true;
+    } else if (node.type === "decl") {
       if (scope.rule) for (const d of run.declare(node, () => locAt(scope.origin, node))) decls.push({ ...d, order: run.out.order++, loc: locAt(scope.origin, node) });
     } else if (node.type === "rule") styleRule(node, scope, run);
     else if (node.type === "atrule") atRule(node, scope, run);
@@ -115,10 +121,11 @@ const walk = (container: Container, scope: Scope, run: Run): void => {
 
 export const collectRules = (sheets: readonly Sheet[], inputs: RuleInputs): Collected => {
   const out: Collected = { blocks: [], registered: new Map(), fonts: { imports: [], faces: [] }, queries: [], dark: false, hover: false, liveText: false, order: 0 };
-  const run: Run = { ...inputs, canInline: canInline(inputs.select), layers: [], anonymous: 0, out };
+  const run: Run = { ...inputs, canInline: canInline(inputs.select), layers: [], anonymous: 0, tooDeep: false, out };
   for (const s of sheets) {
     const root = parseSheet(s.css, s.origin, inputs.ctx);
-    if (root) walk(root, { tier: s.tier, layer: -1, path: "", origin: s.origin, env: TOP }, run);
+    run.tooDeep = false;
+    if (root) walk(root, { tier: s.tier, layer: -1, path: "", origin: s.origin, env: TOP, depth: 0 }, run);
   }
   return out;
 };
