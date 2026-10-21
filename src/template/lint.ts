@@ -47,9 +47,12 @@ const badDeclarations = (css: string): number[] => {
   return out;
 };
 
-const STYLE_HINT =
-  "A field can be the whole value of color, background-color, background, border-color or border-*-color, or the colour of a border shorthand. Anywhere else td;dr needs the real value to lower the layout: pick between fixed styles with data-email-if / -unless.";
-const SHEET_HINT = "A field can be a colour only in a style attribute; a stylesheet rule can't take one. Set the colour inline, or pick between fixed classes with data-email-if / -unless.";
+// docs/templates.md#colours-from-data: a look the ESP would pick is written once per look instead
+const CONDITIONS = "v-if / v-else in Vue, cond ? <A/> : <B/> in JSX, data-email-if / -unless in HTML";
+const PER_LOOK = `write one copy of the element per look, each under its own condition (${CONDITIONS})`;
+const STYLE_HINT = `A field can be the whole value of color, background-color, background, border-color or border-*-color, or the colour of a border shorthand. Anywhere else td;dr needs the real value to lower the layout: ${PER_LOOK}.`;
+const SHEET_HINT = `A field can be a colour only in a style attribute; a stylesheet rule can't take one. Set the colour inline, or ${PER_LOOK}.`;
+const CLASS_HINT = `td;dr inlines the stylesheet when it builds, so a class the ESP fills in later matches no rule. Write one copy of the element per class, each with its class fixed and under its own condition (${CONDITIONS}).`;
 
 // Placeholders belong in text and attributes, and as a colour in a style attribute; the style
 // stage needs real values to lower everything else.
@@ -72,7 +75,7 @@ export const lintPlaceholders = (src: string, ctx: Ctx): void => {
       for (const at of badDeclarations(css)) hits.push([tag.index + a.index + from + at, STYLE_HINT]);
     }
   }
-  for (const [i, hint] of hits.sort((a, b) => a[0] - b[0])) ctx.diagnostics.report("E013", { hint, loc: locAt(src, i) });
+  for (const [i, hint] of hits.sort((a, b) => a[0] - b[0])) ctx.diagnostics.report("E013", { message: "Placeholder in CSS", hint, loc: locAt(src, i) });
 };
 
 // The writer only sees the output; a bad placeholder is looked up in the source for its location.
@@ -91,8 +94,6 @@ export const reportTemplate = (src: string, ctx: Ctx): Report => {
 const PRESENTATIONAL = new Set(["bgcolor", "background", "color", "width", "height", "align", "valign", "border", "cellpadding", "cellspacing", "face", "size"]);
 const ENTITY: Record<string, string> = { amp: "&", quot: '"', lt: "<", gt: ">", nbsp: "\u00a0", "#39": "'" };
 const OUT_ATTR = /\s([^\s"'>/=]+)="([^"]*)"/g;
-// dead-class removal may drop the other classes, so a class is judged token by token
-const parts = (name: string, v: string): string[] => (name.toLowerCase() === "class" ? v.split(/\s+/).filter((c) => c.includes(FIELD_OPEN)) : [v]);
 const readable = (v: string): string => v.replace(new RegExp(`${FIELD_OPEN}([^${FIELD_CLOSE}]*)${FIELD_CLOSE}`, "g"), "{{$1}}");
 
 // Lowering keeps only the attributes a pattern needs. An attribute with a placeholder that didn't
@@ -102,22 +103,24 @@ export const lintDropped = (body: DomElement, html: string, ctx: Ctx): void => {
   const kept = new Map<string, number>();
   for (const m of html.matchAll(OUT_ATTR)) {
     const v = m[2]!.replace(/&(amp|quot|lt|gt|nbsp|#39);/g, (_e, n: string) => ENTITY[n]!);
-    if (v.includes(FIELD_OPEN)) for (const p of parts(m[1]!, v)) kept.set(p, (kept.get(p) ?? 0) + 1);
+    if (v.includes(FIELD_OPEN) && m[1]!.toLowerCase() !== "class") kept.set(v, (kept.get(v) ?? 0) + 1);
   }
   const walk = (n: DomNode): void => {
     if (!isElement(n)) return;
     for (const [name, v] of Object.entries(n.attribs)) {
       // style is E013 already, from the source
       if (!v.includes(FIELD_OPEN) || name === "style" || (TEMPLATE_ATTRS as readonly string[]).includes(name)) continue;
-      const lost = parts(name, v).filter((p) => {
-        const left = kept.get(p) ?? 0;
-        kept.set(p, left - 1);
-        return left <= 0;
-      });
-      if (lost.length === 0) continue;
+      // kept or not, a class picks styles, and those were inlined before the ESP fills it
+      if (name.toLowerCase() === "class") {
+        ctx.diagnostics.report("E013", { message: `class="${readable(v)}" on <${n.name}> comes from a field, and no style can follow it`, hint: CLASS_HINT, loc: locOf(n) });
+        continue;
+      }
+      const left = kept.get(v) ?? 0;
+      kept.set(v, left - 1);
+      if (left > 0) continue;
       const message = `${name}="${readable(v)}" on <${n.name}> is dropped`;
       if (PRESENTATIONAL.has(name)) {
-        ctx.diagnostics.report("E013", { message, hint: "A look can't come from the ESP: td;dr needs it to lower the layout. Pick between fixed looks with data-email-if / -unless twins.", loc: locOf(n) });
+        ctx.diagnostics.report("E013", { message, hint: `A look can't come from the ESP: td;dr needs it to lower the layout. Instead, ${PER_LOOK}.`, loc: locOf(n) });
       } else {
         ctx.diagnostics.report("E012", { message, hint: "td;dr lowers this element to table markup and keeps only the attributes it needs. Put the field where it stays: text, a link's href, an image's src or alt, or an attribute of a text-level element.", loc: locOf(n) });
       }

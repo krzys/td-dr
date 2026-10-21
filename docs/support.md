@@ -769,7 +769,7 @@ first of them, with every place in `locs` (the CLI prints them as "also at").
 | E010 | No layout rule matched (a td;dr bug). |
 | E011 | Unknown `data-email` value. |
 | E012 | Template construct where it can't sit (row item, grid cell, broken chain, bad path or condition, hand-written template syntax). |
-| E013 | Placeholder in CSS (other than a whole colour value) or in a presentational attribute lowering drops. |
+| E013 | Placeholder in CSS (other than a whole colour value), in a `class`, or in a presentational attribute lowering drops. |
 | E014 | Template fields or blocks in the output without a `template` dialect. |
 | E015 | Image can't be placed: no `--base-url`, or a relative URL that isn't a project file. |
 | E016 | Filled template differs from the HTML render, or a data set doesn't meet a dialect's data needs (folder builds). |

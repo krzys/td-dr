@@ -49,7 +49,7 @@ export const classValue = (v: unknown): unknown => {
   if (Array.isArray(plain)) return plain.map(classValue);
   if (plain && typeof plain === "object") {
     for (const [name, on] of Object.entries(plain)) {
-      if (isTemplateValue(on)) throw templateError(`the class ${name}`, "is switched on by a field; a class list holds text.", "put v-if / v-else on two copies of the element, or send the class name in the data");
+      if (isTemplateValue(on)) throw templateError(`the class ${name}`, "is switched on by a field; a class list holds text.", "put v-if / v-else on two copies of the element, each with its own fixed class");
     }
   }
   return plain;

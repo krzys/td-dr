@@ -72,6 +72,7 @@ For HTML passed to `compile(html, { template })`:
 | A hint on or inside a preheader | **E012**: the preheader is one string |
 | `-if` reading the same element's `each` variable | **E012**: put it on a child |
 | A placeholder in CSS other than a [whole colour](#colours-from-data) | **E013** |
+| A placeholder in a `class`, on any element | **E013**: the stylesheet is inlined at build, so no rule follows a class filled in later |
 | A placeholder in an attribute lowering drops | **E013** for a presentational one, else **E012** |
 | Block syntax typed by hand (`{{#`, `{{/`, `{{else`, `{%`) | **E012**, written as text |
 | Fields or markers in a compile without `template` | **E014** |
@@ -189,7 +190,9 @@ is opaque (never lowered or mixed) and goes whole into every attribute that carr
 
 `bgcolor` and VML need `#rrggbb` or a colour name in the data; `rgba()` works in CSS clients only.
 Anywhere else in CSS a placeholder
-is E013: send a ready class or branch on the style.
+is E013, and so is one in a `class`: td;dr inlines the stylesheet when it builds, so a class the
+ESP fills in matches no rule. Write one copy of the element per look, each with fixed styles under
+its own condition (`v-if` / `v-else`, `cond ? <A/> : <B/>`, `data-email-if` / `-unless`).
 
 ## Spacing around blocks
 

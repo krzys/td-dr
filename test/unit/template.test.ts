@@ -307,6 +307,24 @@ describe("placeholders td;dr would drop", () => {
     expect(ds.filter((d) => d.severity === "error")).toEqual([]);
   });
 
+  test("a class from a field is E013 on any element, pointing to one copy per look", () => {
+    const ds = diag(`<div style="padding:4px">\n<div class="card ${field("kind")}"><p style="margin:0">x</p></div>\n<p style="margin:0">z <span class="${field("tier")}">w</span></p></div>`);
+    const e = ds.filter((d) => d.code === "E013");
+    expect(e.map((d) => [d.loc?.line, d.message])).toEqual([
+      [2, 'class="card {{kind}}" on <div> comes from a field, and no style can follow it'],
+      [3, 'class="{{tier}}" on <span> comes from a field, and no style can follow it'],
+    ]);
+    expect(e[0]?.hint).toMatch(/v-if \/ v-else/);
+    expect(e[0]?.hint).not.toMatch(/text-level|ready class|in the data/);
+    expect(ds.filter((d) => d.code === "E012")).toEqual([]);
+  });
+
+  test("the hints for a look from data say to write a copy per look", () => {
+    const style = diag(`<p style="padding:${field("a")}">x</p>`).find((d) => d.code === "E013");
+    expect(style?.hint).toMatch(/v-if \/ v-else/);
+    expect(diag(`<p style="margin:0">x</p>`, [`p { color: ${field("c")}; }`]).find((d) => d.code === "E013")?.hint).not.toMatch(/ready class/);
+  });
+
   test("a placeholder in an extra stylesheet is E013", () => {
     expect(diag(`<p style="margin:0">x</p>`, [`p { color: ${field("c")}; }`]).map((d) => d.code)).toContain("E013");
   });

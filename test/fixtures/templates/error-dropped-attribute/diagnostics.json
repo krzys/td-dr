@@ -13,7 +13,7 @@
     "code": "E013",
     "severity": "error",
     "message": "bgcolor=\"{{brand.bg}}\" on <div> is dropped",
-    "hint": "A look can't come from the ESP: td;dr needs it to lower the layout. Pick between fixed looks with data-email-if / -unless twins.",
+    "hint": "A look can't come from the ESP: td;dr needs it to lower the layout. Instead, write one copy of the element per look, each under its own condition (v-if / v-else in Vue, cond ? <A/> : <B/> in JSX, data-email-if / -unless in HTML).",
     "loc": {
       "line": 2,
       "col": 3

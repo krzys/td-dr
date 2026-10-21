@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E013",
+    "severity": "error",
+    "message": "class=\"badge {{user.tier}}\" on <span> comes from a field, and no style can follow it",
+    "hint": "td;dr inlines the stylesheet when it builds, so a class the ESP fills in later matches no rule. Write one copy of the element per class, each with its class fixed and under its own condition (v-if / v-else in Vue, cond ? <A/> : <B/> in JSX, data-email-if / -unless in HTML).",
+    "loc": {
+      "line": 2,
+      "col": 72
+    }
+  }
+]
