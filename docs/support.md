@@ -730,8 +730,8 @@ Seen in a local test of a few mail clients, beyond the caniemail data:
 ## Diagnostic codes
 
 Defaults from `src/diagnostics/codes.ts`; codes are never renumbered. With `strict: false`, errors
-are reported as warnings and the input is kept as written. Client-support problems are warnings
-even in strict mode.
+are reported as warnings and the input is kept as written, except E018, which leaves no output to
+keep. Client-support problems are warnings even in strict mode.
 
 | Code | Meaning |
 |---|---|
@@ -752,6 +752,7 @@ even in strict mode.
 | E015 | Image can't be placed: no `--base-url`, or a relative URL that isn't a project file. |
 | E016 | Filled template differs from the HTML render, or a data set doesn't meet a dialect's data needs (folder builds). |
 | E017 | A media, dark or hover rule changes the structure, text or attributes ([what a screen may change](#what-a-screen-may-change)). |
+| E018 | Elements nested too deep to compile (thousands of levels): no output, at the deepest element. |
 | W001 | Dropped or changed: no email-safe way to keep it exactly. |
 | W002 | Invalid CSS (a syntax error, a value such as a negative gap, or rules nested over 128 deep); ignored. |
 | W003 | Approximated layout ([approximations](#approximations)). |

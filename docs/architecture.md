@@ -23,7 +23,9 @@ input HTML (+ options.css)
 { html, diagnostics, trace? }
 ```
 
-`src/pipeline.ts` wires the stages; nothing else calls more than one of them.
+`src/pipeline.ts` wires the stages; nothing else calls more than one of them. Stages recurse over the tree,
+so input nested deeper than the stack holds ends the compile with E018 and an empty `html`,
+located at the deepest element.
 
 | Stage | Module | Contract |
 |---|---|---|

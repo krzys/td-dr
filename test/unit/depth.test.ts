@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { run, type CliIO } from "../../src/cli.ts";
 import { compile } from "../../src/index.ts";
 import { CSS_NESTING_DEPTH } from "../../src/limits.ts";
 
@@ -33,5 +34,47 @@ describe("css nesting depth", () => {
     expect(r.html).toContain("example.com");
     expect(r.diagnostics.filter((d) => d.code === "W002")).toHaveLength(1);
     expect(r.diagnostics.map((d) => d.code)).not.toContain("E018");
+  });
+});
+
+const deep = (open: string, close: string, n: number) => `<!doctype html><html lang="en"><head><title>t</title></head><body>${open.repeat(n)}x${close.repeat(n)}</body></html>`;
+
+describe("elements nested too deep", () => {
+  const cases: [string, string, string][] = [
+    ["plain divs", "<div>", "</div>"],
+    ["styled divs", '<div style="padding:1px">', "</div>"],
+    ["spans", "<span>", "</span>"],
+    ["tables", "<table><tr><td>", "</td></tr></table>"],
+  ];
+  for (const [name, open, close] of cases) {
+    it(`5,000 ${name} report a located E018 instead of throwing`, () => {
+      const r = compile(deep(open, close, 5000), { strict: false });
+      expect(r.html).toBe("");
+      const e = r.diagnostics.filter((d) => d.code === "E018");
+      expect(e).toHaveLength(1);
+      // no output was written: it stays an error with strict off
+      expect(e[0]!.severity).toBe("error");
+      expect(e[0]!.message).toMatch(/^Elements nest \d{1,2},\d{3} deep/);
+      expect(e[0]!.loc?.line).toBe(1);
+      expect(e[0]!.loc?.col).toBeGreaterThan(5000);
+    });
+  }
+
+  it("keeps what was reported before", () => {
+    const r = compile(deep('<div style="position:fixed">', "</div>", 5000), { strict: false });
+    expect(r.diagnostics.at(-1)?.code).toBe("E018");
+  });
+
+  it("fails the cli with the location", async () => {
+    const err: string[] = [];
+    const written: Record<string, string> = {};
+    const io: CliIO = {
+      stdout: () => {},
+      stderr: (s) => void err.push(s),
+      readFile: () => deep("<div>", "</div>", 5000),
+      writeFile: (p, s) => void (written[p] = s),
+    };
+    expect(await run(["build", "in.html", "-o", "out.html", "--allow-unsupported"], io)).toBe(1);
+    expect(err.join("")).toMatch(/^in\.html:1:\d+: error E018: /m);
   });
 });

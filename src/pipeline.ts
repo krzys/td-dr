@@ -4,6 +4,7 @@ import type { Ctx, OtherScreens, WidthDecision } from "./ctx.ts";
 import { emit } from "./emit/emit.ts";
 import { locKey } from "./ir/index.ts";
 import { reportUndecoded } from "./parse/decode.ts";
+import { deepest } from "./parse/depth.ts";
 import { parse, type ParsedDoc } from "./parse/html.ts";
 import { runPasses } from "./passes/index.ts";
 import { post } from "./post/post.ts";
@@ -140,7 +141,24 @@ const responsive = (doc: ParsedDoc, ctx: Ctx, base: Base, screens: readonly Scre
 
 export const runPipeline = (input: string, given: Ctx): string => runTraced(input, given).html;
 
-export const runTraced = (input: string, given: Ctx): { html: string; trace?: TraceEntry[] } => {
+type Traced = { html: string; trace?: TraceEntry[] };
+
+// Stages recurse over the tree, so input nested thousands deep runs out of stack in whichever
+// one goes deepest first. Nothing is written then, and what was reported before stays.
+const outOfStack = (e: unknown): boolean => e instanceof RangeError && /call stack/i.test(e.message);
+
+export const runTraced = (input: string, given: Ctx): Traced => {
+  try {
+    return stages(input, given);
+  } catch (e) {
+    if (!outOfStack(e)) throw e;
+    const { depth, loc } = deepest(input);
+    given.diagnostics.report("E018", { message: `Elements nest ${depth.toLocaleString("en-US")} deep, the deepest here: td;dr ran out of stack and wrote no output`, loc });
+    return { html: "" };
+  }
+};
+
+const stages = (input: string, given: Ctx): Traced => {
   reportUndecoded(input, given);
   lintPlaceholders(input, given);
   // parsed once: the style stage only reads it, so every environment cascades the same doc
