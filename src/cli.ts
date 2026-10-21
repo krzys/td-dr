@@ -3,6 +3,8 @@ import { readFileSync, realpathSync, statSync, writeFileSync } from "node:fs";
 import { relative } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+import { loadConfig } from "./config-file.ts";
+import type { TddrConfig } from "./config.ts";
 import { LANG_TAG } from "./ctx.ts";
 import { compile, toText, type Diagnostic } from "./index.ts";
 import { jsonReport, sarifReport, type Reported } from "./diagnostics/report.ts";
@@ -50,6 +52,9 @@ Dev server (dir defaults to ./emails):
 Folder build and dev server:
   --base-url <url>        where images are hosted; a folder build copies them
                           to <out>/assets for you to upload there
+
+tddr.config.ts (.mts, .js, .mjs) in the current directory sets targets, width and
+baseUrl for every build; a flag wins over it.
 
   -h, --help              show this help
   -v, --version           show version
@@ -221,6 +226,22 @@ const dev = async (args: string[], values: { port?: string; host?: string; "base
 
 const text = (file: Uint8Array | string, decode: (b: Uint8Array) => string): string => (typeof file === "string" ? file : decode(file));
 
+// tddr.config.ts in the directory tddr runs in, or {} without one; undefined when it is wrong
+const projectConfig = async (io: CliIO): Promise<TddrConfig | undefined> => {
+  try {
+    return (await loadConfig(process.cwd()))?.config ?? {};
+  } catch (e) {
+    io.stderr(`tddr: ${(e as Error).message}\n`);
+    return undefined;
+  }
+};
+
+// the config's base URL, unless --base-url says one; it is for a folder build or dev, one file has none
+const withBaseUrl = (values: { "base-url"?: string }, config: TddrConfig): { "base-url"?: string } => {
+  const url = values["base-url"] ?? config.baseUrl;
+  return url === undefined ? {} : { "base-url": url };
+};
+
 const version = (): string => {
   const url = new URL("../package.json", import.meta.url);
   return (JSON.parse(readFileSync(url, "utf8")) as { version: string }).version;
@@ -273,15 +294,20 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     io.stderr(`tddr: --${foreign} doesn't apply to "${command}"\n`);
     return 2;
   }
-  if (command === "dev") return dev(rest, values, io);
+  if (command === "dev") {
+    const config = await projectConfig(io);
+    return config ? dev(rest, { ...values, ...withBaseUrl(values, config) }, io) : 2;
+  }
 
   const [input, ...extra] = rest;
   if (command !== "build" || !input || extra.length > 0) {
     io.stderr(`tddr: expected "build <input.html>" or "dev [dir]"\n\n${HELP}`);
     return 2;
   }
+  const config = await projectConfig(io);
+  if (!config) return 2;
 
-  let width: number | undefined;
+  let width = config.width;
   if (values.width !== undefined) {
     if (!/^\d+$/.test(values.width) || Number(values.width) < 1) {
       io.stderr(`tddr: --width must be a positive integer, got "${values.width}"\n`);
@@ -299,10 +325,11 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     return 2;
   }
   const report = reporter(format as Format, io);
-  const targets = values.targets
+  const flagTargets = values.targets
     ?.split(",")
     .map((t) => t.trim())
     .filter(Boolean);
+  const targets = flagTargets?.length ? flagTargets : config.targets;
 
   const compileFlags = { ...(targets?.length && { targets }), ...(width !== undefined && { width }), ...(values.lang !== undefined && { lang: values.lang }) };
 
@@ -311,7 +338,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
       io.stderr("tddr: --css doesn't apply to a folder build; import the stylesheet in the email\n");
       return 2;
     }
-    return buildDir(input, values, compileFlags, io, report);
+    return buildDir(input, { ...values, ...withBaseUrl(values, config) }, compileFlags, io, report);
   }
   if (values["base-url"] !== undefined) {
     io.stderr("tddr: --base-url applies to a folder build or dev\n");

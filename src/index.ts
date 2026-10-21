@@ -11,6 +11,7 @@ export { preview } from "./template/preview.ts";
 export { field } from "./template/tokens.ts";
 export { writeString } from "./template/write.ts";
 export { toText } from "./post/plain-text.ts";
+export { defineConfig, type TddrConfig } from "./config.ts";
 
 export type { TraceEntry } from "./post/trace.ts";
 

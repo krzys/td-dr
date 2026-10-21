@@ -103,6 +103,17 @@ panes, the size against Gmail's clip and reload on save. It uses the project's V
 there is one; without one it adds the Vue and Tailwind Vite plugins when they are installed. A `.vue`
 email no Vue plugin compiled fails with a message saying so.
 
+**Config.** `tddr build` and `tddr dev` read `tddr.config.ts` (or `.mts`, `.js`, `.mjs`) from the
+current directory, not the input's folder. It sets `targets` and `width` for builds and `baseUrl` for
+folder builds and dev; a flag wins over it. Node (22.18 or later) loads a `.ts` config itself,
+stripping its types, so it can use only erasable TypeScript.
+
+```ts
+import { defineConfig } from "tddr";
+
+export default defineConfig({ targets: ["gmail", "outlook-2019"], width: 640, baseUrl: "https://cdn.example.com/emails" });
+```
+
 ## React and Vue
 
 Components render a body fragment; td;dr owns the document. The email's CSS is whatever its module
