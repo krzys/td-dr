@@ -217,6 +217,12 @@ const sibling = (n: DomNode, dir: -1 | 1): DomNode | undefined => {
   return undefined;
 };
 const inline = (n: DomNode | undefined): boolean => !!n && (isText(n) || (isElement(n) && !hidden(n) && !blockLike(n)));
+// a tag beside a tag beside text is in that text too: {{/if}}{{/each}} after a word ends its line
+const inlineSide = (n: DomNode, dir: -1 | 1): boolean => {
+  let s = sibling(n, dir);
+  while (s && isComment(s)) s = sibling(s, dir);
+  return inline(s);
+};
 
 const renderChildren = (n: DomNode, o: Out): void => {
   for (const c of children(n)) render(c, o);
@@ -232,7 +238,7 @@ const render = (n: DomNode, o: Out): void => {
   if (isComment(n)) {
     if (!n.data.startsWith(TAG_MARK)) return;
     const tag = st.tags[Number(n.data.slice(TAG_MARK.length))] ?? "";
-    if (inline(sibling(n, -1)) || inline(sibling(n, 1))) o.text(tag);
+    if (inlineSide(n, -1) || inlineSide(n, 1)) o.text(tag);
     else o.push([tag], 1, 1, { tag: true });
     return;
   }
