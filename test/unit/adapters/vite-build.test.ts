@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -83,5 +83,16 @@ describe("buildEmails", () => {
     const fine = (await buildEmails({ dir: fail, root: fail, out: out() })).find((r) => r.email === "fine")!;
     expect(fine.diagnostics.map((d) => d.code)).not.toContain("I015");
     expect(readFileSync(fine.file!, "utf8")).toContain("<title>Welcome</title>");
+  });
+
+  it("says a Vue email wasn't compiled when the root can't load the Vue plugin", async () => {
+    // a folder outside the repo: nothing there resolves @vitejs/plugin-vue
+    const root = mkdtempSync(join(tmpdir(), "tddr-no-vue-"));
+    mkdirSync(join(root, "hello"));
+    writeFileSync(join(root, "hello/App.vue"), "<script>\nexport const template = [\"handlebars\"];\n</script>\n<script setup>\ndefineProps(['name']);\n</script>\n<template>\n  <p>Hi {{ name }}</p>\n</template>\n");
+    writeFileSync(join(root, "hello/default.json"), '{ "name": "Ada" }');
+    const [r] = await buildEmails({ dir: root, root, out: out() });
+    expect(r!.error).toMatch(/^hello: loading \S+\/hello\/App\.vue failed: App\.vue wasn't compiled: no Vue plugin ran on it\. Install @vitejs\/plugin-vue where the project can import it/);
+    expect(r!.error).not.toMatch(/Unexpected JSX/);
   });
 });

@@ -1,3 +1,4 @@
+import { basename } from "node:path";
 import { createRunnableDevEnvironment, isCSSRequest, type Plugin } from "vite";
 import { rewrite, RUNTIME, SHIM } from "../template/transform.ts";
 import { OWN_DIRS, RUNTIME_FILE, SHIMS } from "./own.ts";
@@ -55,7 +56,14 @@ export const nativeTemplates = (): Plugin => ({
   },
   transform(code, id) {
     if (!isEmailModule(id)) return;
-    return rewrite(code, id.split("?")[0]!);
+    const file = id.split("?")[0]!;
+    // an SFC still as written: no Vue plugin compiled it, and its markup would read as JSX
+    if (file.endsWith(".vue") && code.trimStart().startsWith("<")) {
+      throw new Error(
+        `${basename(file)} wasn't compiled: no Vue plugin ran on it. Install @vitejs/plugin-vue where the project can import it (td;dr adds it when the project has no vite.config), or add it to the vite.config.`,
+      );
+    }
+    return rewrite(code, file);
   },
 });
 
