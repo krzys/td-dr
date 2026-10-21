@@ -42,6 +42,12 @@ describe("lintInput", () => {
     expect(d?.hint).toMatch(/narrow --targets/);
   });
 
+  it("visibility gets its own hint: what it hides shows where it's ignored", () => {
+    const [d] = run(el("p", { visibility: "hidden" }), { "css-visibility": { ...N, notes: ["Buggy. `visibility:collapse` on a `<tr>`."] } });
+    expect(d).toMatchObject({ code: "W005", message: "visibility isn't supported in Outlook" });
+    expect(d?.hint).toMatch(/^Those clients show what it hides.*display:none.*I002/);
+  });
+
   it("a becomes I003 with the note", () => {
     const [d] = run(el("div", { opacity: "0.5" }), { "css-opacity": { status: "a", clients: ["Gmail"], notes: ["Partial."] } });
     expect(d).toMatchObject({ code: "I003", severity: "info", hint: "Partial." });

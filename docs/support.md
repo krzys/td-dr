@@ -264,6 +264,7 @@ several links in click tracking is **unverified**.
 | `<img>` | Fluid (`max-width:100%`) or fixed, always with `width` / `height` attributes. |
 | An `<a>` that looks like a button, or `data-email="button"` | [Bulletproof button](#bulletproof-buttons). |
 | `display: none`, the `hidden` attribute, `popover`, a closed `<dialog>` | Dropped (I002), or emitted hidden when another screen shows it; inline in a text line, kept with `display:none`. |
+| `visibility: hidden` | Kept as written, so the box holds its space; W005, as Gmail and Outlook on Windows ignore it and show the content. |
 | `<details>` | Shown expanded (W001). |
 | Negative margin that exactly cancels the parent's padding | A full-bleed band. Any other is E005. |
 | `%` padding or margin | E006: tables can't scale padding with the viewport. |

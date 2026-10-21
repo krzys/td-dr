@@ -31,6 +31,7 @@ const ALLOWED: readonly Allowed[] = [
   { tag: set("img"), prop: /^float$/, value: /^(left|right)$/, why: "CSS float where it's read; Outlook gets the align attribute next to it (images)" },
   // inherited, so the emitter writes the author's value with the text styles of each cell; reported on input
   { tag: set("td"), prop: /^(overflow-wrap|word-wrap|word-break)$/, why: "the author's text wrapping, inherited into the cell and reported on input (W005)" },
+  { tag: set("td"), prop: /^visibility$/, why: "the author's visibility, inherited into the cell and reported on input (W005); kept so the hidden box holds its space" },
   { tag: set("td"), prop: /^border-spacing$/, why: "inherited with the text styles; it applies to tables only, so on a cell it does nothing (grids-and-table-display)" },
   { prop: /^(mso-|-ms-)/, why: "Outlook-only properties, harmless elsewhere (outlook-quirks)" },
   { prop: /^-webkit-text-size-adjust$/, why: "iOS font inflation reset (apple-ios-quirks)" },

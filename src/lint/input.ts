@@ -96,6 +96,11 @@ const IMAGE_LABEL: Readonly<Record<string, string>> = {
 };
 const URL_IN = /\burl\(\s*(["']?)([^"')]+)\1\s*\)/gi;
 
+// Where caniemail's first note is about something else (visibility: collapse on rows).
+const HINT: Readonly<Record<string, string>> = {
+  "css-visibility": "Those clients show what it hides. To hide content everywhere use display:none, which td;dr drops from the output (I002).",
+};
+
 type Seen = { prop: string; loc: SrcLoc | undefined; els: Set<StyledElement>; values: Set<string> };
 
 
@@ -245,7 +250,7 @@ export const lintInput = (body: StyledElement, ctx: Ctx, doc?: LintDoc): void =>
     const irrelevant = PARTIAL_IRRELEVANT[slug];
     if (res.status === "a" && irrelevant && [...s.values].every(irrelevant)) continue;
     const places = s.els.size > 1 ? ` (${s.els.size} places)` : "";
-    const note = res.notes[0];
+    const note = HINT[slug] ?? res.notes[0];
     if (res.status === "n") {
       const partly = res.clients.filter((c) => !res.unsupported.includes(c));
       const also = partly.length ? `; partly in ${partly.join(", ")}` : "";
