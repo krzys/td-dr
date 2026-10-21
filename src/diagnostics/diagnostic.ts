@@ -1,5 +1,6 @@
 import { locKey, type SrcLoc } from "../loc.ts";
 import { codes, type Code, type Severity } from "./codes.ts";
+import { oncePerShorthand } from "./shorthand.ts";
 
 export type Diagnostic = {
   code: string;
@@ -41,11 +42,11 @@ export const createSink = (strict: boolean): DiagnosticSink => {
 
 const before = (a: SrcLoc, b: SrcLoc): number => (a.file ?? "").localeCompare(b.file ?? "") || a.line - b.line || a.col - b.col;
 
-// What the author reads: a diagnostic said once however often a stage met it, and one said the same
-// way at several places as one "(N places)" at the first of them (docs/support.md#diagnostic-codes).
+// What the author reads: a diagnostic said once however often a stage met it, once per shorthand, and
+// one said the same way at several places as one "(N places)" at the first (docs/support.md#diagnostic-codes).
 export const collapse = (ds: readonly Diagnostic[]): Diagnostic[] => {
   const groups = new Map<string, { first: Diagnostic; locs: Map<string, SrcLoc> }>();
-  for (const d of ds) {
+  for (const d of oncePerShorthand(ds)) {
     const key = JSON.stringify([d.code, d.severity, d.message, d.hint ?? null, d.loc?.file ?? null]);
     const g = groups.get(key) ?? { first: d, locs: new Map<string, SrcLoc>() };
     groups.set(key, g);

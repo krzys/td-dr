@@ -85,7 +85,9 @@ export const bordersOf = (el: StyledElement, ctx: Ctx): Border => {
     const w = parseLen(el.style[`border-${s}-width`] ?? "3px"); // CSS "medium"
     const width = w && "px" in w ? w.px : 0;
     if (style === "none" || style === "hidden" || width === 0) continue;
-    if (FAKE_BORDERS.has(style)) warn(el, ctx, `border-${s}-style: ${style} is drawn as solid`);
+    // the UA sheet's <hr> inset (src/style/ua.ts) is no choice of the author's: drawn solid unsaid
+    const ua = el.tag === "hr" && el.declared[`border-${s}-style`] === undefined;
+    if (FAKE_BORDERS.has(style) && !ua) warn(el, ctx, `border-${s}-style: ${style} is drawn as solid`);
     const side: BorderSide = {
       width,
       style: REAL_BORDERS.has(style) ? (style as BorderSide["style"]) : "solid",
