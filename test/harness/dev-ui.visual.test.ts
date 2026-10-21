@@ -217,6 +217,18 @@ describe.skipIf(!chromiumOnly)("dev page on a phone", () => {
     await p.close();
   });
 
+  test("keeps the email the link asked for while the list hasn't loaded", async () => {
+    const p = await browser.newPage({ viewport: { width: 1400, height: 900 } });
+    await p.route("**/__tddr/api/emails", (r) => r.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: { message: "list failed" } }) }));
+    const listed = p.waitForResponse("**/__tddr/api/emails");
+    await p.goto(`${server.url}#email=vue-digest&data=weekly&mode=liquid&view=compare`);
+    await listed;
+    await p.click('button[data-width="375"]');
+    const hash = new URLSearchParams(new URL(p.url()).hash.slice(1));
+    expect([hash.get("email"), hash.get("data"), hash.get("mode"), hash.get("width")]).toEqual(["vue-digest", "weekly", "liquid", "375"]);
+    await p.close();
+  });
+
   test("shows a render error that has no code frame or stack", async () => {
     const p = await browser.newPage({ viewport: { width: 1400, height: 900 } });
     await p.route("**/__tddr/api/render", (r) => r.fulfill({ status: 400, json: { error: { message: "data must be a JSON object" } } }));

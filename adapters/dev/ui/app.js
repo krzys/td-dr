@@ -126,11 +126,13 @@ const problems = createProblems({
   },
 });
 
+// until the first email opens (the list is loading, or failed to), the link's own email stays in it
+let opened = false;
 const sync = () =>
   writeHash({
-    email: state.email?.name,
-    data: state.set,
-    mode: state.mode,
+    email: opened ? state.email?.name : initial.email,
+    data: opened ? state.set : initial.data,
+    mode: opened ? state.mode : initial.mode,
     view: panels.view,
     width: panels.width,
     fields: state.fields && state.mode !== "html" ? "1" : "",
@@ -519,6 +521,7 @@ const select = async (name, prefer = {}) => {
   const e = state.emails.find((x) => x.name === name) ?? state.emails[0];
   if (!e) return;
   state.email = e;
+  opened = true;
   problems.clearPick();
   // a template email is mostly looked at filled in, so start in its first dialect
   state.mode = modeOf(e, prefer.mode) ?? e.template[0] ?? "html";
