@@ -17,6 +17,7 @@ import { createPanels } from "./panels.js";
 import { createPreview } from "./preview.js";
 import { createProblems } from "./problems.js";
 import { createGate, createLatest } from "./requests.js";
+import { parseSims, SIMS, simulate } from "./simulate.js";
 import { sizeView } from "./size.js";
 
 /** @typedef {import("../protocol.ts").ApiError} ApiError */
@@ -30,6 +31,7 @@ import { sizeView } from "./size.js";
 /** @typedef {import("../protocol.ts").SizeInfo} SizeInfo */
 /** @typedef {import("./hash.js").Hash} Hash */
 /** @typedef {import("./layout.js").ViewChoice} ViewChoice */
+/** @typedef {import("./simulate.js").Sim} Sim */
 
 /** @type {EventsPath} */
 const EVENTS = "/__tddr/events";
@@ -45,7 +47,7 @@ const prefs = createPrefs(() => localStorage);
 /**
  * @type {{
  *   emails: EmailSummary[], email: EmailSummary | null, set: string, mode: RenderMode,
- *   fields: boolean, failed: boolean, last: RenderResponse | null,
+ *   fields: boolean, sims: Sim[], failed: boolean, last: RenderResponse | null,
  * }}
  */
 const state = {
@@ -54,6 +56,7 @@ const state = {
   set: "",
   mode: "html",
   fields: initial.fields === "1",
+  sims: parseSims(initial.sim),
   failed: false,
   last: null,
 };
@@ -91,6 +94,7 @@ const panels = createPanels({
     cross.clear();
     preview.view(v);
     showInbox();
+    paintSims();
     sync();
   },
   onWidth: (w) => {
@@ -130,6 +134,7 @@ const sync = () =>
     view: panels.view,
     width: panels.width,
     fields: state.fields && state.mode !== "html" ? "1" : "",
+    sim: state.sims.join(","),
   });
 
 // ---- status strip
@@ -180,6 +185,7 @@ const showError = (err) => {
   state.failed = !!err;
   byId("stale-note").hidden = !err;
   if (err) byId("inbox").hidden = true;
+  paintSims();
   if (!err) {
     box.hidden = true;
     byId("frames").classList.remove("stale");
@@ -223,10 +229,64 @@ const showFrames = () => {
   cross.clear();
   if (!r) return;
   // both frames show their own unfilled form: the author's markup and the compiled template
-  if (fieldsOn()) preview.show(chipify(blockify(readableFields(r.input ?? r.source))), chipify(r.template ?? "", true));
+  if (fieldsOn()) preview.show(chipify(blockify(readableFields(r.input ?? r.source))), simulate(chipify(r.template ?? "", true), state.sims));
   // filled frames are the annotated copies, when there are any: same look, plus what each element came from
-  else preview.show(r.sourceShown ?? r.source, r.htmlShown ?? r.html);
+  else preview.show(r.sourceShown ?? r.source, simulate(r.htmlShown ?? r.html, state.sims));
 };
+
+// ---- client simulation: the Compiled frame only, and said so wherever it shows
+
+const simBox = byId("sim", HTMLDetailsElement);
+const simInputs = SIMS.map((s) => {
+  const input = h("input", { type: "checkbox", id: `sim-${s.id}`, value: s.id, "aria-describedby": `sim-${s.id}-does` });
+  byId("sim-opts").append(
+    h(
+      "div",
+      { class: "sim-opt" },
+      h("label", {}, input, h("span", {}, s.label)),
+      h("p", { id: `sim-${s.id}-does` }, s.does, s.like && h("span", { class: "like" }, ` For example ${s.like}.`)),
+    ),
+  );
+  return input;
+});
+
+const paintSims = () => {
+  const on = new Set(state.sims);
+  for (const input of simInputs) {
+    const id = /** @type {Sim} */ (input.value);
+    // no @media is part of no <style>
+    input.disabled = id === "nomedia" && on.has("nostyle");
+    input.checked = on.has(id) || input.disabled;
+  }
+  const active = SIMS.filter((s) => on.has(s.id) && !(s.id === "nomedia" && on.has("nostyle")));
+  simBox.classList.toggle("active", active.length > 0);
+  byId("sim-value").textContent = active.length > 1 ? `${active.length} limits` : (active[0]?.label ?? "Off");
+  const shown = active.length > 0 && panels.view !== "source";
+  byId("sim-bar").hidden = !shown || !state.last || state.failed;
+  byId("sim-text").textContent = `Simulated: ${active.map((s) => s.label).join(", ")}${on.has("dark") ? " (an approximation)" : ""}. The code, size and Copy show the real output.`;
+  byId("sim-tag").hidden = !active.length;
+  byId("pane-compiled").classList.toggle("simulated", active.length > 0);
+};
+
+/** @param {Sim[]} sims */
+const setSims = (sims) => {
+  state.sims = parseSims(sims.join(","));
+  paintSims();
+  sync();
+  showFrames();
+};
+
+byId("sim-opts").addEventListener("change", () => setSims(simInputs.filter((i) => i.checked && !i.disabled).map((i) => /** @type {Sim} */ (i.value))));
+byId("sim-off").addEventListener("click", () => setSims([]));
+// a menu: Escape or a click elsewhere closes it
+simBox.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape" || !simBox.open) return;
+  simBox.open = false;
+  simBox.querySelector("summary")?.focus();
+});
+addEventListener("click", (e) => {
+  if (simBox.open && !simBox.contains(/** @type {Node} */ (e.target))) simBox.open = false;
+});
 
 // subject and preheader as an inbox would show them, read from the compiled markup
 const showInbox = () => {
@@ -251,6 +311,7 @@ const apply = (e, r) => {
   state.last = r;
   showFrames();
   showInbox();
+  paintSims();
   code.set({
     compiled: { text: r.html, file: `${e.name}.html` },
     ...(r.template !== undefined && { template: { text: r.template, file: `${e.name}.${state.mode}.html` } }),
@@ -550,6 +611,7 @@ addEventListener("keydown", (e) => {
 // someone edited the hash by hand, or followed a link
 addEventListener("hashchange", () => {
   const next = readHash();
+  if ((next.sim ?? "") !== state.sims.join(",")) setSims(parseSims(next.sim));
   if (next.view && next.view !== panels.view && isView(next.view)) panels.setView(next.view);
   if (next.width && Number(next.width) !== panels.width && Number(next.width) > 0) panels.setWidth(Number(next.width));
   if (next.email && next.email !== state.email?.name) return void select(next.email, next);
@@ -641,5 +703,6 @@ panels.setView(panels.view);
 panels.setWidth(panels.width);
 panels.setDock("code");
 preview.opacity(opacity.value);
+paintSims();
 if (await refreshList()) await select(initial.email ?? state.emails[0]?.name, initial);
 live();

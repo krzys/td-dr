@@ -712,6 +712,157 @@ button.icon[aria-pressed="true"] {
   color: var(--muted);
 }
 
+/* client simulation: a menu of limits, and a bar over the frames while any is on */
+
+.sim {
+  position: relative;
+  flex: none;
+}
+
+.sim summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: var(--r2);
+  border: 1px solid var(--line-strong);
+  background: var(--raised);
+  font-weight: 500;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.sim summary::-webkit-details-marker {
+  display: none;
+}
+
+.sim summary:hover {
+  background: var(--hover);
+}
+
+.sim summary .lbl {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sim summary svg {
+  width: 12px;
+  height: 12px;
+  color: var(--muted);
+}
+
+.sim.active summary {
+  border-color: var(--warning-icon);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.sim.active summary .lbl,
+.sim.active summary svg {
+  color: inherit;
+}
+
+.sim-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  margin: 0;
+  padding: 10px 12px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r3);
+  background: var(--panel);
+  box-shadow: var(--shadow-lg);
+}
+
+.sim-menu legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 4px;
+  padding: 0;
+  font-weight: 600;
+}
+
+.sim-opt {
+  clear: both;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+
+.sim-opt label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.sim-opt input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.sim-opt input:disabled + span {
+  color: var(--muted);
+}
+
+.sim-opt p {
+  margin: 2px 0 0 21px;
+  color: var(--text2);
+  font-size: 12px;
+}
+
+.sim-opt .like {
+  color: var(--muted);
+}
+
+.sim-foot {
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sim-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: var(--frame-width, 600px);
+  max-width: 100%;
+  min-height: 36px;
+  margin: 0 auto 8px;
+  padding: 4px 6px 4px 12px;
+  border: 1px dashed var(--warning-icon);
+  border-radius: var(--r2);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.sim-bar svg {
+  color: var(--warning-icon);
+}
+
+.sim-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.sim-bar button {
+  height: 26px;
+  padding: 0 10px;
+}
+
+.sim-tag {
+  color: var(--warning);
+}
+
+#pane-compiled.simulated iframe {
+  box-shadow: 0 0 0 2px var(--warning-icon), var(--shadow);
+}
+
 .stage-wrap {
   position: relative;
   flex: 1;
@@ -2113,7 +2264,8 @@ div.diag-row {
 
   button,
   .selwrap,
-  .numf {
+  .numf,
+  .sim summary {
     height: 44px;
   }
 

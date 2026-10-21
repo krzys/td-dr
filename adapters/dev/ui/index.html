@@ -82,6 +82,17 @@ emails/welcome/standard.json</code></pre>
         <label class="numf" id="width-field">
           <input type="number" id="width-custom" min="200" max="2400" step="1" inputmode="numeric" aria-label="Custom width in pixels" title="Custom width (px)" />px
         </label>
+        <details class="sim" id="sim">
+          <summary title="Re-render the compiled frame under a stricter client's limits">
+            <span class="lbl">Simulate</span><span class="sim-value" id="sim-value">Off</span>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" /></svg>
+          </summary>
+          <fieldset class="sim-menu" id="sim-menu">
+            <legend>Simulate client limits</legend>
+            <div id="sim-opts"></div>
+            <p class="sim-foot">Compiled frame only. The code, size and Copy show the real output.</p>
+          </fieldset>
+        </details>
         <span class="spacer"></span>
         <div class="seg" id="modes" role="group" aria-label="Template dialect"></div>
         <div class="seg" id="fields" role="group" aria-label="Template data" hidden>
@@ -102,6 +113,11 @@ emails/welcome/standard.json</code></pre>
             <span class="inbox-text"><b id="inbox-subject"></b> <span id="inbox-pre"></span></span>
             <span class="plan" title="The inbox line is planned: subject and preheader come from the email's own markup">Planned</span>
           </div>
+          <div class="sim-bar" id="sim-bar" role="status" hidden>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7.2 2.9 1.8 12.2a.9.9 0 0 0 .8 1.3h10.8a.9.9 0 0 0 .8-1.3L8.8 2.9a.9.9 0 0 0-1.6 0ZM8 6.6v2.8M8 11.4v.01" /></svg>
+            <span class="sim-text" id="sim-text"></span>
+            <button type="button" id="sim-off">Turn off</button>
+          </div>
           <div class="render-error" id="render-error" role="alert" hidden></div>
           <div class="frames" id="frames">
             <figure class="pane" id="pane-source">
@@ -111,7 +127,7 @@ emails/welcome/standard.json</code></pre>
               <button type="button" class="handle r" aria-label="Drag to resize preview width" title="Drag to resize"></button>
             </figure>
             <figure class="pane" id="pane-compiled">
-              <figcaption>Compiled</figcaption>
+              <figcaption>Compiled<span class="sim-tag" id="sim-tag" hidden> · simulated</span></figcaption>
               <iframe title="Compiled email"></iframe>
               <button type="button" class="handle l" aria-label="Drag to resize preview width" title="Drag to resize"></button>
               <button type="button" class="handle r" aria-label="Drag to resize preview width" title="Drag to resize"></button>
