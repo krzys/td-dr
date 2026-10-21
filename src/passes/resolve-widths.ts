@@ -49,6 +49,15 @@ const msoWidth = (col: Column, inner: number): ResolvedWidth | undefined => {
 // A flex-shrink: 0 column the row scaled down (arithmetic-resolver W003) is narrower here than in the source.
 const squeezedCol = (col: Column, r: ResolvedWidth): boolean => !!col.noShrink && "px" in col.width && r.px < col.width.px - 0.5;
 
+// On a screen that stacks the row, a column is a block as wide as the line, its own % of it, or its own
+// px width if that is less (emit/row.ts blockWidth), less the side margins it keeps; null where it doesn't stack.
+const stackedSlot = (row: RowNode, i: number, inner: number): number | null => {
+  const item = row.stacked?.items?.[i];
+  if (!row.stacked || !item) return null;
+  const line = item.pct !== undefined ? (inner * item.pct) / 100 : inner;
+  return Math.max(0, Math.min(line, item.cap ?? Infinity) - item.inset.left - item.inset.right);
+};
+
 // `squeezed`: the subtree sits in such a column, so a fluid image its slot clamps is one the source shows whole.
 const resolve = (node: Node, available: number, ctx: Ctx, screen: Fluid, squeezed = false): Node => {
   switch (node.kind) {
@@ -66,12 +75,13 @@ const resolve = (node: Node, available: number, ctx: Ctx, screen: Fluid, squeeze
       // other clients never see an Outlook-only item, so the rest share the row as if it weren't there
       const kept = node.cols.filter((c) => !isMsoCol(c));
       const narrow = screenSlot(node.box, screen);
+      const row = node;
       const { wrap } = node;
       const widths = arithmeticResolver.resolve({ ...node, cols: kept }, inner, ctx, narrow);
       const taken = widths.reduce((sum, w) => sum + (w?.px ?? 0), 0);
       const autoSpace = Math.max(0, inner - taken - node.gap * (kept.length - 1));
       let k = 0;
-      const cols = node.cols.map((col): Column => {
+      const cols = node.cols.map((col, i): Column => {
         if (isMsoCol(col)) {
           // its own width where it has one, else its content shrinks to fit the row (autoSpace is 0 in full rows and grids)
           const own = msoWidth(col, inner);
@@ -80,6 +90,9 @@ const resolve = (node: Node, available: number, ctx: Ctx, screen: Fluid, squeeze
         }
         const r = widths[k++] ?? null;
         const narrowCol = columnSlot(col, r, narrow, wrap);
+        // stacked here, what is inside fills the block, as on the screen the row stacks on
+        const stacked = stackedSlot(row, i, inner);
+        if (stacked !== null) return { ...col, resolved: r, child: resolve(col.child, stacked, ctx, narrowCol, squeezed) };
         // the table sizes it: auto columns (and grow ones beside them) get whatever the fixed ones leave
         if (!r) return { ...col, resolved: null, child: resolve(col.child, autoSpace, ctx, narrowCol, squeezed) };
         const slot = Math.max(0, r.px - gutterX(col));

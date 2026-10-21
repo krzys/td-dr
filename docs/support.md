@@ -344,7 +344,8 @@ the base didn't.
   between the `space-*` values ([height and vertical distribution](#height-and-vertical-distribution)).
 - **Stack a row:** each column cell becomes `display:block;width:100%` (a bordered painted one
   `box-sizing:border-box`, so its border stays inside that width), gutters drop, the column gap
-  becomes `padding-top`. Outlook keeps the desktop row. Wrapping rows stack by themselves.
+  becomes `padding-top`, and a fluid image in a column is capped at the stacked width instead of
+  the column's. Outlook keeps the desktop row. Wrapping rows stack by themselves.
 - `mso-*` declarations and comment content are ignored (Outlook never applies `@media`, `:hover`
   or dark rules).
 
