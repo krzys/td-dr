@@ -42,6 +42,18 @@ describe("buildEmails", () => {
     expect(existsSync(join(to, "assets"))).toBe(false);
   });
 
+  it("only checks with write: false, saying the same diagnostics and writing nothing", async () => {
+    const to = out();
+    const results = await buildEmails({ dir, root: dir, out: to, write: false });
+    expect(results.map((r) => [r.email, r.dialect, r.file, r.skipped !== undefined])).toEqual([
+      ["badge", "handlebars", undefined, false],
+      ["badge", "liquid", undefined, false],
+      ["plain", undefined, undefined, true],
+    ]);
+    expect(results[0]!.diagnostics.filter((d) => d.code === "E015")).toHaveLength(3);
+    expect(readdirSync(to)).toEqual([]);
+  });
+
   it("names files from a pattern", async () => {
     const to = out();
     const results = await buildEmails({ dir, root: dir, out: to, baseUrl: BASE, fileName: "[dialect]/[name].html" });

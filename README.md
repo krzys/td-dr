@@ -60,6 +60,7 @@ several places comes once, as "… (N places)" at the first, with every place in
 ```sh
 tddr build email.html -o out.html --targets gmail,outlook-2019 --width 640 --lang de
 tddr build emails --base-url https://cdn.example.com/emails   # every template email in a folder
+tddr check emails --max-warnings 0                             # the same diagnostics, nothing written
 tddr dev emails                                                # preview server, localhost:3100
 ```
 
@@ -75,6 +76,7 @@ tddr dev emails                                                # preview server,
 | `--no-verify` | Folder builds: skip the equivalence check. |
 | `--base-url <url>` | Folder builds and dev: where images are hosted; a build copies them to `<out>/assets`. |
 | `--port <n>`, `--host <h>` | Dev server address. |
+| `--max-warnings <n>` | `tddr check`: also exit 1 on more than `n` warnings. |
 
 A file build prints each diagnostic to stderr as `file:line:col: severity CODE: message`, then
 `  hint: …`. A folder build adds the dialect after the place, and says a Vue email's diagnostic on
@@ -87,6 +89,10 @@ loses a field: E016, E012, E013) and 2 for usage errors.
 `{ file, line?, column?, code, severity, message, hint?, count, places, dialect? }`, and
 `--format sarif` as a SARIF 2.1.0 log for code scanning; anything else the build says moves to
 stderr, so a file build needs `-o`.
+
+`tddr check <file|dir>` builds as `tddr build` does, with its flags bar `-o`, `--text` and
+`--file-name`, and says the same diagnostics, but writes nothing; `--format json|sarif` goes to
+stdout.
 
 **Folder builds.** An emails folder holds one email per subfolder (`index.jsx` / `index.tsx`,
 `App.vue`) or per file (`welcome.jsx`, `digest.vue`), each default-exporting its component. Every
@@ -103,7 +109,7 @@ panes, the size against Gmail's clip and reload on save. It uses the project's V
 there is one; without one it adds the Vue and Tailwind Vite plugins when they are installed. A `.vue`
 email no Vue plugin compiled fails with a message saying so.
 
-**Config.** `tddr build` and `tddr dev` read `tddr.config.ts` (or `.mts`, `.js`, `.mjs`) from the
+**Config.** `tddr build`, `check` and `dev` read `tddr.config.ts` (or `.mts`, `.js`, `.mjs`) from the
 current directory, not the input's folder. It sets `targets` and `width` for builds and `baseUrl` for
 folder builds and dev; a flag wins over it. Node (22.18 or later) loads a `.ts` config itself,
 stripping its types, so it can use only erasable TypeScript.

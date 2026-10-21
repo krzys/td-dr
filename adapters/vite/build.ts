@@ -15,9 +15,10 @@ export type BuildOptions = {
   fileName?: string | undefined; // pattern with [name] and [dialect], relative to out
   compile?: CompileOptions;
   verify?: boolean; // default true: compare each template with the HTML render (docs/templates.md#the-equivalence-check)
+  write?: boolean; // default true; false only checks (`tddr check`): the same results, without `file`, and nothing on disk
 };
 
-// one per written file, or per email that wasn't built
+// one per written file (checked one, with write: false), or per email that wasn't built
 export type BuildResult = {
   email: string;
   entry?: string; // the email's own file
@@ -90,6 +91,10 @@ export const buildEmails = async (o: BuildOptions): Promise<BuildResult[]> => {
           if (lost.length) {
             const error = `its ${dialect} template would lose what a field fills in (${lost.join(", ")}); nothing written`;
             results.push({ email: email.name, entry: email.entry, dialect, error, diagnostics: [...checked.splice(0), ...t.diagnostics] });
+            continue;
+          }
+          if (o.write === false) {
+            results.push({ email: email.name, entry: email.entry, dialect, diagnostics: [...checked.splice(0), ...t.diagnostics] });
             continue;
           }
           const file = files.get(`${email.name}\0${dialect}`)!;

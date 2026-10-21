@@ -22,6 +22,7 @@ export type CliIO = {
 
 const HELP = `Usage: tddr build <input.html> [options]
        tddr build <emails dir> [options]
+       tddr check <input.html | emails dir> [options]
        tddr dev [dir] [options]
 
 Build options:
@@ -45,6 +46,9 @@ Folder build:
   --no-verify             skip comparing each template, filled with the email's
                           data sets, against the HTML render
 
+Check (the build options bar -o, --text and --file-name; writes nothing):
+  --max-warnings <n>      exit 1 on more than n warnings too, not only on an error
+
 Dev server (dir defaults to ./emails):
   --port <n>              port to listen on (default 3100)
   --host <host>           host to bind (default localhost)
@@ -65,6 +69,13 @@ export type StartDevServer = (o: { dir: string; port?: number; host?: string; ba
 
 const BUILD_FLAGS = ["out", "targets", "width", "css", "allow-unsupported", "allow-svg", "lang", "file-name", "no-verify", "format", "text"] as const;
 const DEV_FLAGS = ["port", "host"] as const;
+// check builds without writing
+const WRITE_FLAGS = ["out", "text", "file-name"] as const;
+const FOREIGN = {
+  build: [...DEV_FLAGS, "max-warnings"],
+  check: [...DEV_FLAGS, ...WRITE_FLAGS],
+  dev: [...BUILD_FLAGS, "max-warnings"],
+} as const;
 
 // Adapters load lazily so `tddr build in.html` never imports Vite, an optional peer; tsup emits them
 // next to this file. A missing peer is named instead of surfacing as a module-resolution stack.
@@ -118,6 +129,13 @@ const reporter = (format: Format, io: CliIO): Reporter => {
   };
 };
 
+// 1 on an error and, for check --max-warnings, on more warnings than that
+const verdict = (errors: boolean, warnings: number, maxWarnings: number | undefined, io: CliIO): number => {
+  const over = maxWarnings !== undefined && warnings > maxWarnings;
+  if (over) io.stderr(`tddr: ${warnings} warning${warnings === 1 ? "" : "s"}, more than --max-warnings ${maxWarnings}\n`);
+  return errors || over ? 1 : 0;
+};
+
 // out.html -> out.txt
 const textFile = (html: string): string => `${html.replace(/\.html?$/i, "")}.txt`;
 
@@ -136,6 +154,7 @@ const buildDir = async (
   compile: { targets?: string[]; width?: number; lang?: string },
   io: CliIO,
   report: Reporter,
+  check?: { maxWarnings: number | undefined },
 ): Promise<number> => {
   const out = values.out ?? "dist/emails";
   let results;
@@ -147,6 +166,7 @@ const buildDir = async (
       ...(values["base-url"] !== undefined && { baseUrl: values["base-url"] }),
       ...(values["file-name"] !== undefined && { fileName: values["file-name"] }),
       ...(values["no-verify"] && { verify: false }),
+      ...(check && { write: false }),
       compile: { strict: !values["allow-unsupported"], ...(values["allow-svg"] && { allowSvg: true }), ...compile },
     });
   } catch (e) {
@@ -155,6 +175,7 @@ const buildDir = async (
     return 2;
   }
   let failed = false;
+  let warnings = 0;
   for (const r of results) {
     const where = r.entry ? rel(r.entry) : r.email;
     const what = r.dialect ? `${where} (${r.dialect})` : where;
@@ -181,11 +202,12 @@ const buildDir = async (
       const said: Diagnostic = loc?.file ? { ...rest, loc: { ...loc, file: rel(loc.file) }, ...(inFiles && { locs: inFiles }) } : rest;
       report.add(said, where, r.dialect);
       failed ||= d.severity === "error";
+      if (d.severity === "warning") warnings++;
     }
   }
   report.end();
   if (values["base-url"] && results.some((r) => r.assets?.length)) report.progress(`images in ${out}/assets go to ${values["base-url"]}\n`);
-  return failed ? 1 : 0;
+  return verdict(failed, warnings, check?.maxWarnings, io);
 };
 
 const dev = async (args: string[], values: { port?: string; host?: string; "base-url"?: string }, io: CliIO): Promise<number> => {
@@ -268,6 +290,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
         "no-verify": { type: "boolean" },
         format: { type: "string" },
         text: { type: "boolean" },
+        "max-warnings": { type: "string" },
         help: { type: "boolean", short: "h" },
         version: { type: "boolean", short: "v" },
       },
@@ -288,9 +311,9 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
   }
 
   const [command, ...rest] = positionals;
-  // a flag for the other command is a typo, not something to ignore
-  const foreign = (command === "dev" ? BUILD_FLAGS : DEV_FLAGS).find((f) => values[f] !== undefined);
-  if ((command === "dev" || command === "build") && foreign) {
+  // a flag for another command is a typo, not something to ignore
+  const foreign = command === "dev" || command === "build" || command === "check" ? FOREIGN[command].find((f) => values[f] !== undefined) : undefined;
+  if (foreign) {
     io.stderr(`tddr: --${foreign} doesn't apply to "${command}"\n`);
     return 2;
   }
@@ -300,10 +323,11 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
   }
 
   const [input, ...extra] = rest;
-  if (command !== "build" || !input || extra.length > 0) {
-    io.stderr(`tddr: expected "build <input.html>" or "dev [dir]"\n\n${HELP}`);
+  if ((command !== "build" && command !== "check") || !input || extra.length > 0) {
+    io.stderr(`tddr: expected "build <input.html>", "check <input.html>" or "dev [dir]"\n\n${HELP}`);
     return 2;
   }
+  const checking = command === "check";
   const config = await projectConfig(io);
   if (!config) return 2;
 
@@ -318,6 +342,14 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
   if (values.lang !== undefined && !LANG_TAG.test(values.lang)) {
     io.stderr(`tddr: --lang must be a language tag like de or pt-BR, got "${values.lang}"\n`);
     return 2;
+  }
+  let maxWarnings: number | undefined;
+  if (values["max-warnings"] !== undefined) {
+    if (!/^\d+$/.test(values["max-warnings"])) {
+      io.stderr(`tddr: --max-warnings must be a whole number, got "${values["max-warnings"]}"\n`);
+      return 2;
+    }
+    maxWarnings = Number(values["max-warnings"]);
   }
   const format = values.format ?? "text";
   if (!(FORMATS as readonly string[]).includes(format)) {
@@ -338,7 +370,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
       io.stderr("tddr: --css doesn't apply to a folder build; import the stylesheet in the email\n");
       return 2;
     }
-    return buildDir(input, { ...values, ...withBaseUrl(values, config) }, compileFlags, io, report);
+    return buildDir(input, { ...values, ...withBaseUrl(values, config) }, compileFlags, io, report, checking ? { maxWarnings } : undefined);
   }
   if (values["base-url"] !== undefined) {
     io.stderr("tddr: --base-url applies to a folder build or dev\n");
@@ -356,7 +388,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     io.stderr("tddr: --text writes <name>.txt next to the HTML; give -o for it\n");
     return 2;
   }
-  if (format !== "text" && !values.out) {
+  if (format !== "text" && !values.out && !checking) {
     io.stderr(`tddr: --format ${format} writes the report to stdout; give -o for the HTML\n`);
     return 2;
   }
@@ -389,6 +421,8 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
 
   for (const d of result.diagnostics) report.add(d, input);
   report.end();
+  const errors = result.diagnostics.some((d) => d.severity === "error");
+  if (checking) return verdict(errors, result.diagnostics.filter((d) => d.severity === "warning").length, maxWarnings, io);
 
   if (values.out) {
     try {
@@ -404,7 +438,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     io.stdout(result.html);
   }
 
-  return result.diagnostics.some((d) => d.severity === "error") ? 1 : 0;
+  return errors ? 1 : 0;
 };
 
 // argv[1] can be a symlink (npm/pnpm bins), import.meta.url is already resolved
