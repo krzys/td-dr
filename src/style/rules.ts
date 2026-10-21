@@ -4,13 +4,14 @@
 import type { AtRule, ChildNode, Container, Declaration, Rule } from "postcss";
 import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
+import type { DomElement } from "../parse/dom.ts";
 import { fontFace, fontImport, isSilent, supportsHolds, unsafeFace } from "./at-rules.ts";
 import { asksDark, inMedia, keepsTextLive, TOP, usableQueries, type EnvScope } from "./conditions.ts";
 import type { Decl, Declare, ViewportNotes } from "./declarations.ts";
 import { canInline, matchRule, type Select, type Sel } from "./match.ts";
 import type { MediaQuery } from "./media.ts";
 import { propertyRule, type Registered } from "./registered.ts";
-import { hasPseudoElement } from "./selectors.ts";
+import { anyCheckedState, hasChecked, hasPseudoElement } from "./selectors.ts";
 import { locAt, parseSheet } from "./sheet.ts";
 import type { Env, FontRules } from "./types.ts";
 import { CSS_NESTING_DEPTH } from "../limits.ts";
@@ -23,6 +24,10 @@ export type OrderedDecl = Decl & { order: number; loc: SrcLoc | undefined };
 // One style rule's own declarations and the static selectors they reach, when its @media hold here.
 export type Block = { tier: number; layer: number; sels: readonly Sel[]; decls: readonly OrderedDecl[] };
 
+// :checked rules that would land in another state (docs/support.md#css-values).
+// `shows`: what such a rule gives a display, so it may be hidden only in the initial state.
+export type CheckedRules = { loc: SrcLoc | undefined; lands: boolean; shows: Set<DomElement> };
+
 export type Collected = {
   // in the order browsers apply them: a nested rule before the declarations that follow it
   blocks: Block[];
@@ -33,6 +38,7 @@ export type Collected = {
   hover: boolean; // a :hover rule some env applies
   liveText: boolean; // vw text that can apply below the design width
   order: number; // declarations seen, so style="" ones come after
+  checked: CheckedRules;
 };
 
 export type RuleInputs = { env: Env; designWidth: number; select: Select; declare: Declare; notes: ViewportNotes; ctx: Ctx };
@@ -96,6 +102,25 @@ const atRule = (node: AtRule, scope: Scope, run: Run): void => {
   }
 };
 
+const checkedRule = (container: Container, sels: readonly Sel[], decls: readonly OrderedDecl[], scope: Scope, run: Run): void => {
+  const out = run.out.checked;
+  const shows = decls.some((d) => d.prop === "display" && d.value.trim().toLowerCase() !== "none");
+  for (const sel of sels) {
+    if (!hasChecked(sel.match)) continue;
+    let any: DomElement[] = [];
+    try {
+      any = run.select(anyCheckedState(sel.match));
+    } catch {
+      continue; // W002 already, from matching
+    }
+    const flips = any.filter((el) => !sel.hits.includes(el));
+    if (flips.length === 0) continue;
+    if (!out.lands) out.loc = locAt(scope.origin, container as Rule);
+    out.lands = true;
+    if (shows) for (const el of flips) out.shows.add(el);
+  }
+};
+
 // Declarations get their order as they're met, so ones after a nested rule
 // still beat it, like browsers' nested declarations rules.
 const walk = (container: Container, scope: Scope, run: Run): void => {
@@ -116,11 +141,12 @@ const walk = (container: Container, scope: Scope, run: Run): void => {
   if (!scope.env.live) return;
   const applied = sels.filter((sel) => sel.kind === "static");
   for (const sel of applied) if (sel.hits.length > 0) for (const d of decls) run.notes(d, d.loc);
+  if (decls.length > 0) checkedRule(container, sels, decls, scope, run);
   if (applied.length > 0 && decls.length > 0) run.out.blocks.push({ tier: scope.tier, layer: scope.layer, sels: applied, decls });
 };
 
 export const collectRules = (sheets: readonly Sheet[], inputs: RuleInputs): Collected => {
-  const out: Collected = { blocks: [], registered: new Map(), fonts: { imports: [], faces: [] }, queries: [], dark: false, hover: false, liveText: false, order: 0 };
+  const out: Collected = { blocks: [], registered: new Map(), fonts: { imports: [], faces: [] }, queries: [], dark: false, hover: false, liveText: false, order: 0, checked: { loc: undefined, lands: false, shows: new Set() } };
   const run: Run = { ...inputs, canInline: canInline(inputs.select), layers: [], anonymous: 0, tooDeep: false, out };
   for (const s of sheets) {
     const root = parseSheet(s.css, s.origin, inputs.ctx);

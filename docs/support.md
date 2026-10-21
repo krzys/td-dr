@@ -90,6 +90,7 @@ E008s fail the build.
 | Logical properties, `dir` | Physical sides by the resolved direction ([right-to-left](#right-to-left-text)). |
 | `::before` / `::after` with static `content` | Written as text. Other pseudo-elements warn. |
 | `@media` width and `prefers-color-scheme`, `:hover` | [Head styles](#head-styles). Other media features warn. |
+| `:checked` (radio and checkbox tabs) | Applied in the initial state, as inlining has no other; what only another state shows is dropped, counted in one W001. A `<label for>` naming a hidden radio or checkbox switches nothing and is dropped too (I002), and counted; one holding a heading or other block (an accordion's question) stays. |
 | `@import`, `@font-face`, font `<link>` | [Web fonts](#web-fonts). |
 | `@container`, other at-rules, rules inside a `style` attribute | Skipped (W001). |
 | Invalid values (negative `gap`, unparsable declarations, selectors) | Ignored as a browser would (W002). |

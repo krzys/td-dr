@@ -48,6 +48,13 @@ export const pseudoTarget = (selector: string): { base: string; which: "before" 
 // rule would land on anything at all.
 export const subjectOf = (selector: string): string => selector.replace(STRIP, (m, quoted: string | undefined) => quoted ?? ":where(*)");
 
+// :checked is static to css-select, so it matches the initial `checked` attribute only.
+const CHECKED = new RegExp(`(${QUOTED.source})|:checked(?![\\w-])`, "gi");
+export const hasChecked = (selector: string): boolean => /:checked(?![\w-])/i.test(blankStrings(selector));
+
+// "#b:checked ~ .pb" -> "#b:where(*) ~ .pb": what the rule lands on in any state.
+export const anyCheckedState = (selector: string): string => selector.replace(CHECKED, (m, quoted: string | undefined) => quoted ?? ":where(*)");
+
 // "a.cta:hover" -> "a.cta", when :hover sits only on the subject compound and nothing else
 // dynamic is left. Whether it applies is up to the environment.
 export const hoverSubject = (selector: string): string | undefined => {

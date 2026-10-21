@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { classifySelector, subjectOf } from "../../src/style/selectors.ts";
+import { anyCheckedState, classifySelector, hasChecked, subjectOf } from "../../src/style/selectors.ts";
 
 describe("classifySelector", () => {
   test("plain selectors are static", () => {
@@ -56,5 +56,16 @@ describe("subjectOf", () => {
     expect(subjectOf(".x > :focus span")).toBe(".x > :where(*) span");
     expect(subjectOf("p::before")).toBe("p:where(*)");
     expect(subjectOf('a[title=":hover"]:hover')).toBe('a[title=":hover"]:where(*)');
+  });
+});
+
+describe("anyCheckedState", () => {
+  test(":checked becomes any state; quoted text and longer names stay", () => {
+    expect(anyCheckedState("#b:checked ~ .pb")).toBe("#b:where(*) ~ .pb");
+    expect(anyCheckedState(":checked + label")).toBe(":where(*) + label");
+    expect(anyCheckedState('a[title=":checked"]')).toBe('a[title=":checked"]');
+    expect(hasChecked('a[title=":checked"]')).toBe(false);
+    expect(hasChecked("input:checked-ish")).toBe(false);
+    expect(hasChecked("#t1:CHECKED~.p1")).toBe(true);
   });
 });
