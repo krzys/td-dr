@@ -177,20 +177,21 @@ const stages = (input: string, given: Ctx): Traced => {
   // the screens that stack are compiled quietly, so what they can't carry is said here
   if (shared) for (const n of stackNotes(probe.body, others)) ctx.diagnostics.report("W003", n);
   lintInput(styled, ctx, { lang: parsed.meta.lang ?? ctx.options.lang, dark: conditions.dark });
-  const marked = ctx.options.trace || shared ? markTree(styled) : undefined;
-  const traced = marked ? tracing(ctx) : ctx;
-  const emitted = emit(runPasses(analyze(marked?.tree ?? styled, traced), traced), traced);
-  const head = shared && marked ? responsive(parsed, ctx, { html: emitted.html, elements: marked.found, styled: probe.body }, screens, shared) : undefined;
-  // markers reach the output only when the caller asked for a trace
-  const body = head?.html ?? emitted.html;
-  const page = shell({ ...emitted, html: marked && !ctx.options.trace ? stripMarkers(body) : body }, parsed.meta, ctx, fontHead(fonts, parsed.meta.fontLinks ?? [], styled, ctx), head);
+  // always marked: the screens diff by the markers, and the self-lint places a W006 by them
+  const marked = markTree(styled);
+  const traced = tracing(ctx);
+  const emitted = emit(runPasses(analyze(marked.tree, traced), traced), traced);
+  const head = shared ? responsive(parsed, ctx, { html: emitted.html, elements: marked.found, styled: probe.body }, screens, shared) : undefined;
+  const page = shell({ ...emitted, html: head?.html ?? emitted.html }, parsed.meta, ctx, fontHead(fonts, parsed.meta.fontLinks ?? [], styled, ctx), head);
   headStyleCheck(page, ctx);
-  const html = post(page, ctx);
+  const posted = post(page, ctx);
+  // markers reach the output only when the caller asked for a trace
+  const html = ctx.options.trace ? posted : stripMarkers(posted);
   lintDropped(parsed.body, html, ctx);
   let out = html;
   if (ctx.options.template) out = writeTemplate(html, ctx.options.template, reportTemplate(input, ctx));
   else if (hasTemplate(html)) ctx.diagnostics.report("E014");
-  if (!ctx.options.trace || !marked) return { html: clipCheck(wrapLines(out, ctx), ctx) };
+  if (!ctx.options.trace) return { html: clipCheck(wrapLines(out, ctx), ctx) };
   const read = readTrace(out, marked.found);
   return { html: clipCheck(wrapLines(read.html, ctx), ctx), trace: read.trace };
 };

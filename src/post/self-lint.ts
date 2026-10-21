@@ -1,6 +1,8 @@
 import { parse } from "parse5";
 import type { DefaultTreeAdapterMap } from "parse5";
 import type { Ctx } from "../ctx.ts";
+import { TRACE_ATTR } from "../emit/trace.ts";
+import type { SrcLoc } from "../loc.ts";
 import { MODERN_COLOR, unquoted } from "../style/colors.ts";
 import { featuresFor, featuresForAtRule, featuresForSelector } from "../targets/features.ts";
 
@@ -42,6 +44,19 @@ const ALLOWED: readonly Allowed[] = [
 
 const isAllowed = (tag: string, prop: string, value: string): boolean =>
   ALLOWED.some((a) => (!a.tag || a.tag.has(tag)) && a.prop.test(prop) && (!a.value || a.value.test(value.trim())));
+
+// The hide of an element shown on another screen only (a dark-mode logo, a phone-only block), on any
+// tag: mso-hide:all beside it is Outlook's half, and a client that ignores display:none shows it, which
+// is the documented cost (docs/support.md#what-a-screen-may-change).
+const HIDE: Readonly<Record<string, RegExp>> = { display: /^none$/, "max-height": /^0(px)?$/, overflow: /^hidden$/ };
+const isHide = (decls: readonly [string, string][], prop: string, value: string): boolean =>
+  HIDE[prop]?.test(value) === true && decls.some(([p, v]) => p === "mso-hide" && v === "all");
+
+// The author element a tag came from: its trace marker (src/emit/trace.ts), when the compile marked the tree.
+const locOf = (el: Element): SrcLoc | undefined => {
+  const m = /^(\d+):(\d+)$/.exec(el.attrs.find((a) => a.name === TRACE_ATTR)?.value ?? "");
+  return m ? { line: Number(m[1]), col: Number(m[2]) } : undefined;
+};
 
 // Selectors we write ourselves in <head>: the shell's reset and the iOS/Gmail link fixes.
 const ALLOWED_SELECTORS: ReadonlySet<string> = set("body", "table", "td", "img", "a[x-apple-data-detectors]", "u + #body a");
@@ -102,7 +117,7 @@ export const selfLint = (html: string, ctx: Ctx): void => {
   const reported = new Set<string>();
 
   // one W006 per slug and place, however many times the emitter repeats it
-  const flag = (slug: string, where: string): void => {
+  const flag = (slug: string, where: string, loc?: SrcLoc): void => {
     const key = `${slug}|${where}`;
     if (reported.has(key)) return;
     const res = ctx.caps.check(slug);
@@ -110,37 +125,40 @@ export const selfLint = (html: string, ctx: Ctx): void => {
     reported.add(key);
     ctx.diagnostics.report("W006", {
       message: `Output uses ${slug} on ${where}, which ${res.unsupported.join(", ")} don't support (compiler bug)`,
+      loc,
     });
   };
 
   // values the style stage should have folded: modern colours and calc(). Only in our own markup:
   // pass-through keeps what the author wrote, which the input lint has already reported.
-  const leftover = (css: string, where: string): void => {
+  const leftover = (css: string, where: string, loc?: SrcLoc): void => {
     for (const re of [MODERN_COLOR, /(?<![\w-])(?:-\w+-)?calc\(/i]) {
       const m = re.exec(unquoted(css));
       if (!m) continue;
       const key = `left|${where}|${m[0]}`;
       if (reported.has(key)) continue;
       reported.add(key);
-      ctx.diagnostics.report("W006", { message: `Output still has ${m[0]}...) in ${where}; it should have been lowered to hex/px` });
+      ctx.diagnostics.report("W006", { message: `Output still has ${m[0]}...) in ${where}; it should have been lowered to hex/px`, loc });
     }
   };
 
   const checkEl = (el: Element): void => {
     const tag = el.tagName;
+    const loc = locOf(el);
     for (const a of el.attrs) {
       const slug = ATTR_FEATURES[a.name];
       // the photo attribute is a documented fallback under the CSS image and VML (vml-backgrounds)
-      if (slug && !(tag === "td" && a.name === "background")) flag(slug, `<${tag} ${a.name}>`);
+      if (slug && !(tag === "td" && a.name === "background")) flag(slug, `<${tag} ${a.name}>`, loc);
     }
     const style = el.attrs.find((a) => a.name === "style")?.value ?? "";
-    if (style) leftover(style, `<${tag} style>`);
+    if (style) leftover(style, `<${tag} style>`, loc);
     // a td's height is its min-height: the attribute is the real one, the css is the same px for fluid clients
     const cellHeight = tag === "td" && el.attrs.some((a) => a.name === "height");
-    for (const [prop, value] of declarations(style)) {
-      if (isAllowed(tag, prop, value)) continue;
+    const decls = declarations(style);
+    for (const [prop, value] of decls) {
+      if (isAllowed(tag, prop, value) || isHide(decls, prop, value)) continue;
       if (cellHeight && prop === "height" && /^\d+(\.\d+)?px$/.test(value)) continue;
-      for (const slug of featuresFor(prop, value)) flag(slug, `<${tag}> (${prop}: ${value})`);
+      for (const slug of featuresFor(prop, value)) flag(slug, `<${tag}> (${prop}: ${value})`, loc);
     }
   };
 

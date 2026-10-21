@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Ctx } from "../../../src/ctx.ts";
+import { TRACE_ATTR } from "../../../src/emit/trace.ts";
 import { selfLint } from "../../../src/post/self-lint.ts";
 import type { Capabilities } from "../../../src/targets/capabilities.ts";
 import { testCtx } from "../../helpers/index.ts";
@@ -11,9 +12,9 @@ vi.mock("../../../src/targets/features.ts", () => ({
   featuresForSelector: (sel: string) => (sel.includes(":hover") ? ["css-pseudo-class-hover"] : []),
 }));
 
-const UNSUPPORTED = new Set(["css-border-radius", "css-max-width", "css-box-shadow", "css-at-media", "css-at-supports", "css-pseudo-class-hover", "css-mso-line-height-rule", "html-valign", "css-height"]);
+const UNSUPPORTED = new Set(["css-overflow", "css-border-radius", "css-max-width", "css-box-shadow", "css-at-media", "css-at-supports", "css-pseudo-class-hover", "css-mso-line-height-rule", "html-valign", "css-height"]);
 
-const lint = (html: string): { code: string; message: string }[] => {
+const lint = (html: string): { code: string; message: string; loc?: { line: number; col: number } }[] => {
   const caps: Capabilities = {
     targets: ["x"],
     check: (slug) => ({ status: UNSUPPORTED.has(slug) ? "n" : "y", clients: UNSUPPORTED.has(slug) ? ["Outlook"] : [], unsupported: UNSUPPORTED.has(slug) ? ["Outlook"] : [], notes: [] }),
@@ -133,6 +134,18 @@ describe("selfLint", () => {
 
   it("leaves leftovers in author pass-through to the input lint", () => {
     expect(lint(page('<table role="presentation"><tr><td><span style="width:calc(100% - 20px)">x</span></td></tr></table>'))).toEqual([]);
+  });
+
+  it("allows the hide of a copy shown on another screen on any emitted tag, and only with mso-hide:all", () => {
+    const img = (style: string): string => page(`<table role="presentation"><tr><td><a href="#"><img src="a.png" style="${style}"></a></td></tr></table>`);
+    expect(lint(img("max-width:100%;display:none;mso-hide:all"))).toEqual([]);
+    expect(lint(page('<table role="presentation"><tr style="display:none;max-height:0;overflow:hidden;mso-hide:all"><td>x</td></tr></table>'))).toEqual([]);
+    expect(lint(img("overflow:hidden")).map((d) => d.message)).toEqual([expect.stringContaining("css-overflow")]);
+  });
+
+  it("places a W006 at the author element named by the tag's trace marker", () => {
+    const [d] = lint(page(`<table role="presentation"><tr><td ${TRACE_ATTR}="12:5" style="box-shadow:0 1px #000">x</td></tr></table>`));
+    expect(d?.loc).toEqual({ line: 12, col: 5 });
   });
 
   it("doesn't read colour functions inside strings and urls", () => {

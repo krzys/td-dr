@@ -325,8 +325,10 @@ the base didn't.
 - Presentational attributes count as their CSS (`width`, `height`, `bgcolor`, `valign`, `align`,
   `hspace` / `vspace`); `align` on a table or image must be the same on every screen.
 - **Show and hide:** the hidden cell gets the preheader's hide
-  (`display:none;max-height:0;overflow:hidden;mso-hide:all`); content hidden on desktop is also in
+  (`display:none;max-height:0;overflow:hidden;mso-hide:all`), an image or text-level element
+  `display:none;mso-hide:all`; content hidden on desktop is also in
   `<!--[if !mso]><!-->…<!--<![endif]-->`, as `display:none` doesn't reach nested tables in Outlook.
+  A client that ignores `display:none` (Gmail Mobile Webmail per caniemail) shows every copy.
   A hidden row item lets a grow column take its room; otherwise its cell keeps its width (W014
   unless it is last). In a wrapping row the fluid column is hidden and Outlook keeps an empty ghost
   cell; a column hidden on desktop beside a growing one relies on `mso-hide:all` for Outlook to drop
