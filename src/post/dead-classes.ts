@@ -55,8 +55,8 @@ export const dropDeadClasses = (html: string): string => {
   return html.replace(TAG, (tag) =>
     tag.replace(ATTR, (whole, space: string, name: string, _eq?: string, dq?: string, sq?: string, bare?: string) => {
       if (name.toLowerCase() !== "class") return whole;
-      // a class the ESP fills in can't be judged here
-      const keep = (dq ?? sq ?? bare ?? "").split(/\s+/).filter((c) => c && (c.includes(FIELD_OPEN) || used.names.has(c) || used.partial.some((f) => f(c))));
+      // a class the ESP fills in can't be judged here; a class said twice is said once, where it first was
+      const keep = [...new Set((dq ?? sq ?? bare ?? "").split(/\s+/))].filter((c) => c && (c.includes(FIELD_OPEN) || used.names.has(c) || used.partial.some((f) => f(c))));
       return keep.length ? `${space}class="${keep.join(" ")}"` : "";
     }),
   );

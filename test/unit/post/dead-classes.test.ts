@@ -62,3 +62,21 @@ test("a class starting with two hyphens counts as used", () => {
   const out = dropDeadClasses(page("@media (max-width:600px){.--x{padding:0}}", '<td class="--x --y">t</td>'));
   expect(out).toContain('<td class="--x">t</td>');
 });
+
+test("says a class once, in the order the classes first come", () => {
+  const out = dropDeadClasses(page(".a{x:y}.b{x:y}", '<td class="b a  b dead a">t</td><p class="a a">u</p>'));
+  expect(out).toContain('<td class="b a">t</td>');
+  expect(out).toContain('<p class="a">u</p>');
+});
+
+test("an ESP's class said twice is said once", () => {
+  const out = dropDeadClasses(page(".a{x:y}", '<td class="\u{e000}tier\u{e001} a \u{e000}tier\u{e001}">t</td>'));
+  expect(out).toContain('<td class="\u{e000}tier\u{e001} a">t</td>');
+});
+
+test("an author's class that is also a generated name comes out once", async () => {
+  const { compile } = await import("../../../src/index.ts");
+  const html = compile(`<style>.t-0{color:#111}@media (max-width:600px){.t-0{color:#f00}}</style><div style="max-width:600px"><p class="t-0 t-0">x</p></div>`).html;
+  expect(html).toContain('class="t-0"');
+  expect(html).not.toMatch(/class="[^"]*\bt-0\b[^"]*\bt-0\b/);
+});
