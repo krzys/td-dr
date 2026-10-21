@@ -309,6 +309,24 @@ describe("a box some screen paints or pads keeps one structure", () => {
     const out = compile(W(css + screen, `<h1>Title</h1>${row}`), { lang: "en" });
     expect(bodyOf(out.html)).toBe(bodyOf(plain.html));
   });
+
+  const label = '<p class="b">Label</p><p>Other</p>';
+  it.each([
+    ["a text block's fill dropped", ".b{background-color:#eeeeee;margin:0} @media (max-width:480px){.b{background:none}}", label, ".t-0 { background-color:transparent !important; }"],
+    ["a text block's border added", ".b{margin:0} @media (max-width:480px){.b{border-left:2px solid #333333}}", label, ".t-0 { border-left:2px solid #333333 !important; }"],
+    ["a text item's padding dropped", `${flex} .row p{padding-right:8px;margin:0} @media (max-width:480px){.row p{padding:0}}`, '<div class="row"><p>Label</p><div class="c">Copy</div></div>', ".t-0 { padding:0 !important; }"],
+  ])("%s", (_name, css, body, rule) => {
+    const out = compile(W(css, body), { lang: "en" });
+    expect(out.diagnostics.filter((d) => d.code === "E017")).toEqual([]);
+    expect(out.html).toContain(rule);
+  });
+
+  it("a text block padded alike on every screen is emitted as without the screen", () => {
+    const css = ".b{padding:8px;margin:0}";
+    const plain = compile(W(css, label), { lang: "en" });
+    const out = compile(W(`${css} @media (max-width:480px){.b{font-size:20px}}`, label), { lang: "en" });
+    expect(bodyOf(out.html)).toBe(bodyOf(plain.html));
+  });
 });
 
 describe("ordinary style changes on a plain block still become overrides", () => {

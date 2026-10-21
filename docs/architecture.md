@@ -71,10 +71,11 @@ compares outputs:
    replaces; boxes with a side border on the base, which get their own table everywhere; columns
    another screen spaces with another `space-*` value, which get the same spacer rows everywhere;
    boxes with a fill or a border on some screens only, or padded on some only while painted, which
-   keep their cell everywhere, unpainted where a screen paints nothing (`Box.keepCell`)). Structure
-   is decided from all screens at once, so a screen that only adds, changes or drops paint differs
-   from the base in styles alone, and a box painted alike on every screen is emitted as if there
-   were no other screen.
+   keep their cell everywhere, unpainted where a screen paints nothing (`Box.keepCell`); text
+   blocks painted or padded on some screens only, which keep that box everywhere instead of passing
+   through as text). Structure is decided from all screens at once, so a screen that only adds,
+   changes or drops paint or padding differs from the base in styles alone, and a box styled alike
+   on every screen is emitted as if there were no other screen.
 4. The base compile (wide, light, no hover) is the output. Each other screen compiles on a quiet ctx
    with trace markers and is diffed tag by tag; changes become classes and head rules. What a screen
    says that the base doesn't is reported once for all the screens saying it, led by them (`scopeOf`

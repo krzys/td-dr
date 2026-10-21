@@ -1,5 +1,5 @@
 import type { Ctx } from "../ctx.ts";
-import { withLoc, zeroSides, type InlineNode, type Node, type Sides } from "../ir/index.ts";
+import { locKey, withLoc, zeroSides, type InlineNode, type Node, type Sides } from "../ir/index.ts";
 import { INHERITED, lineHeightPx, textAlignOf } from "../style/props.ts";
 import type { ComputedStyle, StyledElement, StyledNode } from "../style/types.ts";
 import { INLINE_TAGS, isHidden, isInlineLevel, isTransparent } from "./classify.ts";
@@ -216,7 +216,9 @@ export const passThrough = (source: StyledElement, ctx: Ctx): Node => {
   const painted = !!background || !!backgroundImage || !!minHeight || !!radius || !!clip || Object.keys(border ?? {}).length > 0;
   const sized = !!width || !!maxWidth || !!align;
   const hasPadding = padding.top || padding.right || padding.bottom || padding.left;
-  if (!painted && !sized && !hasPadding) return { ...inline, margin };
+  // a box another screen paints or pads stays one here too (ctx.otherScreens.boxed), so both have one structure
+  const boxedSomewhere = el.loc !== undefined && !!ctx.otherScreens?.boxed.has(locKey(el.loc));
+  if (!painted && !sized && !hasPadding && !boxedSomewhere) return { ...inline, margin };
   return withLoc({ kind: "stack", box: { ...box, margin }, children: [inline], gap: 0, collapse: false }, el.loc);
 };
 

@@ -45,6 +45,9 @@ export type OtherScreens = {
   // elements with a fill or a border on some screens only, or painted with padding on some only: their box
   // keeps its cell in every compile (Box.keepCell), so a screen that adds or drops either changes only styles
   readonly painted: ReadonlySet<string>;
+  // elements painted or padded on some screens only: a text block keeps the box it gets there on every screen
+  // (analyze/children.ts passThrough)
+  readonly boxed: ReadonlySet<string>;
 };
 
 export interface Ctx {
