@@ -253,7 +253,7 @@ diagnostic case), `codes`, `feature`, `viewports`, `maxDiffRatio` (with a reason
 `allowSvg`, `lang`, `template` (one or several dialects, one `expected.<dialect>.html` each),
 `skipEngines` (see [Engines](#engines)).
 
-CI (`.github/workflows/ci.yml`) runs two jobs on every push and pull request: `check`
+CI (`.github/workflows/ci.yml`) runs two jobs on every push and pull request: `check` on Node 22.18 and 24
 (`pnpm install --frozen-lockfile`, `pnpm check`, `pnpm build`, `pnpm smoke`) and `visual`
 (a matrix of Chromium, Firefox and WebKit with `fonts-inter`, `pnpm test:visual`, and each engine's
 diff images uploaded on failure).
