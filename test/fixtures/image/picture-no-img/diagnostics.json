@@ -3,7 +3,7 @@
     "code": "E008",
     "severity": "error",
     "message": "<picture> without an <img> has no email-safe equivalent",
-    "hint": "This element has no email-safe equivalent; replace it or wrap it in data-email=\"raw\".",
+    "hint": "Every client shows the <picture>'s <img>; add one inside it.",
     "loc": {
       "line": 2,
       "col": 3

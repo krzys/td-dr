@@ -64,6 +64,17 @@ describe("lintElement", () => {
     expect(lint("div", {}, { "animation-name": "none", "animation-duration": "0s" }).bad).toBe(false);
   });
 
+  test("an E008 says what to write instead of that element", () => {
+    const hint = (tag: string) => lint(tag, {}).ctx.diagnostics.list()[0]?.hint ?? "";
+    expect(hint("svg")).toMatch(/hosted PNG.*--allow-svg/);
+    expect(hint("video")).toMatch(/<img> linked to/);
+    expect(hint("iframe")).toMatch(/<img> linked to/);
+    expect(hint("form")).toMatch(/link to a page/i);
+    expect(hint("button")).toContain('data-email="button"');
+    expect(hint("picture")).toContain("<img>");
+    expect(new Set(["video", "audio", "canvas", "iframe", "svg", "form", "input", "button", "picture"].map(hint)).size).toBeGreaterThan(5);
+  });
+
   test("<picture> without an img is E008", () => {
     expect(lint("picture", {}).codes).toEqual(["E008"]);
   });

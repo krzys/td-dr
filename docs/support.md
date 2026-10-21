@@ -272,7 +272,7 @@ several links in click tracking is **unverified**.
 | Negative margin that exactly cancels the parent's padding | A full-bleed band. Any other is E005. |
 | `%` padding or margin | E006: tables can't scale padding with the viewport. |
 | `float` on anything but an image | E004. |
-| `video`, `audio`, `canvas`, inline `svg` | E008. Frames, plugins and form controls are [removed](#sanitizing) (E008). |
+| `video`, `audio`, `canvas`, inline `svg` | E008, with a hint for what to write instead: an `<img>` linked to the page, a hosted PNG. Frames, plugins and form controls are [removed](#sanitizing) (E008), with a link to the form or `data-email="button"` as the hint. |
 
 ### Approximations
 
@@ -413,7 +413,8 @@ so the gap under it is the source's; authored `display:block` and flex or grid i
   floated image taller than its paragraph doesn't wrap the next block (W001).
 - **Margins:** Outlook ignores margins on images; in an image cell the margin becomes cell padding,
   which Outlook honours.
-- **`<picture>`** compiles as its `<img>` (I007): Gmail, Outlook and Yahoo ignore `<source>`.
+- **`<picture>`** compiles as its `<img>` (I007): Gmail, Outlook and Yahoo ignore `<source>`, and
+  Apple Mail, which would pick one, shows the `<img>` too.
   Styles on the `<picture>` are lost and a selector through it (`picture img`) stops matching
   (W001); one without an `<img>` is E008.
 - **SVG:** `<img src="*.svg">` is rasterized by Gmail and unsupported in older Outlook. Inline
@@ -721,7 +722,9 @@ A feature's status is the worst across the pairs (`n` > `a` > `u` > `y`; `a` is 
 caniemail's note, and `u` is untested, never unsupported). The Gmail app with non-Google accounts
 is not a separate platform; it shows up as `a` with a note. The same table drives
 input lint (W005, I003; only CSS, tags and images that reach the output) and output self-lint
-(W006). The data is a pinned copy in `src/targets/data/` (MIT, attribution in `NOTICE`), never
+(W006). A partial note about values the email doesn't use is left out: td;dr writes `rgba()` with
+commas, so the note that Gmail and Yahoo strip the space-separated form (`rgb(0 0 0 / 50%)`) is not
+shown. The data is a pinned copy in `src/targets/data/` (MIT, attribution in `NOTICE`), never
 fetched at runtime; `pnpm caniemail` refreshes it and a test fails once it is 120 days old.
 Properties, values, selectors, tags kept as written (`<progress>`, `<meter>`, `<marquee>`) and image
 formats (by extension or `data:` type) map to features through explicit tables in

@@ -3,7 +3,7 @@
     "code": "E008",
     "severity": "error",
     "message": "<svg> has no email-safe equivalent",
-    "hint": "This element has no email-safe equivalent; replace it or wrap it in data-email=\"raw\".",
+    "hint": "Gmail and Outlook don't show <svg>; use a hosted PNG in an <img>, or pass --allow-svg (allowSvg) to keep it for the clients that do.",
     "loc": {
       "line": 2,
       "col": 3

@@ -13,7 +13,7 @@
     "code": "E006",
     "severity": "error",
     "message": "padding-top: 5% is not supported, use px",
-    "hint": "Use px (em/rem are resolved). vw and vh are not supported, % only works for widths, and calc() only as calc(P% ± Npx) on a flex item.",
+    "hint": "Use px (em, rem and vw are resolved). vh is not supported, % only works for widths, and calc() only as calc(P% ± Npx) on a flex item.",
     "loc": {
       "line": 6,
       "col": 1
@@ -23,7 +23,7 @@
     "code": "E006",
     "severity": "error",
     "message": "padding-right: 4% is not supported, use px",
-    "hint": "Use px (em/rem are resolved). vw and vh are not supported, % only works for widths, and calc() only as calc(P% ± Npx) on a flex item.",
+    "hint": "Use px (em, rem and vw are resolved). vh is not supported, % only works for widths, and calc() only as calc(P% ± Npx) on a flex item.",
     "loc": {
       "line": 6,
       "col": 1
@@ -33,7 +33,7 @@
     "code": "E006",
     "severity": "error",
     "message": "padding-left: 4% is not supported, use px",
-    "hint": "Use px (em/rem are resolved). vw and vh are not supported, % only works for widths, and calc() only as calc(P% ± Npx) on a flex item.",
+    "hint": "Use px (em, rem and vw are resolved). vh is not supported, % only works for widths, and calc() only as calc(P% ± Npx) on a flex item.",
     "loc": {
       "line": 6,
       "col": 1

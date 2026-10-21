@@ -98,7 +98,7 @@ export const computeStyles = (doc: ParsedDoc, ctx: Ctx, env: Env = DESKTOP, show
     if (seeThrough.length > 0) {
       ctx.diagnostics.report("W001", {
         message: `Translucent colour kept as written (${seeThrough.join("; ")}): it sits over a gradient, photo or colour td;dr can't resolve`,
-        hint: "Outlook ignores rgba() and some Gmail and Yahoo clients drop it; use a solid colour here.",
+        hint: "Outlook ignores rgba(); use a solid colour here.",
         loc,
       });
     }

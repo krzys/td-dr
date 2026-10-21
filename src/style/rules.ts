@@ -70,7 +70,12 @@ const atRule = (node: AtRule, scope: Scope, run: Run): void => {
   const name = node.name.toLowerCase();
   const loc = locAt(scope.origin, node);
   if (name === "container") {
-    ctx.diagnostics.report("W001", { message: "@container rules are not applied", hint: "Only plain style rules are inlined.", loc });
+    ctx.diagnostics.report("W001", {
+      message: "@container rules are not applied",
+      // docs/support.md#screens: a viewport query is what a screen is made of
+      hint: "Email clients don't run container queries; say the narrow layout with @media (max-width: …), which becomes a screen.",
+      loc,
+    });
   } else if (name === "media") {
     const ok = usableQueries(node.params, scope.env, loc, ctx);
     if (ok.length === 0) return;

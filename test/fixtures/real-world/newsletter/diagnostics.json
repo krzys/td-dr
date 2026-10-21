@@ -32,8 +32,8 @@
   {
     "code": "W005",
     "severity": "warning",
-    "message": "an rgba() colour isn't supported in Outlook Windows; partly in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (2 places)",
-    "hint": "Whitespace syntax is not supported (`rgb(0 128 0 / 1)`).",
+    "message": "an rgba() colour isn't supported in Outlook Windows (2 places)",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
     "loc": {
       "line": 80,
       "col": 5

@@ -73,3 +73,23 @@ describe("the UA sheet's own styles", () => {
     expect(codes('<p>a</p><hr style="border:2px inset #888888"><p>b</p>').map((d) => d.message)).toEqual(["border-style: inset is drawn as solid"]);
   });
 });
+
+describe("hints say what is true", () => {
+  const hintOf = (html: string, code: string): string => compile(html, { strict: false }).diagnostics.find((d) => d.code === code)?.hint ?? "";
+
+  test("E006 doesn't call vw unsupported: it is resolved (I006), only vh is not", () => {
+    const hint = hintOf('<div style="height:50vh">x</div>', "E006");
+    expect(hint).toMatch(/vh is not supported/);
+    expect(hint).not.toMatch(/vw and vh/);
+  });
+
+  test("@container's hint doesn't claim only plain rules apply: @media, @supports and @layer do", () => {
+    const hint = hintOf("<style>@container (max-width: 400px) { p { color: #c00000 } }</style><p>x</p>", "W001");
+    expect(hint).not.toMatch(/only plain style rules/i);
+    expect(hint).toContain("@media");
+  });
+
+  test("I007 says Apple Mail's <source> choice is lost too", () => {
+    expect(hintOf('<picture><source srcset="w.png" media="(min-width: 600px)"><img src="a.png" alt="" width="100"></picture>', "I007")).toContain("Apple Mail");
+  });
+});

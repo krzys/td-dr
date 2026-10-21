@@ -3,7 +3,7 @@
     "code": "W001",
     "severity": "warning",
     "message": "Translucent colour kept as written (background-color: rgba(255, 255, 255, 0.25)): it sits over a gradient, photo or colour td;dr can't resolve",
-    "hint": "Outlook ignores rgba() and some Gmail and Yahoo clients drop it; use a solid colour here.",
+    "hint": "Outlook ignores rgba(); use a solid colour here.",
     "loc": {
       "line": 5,
       "col": 5

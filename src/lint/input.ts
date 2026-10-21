@@ -104,6 +104,9 @@ const HINT: Readonly<Record<string, string>> = {
 type Seen = { prop: string; loc: SrcLoc | undefined; els: Set<StyledElement>; values: Set<string> };
 
 
+// rgb(0 128 0) and rgba(0 0 0 / 50%), not rgba(0, 0, 0, 0.5)
+const WHITESPACE_COLOUR = /\b(?:rgba?|hsla?)\(\s*[^,()\s]+\s+[^,()]*\)/i;
+
 // caniemail's partial notes for these are about edge values (numeric weights
 // like 450, `lowercase`, negative spacing, multi-value decorations).
 const PARTIAL_IRRELEVANT: Readonly<Record<string, (v: string) => boolean>> = {
@@ -118,6 +121,8 @@ const PARTIAL_IRRELEVANT: Readonly<Record<string, (v: string) => boolean>> = {
   "css-direction": () => true, // the notes are about clients guessing rtl themselves; dir= is written too
   "css-text-indent": (v) => !v.trim().startsWith("-"),
   "css-rgb": (v) => [...v.matchAll(/(?<![\w-])rgb\(([^)]*)\)/gi)].every((m) => !m[1]!.includes("/") && m[1]!.split(",").length === 3),
+  // td;dr writes rgba() with commas (src/style/colors.ts); the notes are about `rgb(0 128 0 / 1)`
+  "css-rgba": (v) => !WHITESPACE_COLOUR.test(v),
   "css-list-style": (v) => !/\burl\(/i.test(v),
   // tag features carry the element's attribute names as their value
   "html-lists": (v) => !/\b(reversed|value)\b/.test(v),
@@ -250,9 +255,11 @@ export const lintInput = (body: StyledElement, ctx: Ctx, doc?: LintDoc): void =>
     const irrelevant = PARTIAL_IRRELEVANT[slug];
     if (res.status === "a" && irrelevant && [...s.values].every(irrelevant)) continue;
     const places = s.els.size > 1 ? ` (${s.els.size} places)` : "";
-    const note = HINT[slug] ?? res.notes[0];
+    // a note about a syntax none of the values use is no hint
+    const note = HINT[slug] ?? res.notes.find((n) => !/whitespace syntax/i.test(n) || [...s.values].some((v) => WHITESPACE_COLOUR.test(v)));
     if (res.status === "n") {
-      const partly = res.clients.filter((c) => !res.unsupported.includes(c));
+      const plain = irrelevant !== undefined && [...s.values].every(irrelevant);
+      const partly = plain ? [] : res.clients.filter((c) => !res.unsupported.includes(c));
       const also = partly.length ? `; partly in ${partly.join(", ")}` : "";
       ctx.diagnostics.report("W005", {
         message: `${s.prop} isn't supported in ${res.unsupported.join(", ")}${also}${places}`,

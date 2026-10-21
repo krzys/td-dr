@@ -22,3 +22,16 @@ describe("lintInput on real output", () => {
     });
   }
 });
+
+describe("lintInput hints", () => {
+  const rgbaOver = (colour: string) =>
+    compile(`<body><div style="background-image:linear-gradient(#123456,#654321)"><p style="color:${colour}">Hi</p></div></body>`).diagnostics.find((d) => d.code === "W005" && d.message.startsWith("an rgba() colour"));
+
+  it("an rgba() kept over a gradient isn't told about the whitespace syntax nobody wrote", () => {
+    for (const colour of ["rgba(255,255,255,0.8)", "rgb(255 255 255 / 0.8)"]) {
+      const d = rgbaOver(colour);
+      expect(d?.message).toBe("an rgba() colour isn't supported in Outlook Windows");
+      expect(d?.hint).toBe("Those clients ignore it; drop the property or narrow --targets.");
+    }
+  });
+});

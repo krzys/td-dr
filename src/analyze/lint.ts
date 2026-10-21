@@ -16,6 +16,25 @@ const UNSUPPORTED_TAGS: ReadonlySet<string> = new Set([
   "form", "input", "select", "textarea", "button",
 ]);
 
+// what to write instead (docs/support.md#boxes-and-content); the code's own hint is the fallback
+const LINKED = "Email clients don't play or load it; put an <img> linked to the page that has it in its place.";
+const FORM = "Most email clients disable forms; link to a page with the form instead.";
+const INSTEAD: Readonly<Record<string, string>> = {
+  video: `${LINKED} Apple Mail plays <video>: wrap it in data-email="raw" to keep it there.`,
+  audio: LINKED,
+  iframe: LINKED,
+  object: LINKED,
+  embed: LINKED,
+  canvas: "Nothing runs script in email; draw it into a hosted PNG and use an <img>.",
+  svg: "Gmail and Outlook don't show <svg>; use a hosted PNG in an <img>, or pass --allow-svg (allowSvg) to keep it for the clients that do.",
+  form: FORM,
+  input: FORM,
+  select: FORM,
+  textarea: FORM,
+  button: 'A <button> does nothing in email; use an <a href> with data-email="button".',
+  picture: "Every client shows the <picture>'s <img>; add one inside it.",
+};
+
 // The UA sheet gives these table-* displays, so they're fine.
 const TABLE_TAGS: ReadonlySet<string> = new Set([
   "table", "thead", "tbody", "tfoot", "tr", "td", "th", "caption", "colgroup", "col",
@@ -163,7 +182,7 @@ const TABLE_HINT = "Use display: table with display: table-cell children (or tab
 const TEXT_TABLE_HINT = "display: table inside text is not lowered; make it its own block, outside the paragraph or text run.";
 const problems = (el: StyledElement, allowSvg = false, lowered = true): Problem[] => {
   const out: Problem[] = [];
-  const add = (code: Code, message: string): void => void out.push({ code, message });
+  const add = (code: Code, message: string): void => void out.push({ code, message, ...(code === "E008" && INSTEAD[el.tag] && { hint: INSTEAD[el.tag] }) });
 
   const display = get(el.style, "display") ?? "inline";
   if (/^(inline-)?grid$/.test(display)) {
