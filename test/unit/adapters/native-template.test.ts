@@ -132,6 +132,16 @@ defineProps({ line: { type: Object, required: true } });
 defineProps({ order: Object });
 </script>
 <template><p :class="{ paid: order.paid }">x</p></template>`,
+  "Vtag.vue": `
+<script setup>
+defineProps({ flag: Boolean });
+</script>
+
+<template>
+  <div class="wrap">
+    <p>Status: <span class="tag" :class="{ on: flag }">tag</span></p>
+  </div>
+</template>`,
   "Vmath.vue": `
 <script setup>
 defineProps({ order: Object });
@@ -169,7 +179,7 @@ afterAll(async () => {
 
 const email = (name: string) => emails.find((e) => e.name === name)!;
 const readable = (s: string) => s.replaceAll(FIELD_OPEN, "{{").replaceAll(FIELD_CLOSE, "}}").replaceAll("&#x27;", "'");
-const template = async (name: string) => readable(await templateMarkup(email(name), (await loadEmail(vite, email(name))).component));
+const template = async (name: string) => readable(await templateMarkup(email(name), (await loadEmail(vite, email(name))).component, vite));
 const html = async (name: string, data: unknown) => {
   const source = (await renderEmail(vite, email(name), { data, mode: "html" })).source;
   return source.slice(source.indexOf("</style>\n") + "</style>\n".length).trim();
@@ -302,7 +312,10 @@ describe("Vue, template mode", () => {
   });
 
   it("refuses what an attribute or a field can't hold", async () => {
-    expect(await failure("Vclass")).toMatch(/failed: the class paid: is switched on by a field/);
+    // the file alone where the render mapped nothing on the line it ran, rather than a line not in it
+    expect(await failure("Vclass")).toMatch(/failed: :class="\{ paid: … \}": a field switches the class on.*\n {4}at .*\/Vclass\.vue$/s);
+    // the line of the :class, though Vue's server render maps only parts of it
+    expect(await failure("Vtag")).toMatch(/failed: :class="\{ on: … \}": a field switches the class on.*\n {4}at .*\/Vtag\.vue:7:\d+$/s);
     expect(await failure("Vmath")).toMatch(/failed: order\.total\.toFixed\(\): calls a method.*\n {4}at .*\/Vmath\.vue:\d+:\d+$/s);
   });
 

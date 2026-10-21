@@ -29,7 +29,9 @@ the same module renders real data as HTML.
 What a dialect can't do with a field is a `TemplateError` at the component line, with a hint:
 arithmetic, formatting, string methods, sorting, `typeof`, iterating a branch value, a loop whose
 test is a field, `break` / `continue` out of a branch, a field-dependent `return` inside a loop or
-`try`, a branch with side effects (`push`, `+=`, mutating an outer object). Send ready values in the
+`try`, a branch with side effects (`push`, `+=`, mutating an outer object), a Vue `:class` a field
+switches (td;dr inlines the stylesheet, so no rule could follow it). A Vue error names the line of
+the `.vue` file, or the file alone when its compiled render maps nothing there. Send ready values in the
 data (formatted money and dates, booleans) and branch in the markup. Functions called in an arm
 must be pure; the rewrite can't see into them, and the [equivalence check](#the-equivalence-check)
 catches a difference when the email has data sets.

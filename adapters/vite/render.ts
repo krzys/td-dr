@@ -7,6 +7,7 @@ import { placeAssets, type Placed } from "./assets.ts";
 import { collectCss } from "./css.ts";
 import { engine } from "./engines.ts";
 import { dataObject } from "./find.ts";
+import { placeFrame } from "./frames.ts";
 import { EMAIL_ENV } from "./plugin.ts";
 import type { AssetFile, EmailEntry, Framework, RenderOptions, Rendered } from "./types.ts";
 
@@ -54,18 +55,20 @@ export const loadEmail = async (vite: ViteDevServer, email: EmailEntry): Promise
   }
 };
 
-const renderMarkup = async (email: EmailEntry, component: unknown, props: Props | undefined): Promise<string> => {
+// with the server it was loaded by, a template error's frame is placed on its component line
+const renderMarkup = async (email: EmailEntry, component: unknown, props: Props | undefined, vite?: ViteDevServer): Promise<string> => {
   try {
     const adapter = await adapters[email.framework]();
     return await (props ? adapter.render(component as never, props) : adapter.renderTemplate(component as never));
   } catch (err) {
+    if (vite) placeFrame(emailEnv(vite), err);
     return fail(email, `rendering with ${email.framework}`, err);
   }
 };
 
 // docs/templates.md#native-component-code: the props are symbolic, so the markup holds fields and <tddr-*> blocks for every branch
 // and loop the component writes natively (field() and data-email-* hints keep working).
-export const templateMarkup = (email: EmailEntry, component: unknown): Promise<string> => renderMarkup(email, component, undefined);
+export const templateMarkup = (email: EmailEntry, component: unknown, vite?: ViteDevServer): Promise<string> => renderMarkup(email, component, undefined, vite);
 
 export const props = (email: EmailEntry, data: unknown): Props => {
   if (data === undefined) return {};
@@ -105,7 +108,7 @@ export const compileTemplate = async (
     throw new Error(`${email.name} is not written as a ${dialect} template (${listed})`);
   }
   const { component, css } = await loadEmail(vite, email);
-  const markup = await templateMarkup(email, component);
+  const markup = await templateMarkup(email, component, vite);
   // compiling the page itself keeps diagnostic locations pointing into text the dev server can show
   const placed = withAssets(vite, sourcePage(css, markup), o);
   const out = compile(placed.page, { ...optionsFor(email, o.compile), template: dialect });
@@ -241,7 +244,7 @@ export const renderReference = async (
   loaded?: { component: unknown; css: string },
 ): Promise<{ html: string; diagnostics: Diagnostic[] }> => {
   const { component, css } = loaded ?? (await loadEmail(vite, email));
-  const placed = withAssets(vite, sourcePage(css, await renderMarkup(email, component, data)), o);
+  const placed = withAssets(vite, sourcePage(css, await renderMarkup(email, component, data, vite)), o);
   // the html render itself: JS semantics, no dialect's data needs
   const out = compile(preview(placed.page, data, { dialects: [] }), optionsFor(email, o.compile));
   return { html: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics] };
@@ -251,7 +254,7 @@ export const renderEmail = async (vite: ViteDevServer, email: EmailEntry, o: Ren
   if (o.mode !== "html") return renderTemplate(vite, email, o, o.mode);
   const data = props(email, o.data);
   const { component, css } = await loadEmail(vite, email);
-  const placed = withAssets(vite, sourcePage(css, await renderMarkup(email, component, data)), o);
+  const placed = withAssets(vite, sourcePage(css, await renderMarkup(email, component, data, vite)), o);
   const out = compile(placed.page, { ...optionsFor(email, o.compile), trace: true });
   return { source: placed.page, input: placed.page, html: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics, ...titled(out.html)], assets: placed.files, ...(out.trace && { trace: out.trace }) };
 };
