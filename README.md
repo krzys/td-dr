@@ -195,4 +195,4 @@ and `tddr/vite` types import their framework's types (`@types/react`, Vue with t
 
 ## License
 
-See `NOTICE`. Contains data from caniemail.com (MIT License).
+MIT, see `LICENSE`. Contains data from caniemail.com (MIT License), see `NOTICE`.

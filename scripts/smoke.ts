@@ -129,13 +129,13 @@ const steps = async (): Promise<void> => {
   if (!(await check("build", () => must("pnpm", ["build"], ROOT)))) return;
 
   let tarball = "";
-  const packed = await check("pack: tarball holds dist (with dist/ui), NOTICE, README and nothing else", () => {
+  const packed = await check("pack: tarball holds dist (with dist/ui), LICENSE, NOTICE, README and nothing else", () => {
     const pack = JSON.parse(must("pnpm", ["pack", "--pack-destination", WORK, "--json"], ROOT)) as { filename: string; files: Array<{ path: string }> };
     tarball = pack.filename;
     const paths = pack.files.map((f) => f.path);
-    for (const p of ["NOTICE", "README.md", "package.json", "dist/cli.js", "dist/ui/index.html", "dist/types/src/index.d.ts"])
+    for (const p of ["LICENSE", "NOTICE", "README.md", "package.json", "dist/cli.js", "dist/ui/index.html", "dist/types/src/index.d.ts"])
       assert(paths.includes(p), `missing ${p}`);
-    const stray = paths.filter((p) => !/^(dist\/|NOTICE$|README\.md$|package\.json$)/.test(p));
+    const stray = paths.filter((p) => !/^(dist\/|LICENSE$|NOTICE$|README\.md$|package\.json$)/.test(p));
     assert(stray.length === 0, `unexpected files: ${stray.join(", ")}`);
   });
   if (!packed) return;

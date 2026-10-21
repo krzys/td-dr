@@ -1,5 +1,6 @@
 td;dr
 Copyright (c) 2026 Krzysztof Sternik
+Licensed under the MIT License (see LICENSE).
 
 This product includes data from caniemail.com (https://github.com/hteumeuleu/caniemail),
 vendored in src/targets/data/caniemail.json and bundled into the published dist/ files.
