@@ -707,10 +707,13 @@ at existing whitespace between attributes. A line with nowhere safe to break is 
 A feature's status is the worst across the pairs (`n` > `a` > `u` > `y`; `a` is partial, with
 caniemail's note, and `u` is untested, never unsupported). The Gmail app with non-Google accounts
 is not a separate platform; it shows up as `a` with a note. The same table drives
-input lint (W005, I003; only CSS that reaches the output) and output self-lint (W006). The data is
-a pinned copy in `src/targets/data/` (MIT, attribution in `NOTICE`), never fetched at runtime;
-`pnpm caniemail` refreshes it and a test fails once it is 120 days old. Property-to-slug mapping is
-an explicit table in `src/targets/features.ts`. The results are community tests at a point in time.
+input lint (W005, I003; only CSS, tags and images that reach the output) and output self-lint
+(W006). The data is a pinned copy in `src/targets/data/` (MIT, attribution in `NOTICE`), never
+fetched at runtime; `pnpm caniemail` refreshes it and a test fails once it is 120 days old.
+Properties, values, selectors, tags kept as written (`<progress>`, `<meter>`, `<marquee>`) and image
+formats (by extension or `data:` type) map to features through explicit tables in
+`src/targets/features.ts`; a test fails when a CSS feature in the data is neither mapped nor listed
+as excluded with a reason. The results are community tests at a point in time.
 
 ### Observed locally
 

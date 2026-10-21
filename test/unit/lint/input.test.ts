@@ -9,6 +9,8 @@ vi.mock("../../../src/targets/features.ts", () => ({
   featuresFor: (prop: string) => [/^border-.*-radius$/.test(prop) ? "css-border-radius" : `css-${prop}`],
   featuresForAtRule: () => [],
   featuresForSelector: () => [],
+  featuresForImage: () => [],
+  featuresForTag: () => [],
 }));
 
 const ctxWith = (table: Record<string, Partial<Resolution>>): Ctx => {

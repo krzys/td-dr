@@ -20,6 +20,16 @@
     }
   },
   {
+    "code": "W005",
+    "severity": "warning",
+    "message": "-webkit-background-clip isn't supported in Gmail Mobile Webmail, Outlook Windows, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail iOS, Gmail Android",
+    "hint": "Partial. Not supported with non Google accounts. But it can be used in the `background` shorthand property instead.",
+    "loc": {
+      "line": 2,
+      "col": 31
+    }
+  },
+  {
     "code": "W001",
     "severity": "warning",
     "message": "gradient text is invisible where gradients are dropped (Outlook, Yahoo)",

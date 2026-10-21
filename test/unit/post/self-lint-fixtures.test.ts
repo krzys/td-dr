@@ -11,3 +11,12 @@ describe("selfLint on real output", () => {
     });
   }
 });
+
+describe("selfLint on author values kept as written", () => {
+  it("light-dark() is reported on input (W005), not as a compiler bug", () => {
+    const html = '<!doctype html><html><head><style>.card{background-color:light-dark(#ffffff,#1d2126)}</style></head><body><div class="card" style="padding:16px">Hi</div></body></html>';
+    const codes = compile(html).diagnostics.map((d) => `${d.code} ${d.message}`);
+    expect(codes.filter((c) => c.startsWith("W006"))).toEqual([]);
+    expect(codes.some((c) => c.startsWith("W005 light-dark()"))).toBe(true);
+  });
+});

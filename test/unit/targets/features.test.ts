@@ -1,9 +1,13 @@
 import { describe, expect, it, test } from "vitest";
 import {
   ALL_FEATURE_SLUGS,
+  ALL_IMAGE_SLUGS,
+  ALL_TAG_SLUGS,
   featuresFor,
   featuresForAtRule,
+  featuresForImage,
   featuresForSelector,
+  featuresForTag,
 } from "../../../src/targets/features.ts";
 import data from "../../../src/targets/data/caniemail.json" with { type: "json" };
 
@@ -172,5 +176,143 @@ describe("alpha colours", () => {
   });
   test("transition isn't an animation", () => {
     expect(featuresFor("transition", "opacity 1s")).toEqual(["css-transition"]);
+  });
+});
+
+// css-* slugs no table returns, on purpose. Anything else in the data must be mapped.
+const SELECTOR_SYNTAX = "selectors are matched and inlined (style/match.ts); the head rules kept are enhancement over those inline styles";
+const MEDIA_FEATURE = "@media is resolved by style/media.ts, which reports the queries it drops; the ones kept are enhancement";
+const EXCLUDED: Readonly<Record<string, string>> = {
+  "css-comments": "stylesheets are parsed and rewritten: comments never reach the output",
+  "css-unit-px": "the unit everything lowers to, supported everywhere",
+  "css-unit-percent": "supported everywhere; would tag most declarations",
+  "css-font-size": "its one caveat is rem, which css-unit-rem reports",
+  "css-inert-attribute": "an HTML attribute, not CSS; email has nothing to focus but links",
+  "css-selector-adjacent-sibling": SELECTOR_SYNTAX,
+  "css-selector-chaining": SELECTOR_SYNTAX,
+  "css-selector-child": SELECTOR_SYNTAX,
+  "css-selector-class": SELECTOR_SYNTAX,
+  "css-selector-descendant": SELECTOR_SYNTAX,
+  "css-selector-general-sibling": SELECTOR_SYNTAX,
+  "css-selector-grouping": SELECTOR_SYNTAX,
+  "css-selector-id": SELECTOR_SYNTAX,
+  "css-selector-type": SELECTOR_SYNTAX,
+  "css-selector-universal": SELECTOR_SYNTAX,
+  "css-at-media-device-pixel-ratio": MEDIA_FEATURE,
+  "css-at-media-hover": MEDIA_FEATURE,
+  "css-at-media-orientation": MEDIA_FEATURE,
+  "css-at-media-prefers-color-scheme": MEDIA_FEATURE,
+  "css-at-media-prefers-reduced-motion": MEDIA_FEATURE,
+};
+
+describe("coverage of the vendored data", () => {
+  const mapped = new Set(ALL_FEATURE_SLUGS);
+  const css = [...slugs].filter((s) => s.startsWith("css-"));
+
+  it("maps every css slug or excludes it with a reason", () => {
+    expect(css.filter((s) => !mapped.has(s) && !(s in EXCLUDED))).toEqual([]);
+  });
+  it("excludes only slugs that exist and aren't mapped", () => {
+    for (const [s, why] of Object.entries(EXCLUDED)) {
+      expect(slugs.has(s), s).toBe(true);
+      expect(mapped.has(s), s).toBe(false);
+      expect(why.length, s).toBeGreaterThan(10);
+    }
+  });
+  it("maps every image slug or excludes it with a reason", () => {
+    const images = new Set(ALL_IMAGE_SLUGS);
+    const why: Readonly<Record<string, string>> = { "image-base64": "an encoding, not a format: a data: URI maps to its format's slug" };
+    expect([...slugs].filter((s) => s.startsWith("image-") && !images.has(s) && !(s in why))).toEqual([]);
+  });
+  it("image and tag tables only use slugs that exist", () => {
+    for (const s of [...ALL_IMAGE_SLUGS, ...ALL_TAG_SLUGS]) expect(slugs.has(s), s).toBe(true);
+  });
+});
+
+describe("curated mappings", () => {
+  it.each([
+    ["text-wrap", "balance", ["css-text-wrap"]],
+    ["text-underline-offset", "3px", ["css-text-underline-offset"]],
+    ["writing-mode", "vertical-rl", ["css-writing-mode"]],
+    ["text-emphasis", "dot", ["css-text-emphasis"]],
+    ["list-style-image", "url(dot.png)", ["css-list-style-image"]],
+    ["list-style-image", "none", []],
+    ["list-style", "square url(dot.png)", ["css-list-style", "css-list-style-image"]],
+    ["border-spacing", "4px", ["css-border-spacing"]],
+    ["border-spacing", "0", []],
+    ["border-spacing", "0 0", []],
+    ["white-space", "pre", ["css-white-space"]],
+    ["white-space", "normal", []],
+    ["white-space", "nowrap", []],
+    ["visibility", "hidden", ["css-visibility"]],
+    ["visibility", "visible", []],
+    ["clip-path", "circle(50%)", ["css-clip-path"]],
+    ["clip-path", "none", []],
+    ["column-count", "2", ["css-column-count", "css-column-layout-properties"]],
+    ["inline-size", "10px", ["css-block-inline-size", "css-inline-size"]],
+    ["z-index", "2", ["css-z-index"]],
+    ["z-index", "auto", []],
+    ["overflow-wrap", "anywhere", ["css-overflow-wrap"]],
+    ["word-wrap", "break-word", ["css-word-wrap"]],
+    ["font-family", "system-ui, sans-serif", ["css-sytem-ui"]],
+    ["font-family", "Arial, sans-serif", []],
+    ["font-family", "Inter, ui-sans-serif", ["css-sytem-ui"]],
+    ["font-family", '"ui-rounded Pro", Arial', []],
+    ["font-family", '"system-ui", Arial', []],
+    ["display", "flow-root", ["css-display"]],
+    ["display", "inline flex", ["css-display-flex", "css-display"]],
+    ["border-top-width", "2px", ["css-border"]],
+    ["color", "light-dark(#000, #fff)", ["css-function-light-dark"]],
+    ["width", "30ch", ["css-width", "css-unit-ch"]],
+    ["width", "min(100%, 600px)", ["css-width", "css-function-min"]],
+    ["grid-template-columns", "minmax(0, 1fr)", ["css-grid-template"]],
+    ["width", "fit-content", ["css-width", "css-intrinsic-size"]],
+    ["color", "oklch(70% 0.1 200)", ["css-modern-color"]],
+    ["color", "rgb(0 128 0)", ["css-rgb"]],
+    ["font-size", "12pt", ["css-unit-pt"]],
+    ["color", "initial", ["css-unit-initial"]],
+  ])("%s: %s", (prop, value, expected) => {
+    expect(featuresFor(prop, value).sort()).toEqual([...expected].sort());
+  });
+
+  it.each([
+    ["li:nth-last-child(2)", ["css-pseudo-class-nth-last-child"]],
+    ["li:nth-last-of-type(2)", ["css-pseudo-class-nth-last-of-type"]],
+    ["p:only-of-type", ["css-pseudo-class-only-of-type"]],
+    ["div:has(> img)", ["css-pseudo-class-has"]],
+    ["p:lang(fr)", ["css-pseudo-class-lang"]],
+    ["& .x", ["css-nesting"]],
+    ["[data-x] > &", ["css-selector-attribute", "css-nesting"]],
+    ['a[href*="&utm"]', ["css-selector-attribute"]],
+  ])("selector %s", (s, expected) => {
+    expect(featuresForSelector(s)).toEqual(expected);
+  });
+
+  it.each([
+    ["https://img.test/a.webp", ["image-webp"]],
+    ["https://img.test/a.AVIF?w=600", ["image-avif"]],
+    ["logo.svg#x", ["image-svg"]],
+    ["data:image/svg+xml;utf8,<svg/>", ["image-svg"]],
+    ["data:image/png;base64,AAAA", ["image-png"]],
+    ["https://img.test/photo.jpeg", ["image-jpg"]],
+    ["https://img.test/photo.jfif", ["image-jpg"]],
+    ["data:image/pjpeg;base64,AAAA", ["image-jpg"]],
+    ["data:image/x-png;base64,AAAA", ["image-png"]],
+    ["https://img.test/{{brand.logo}}", []],
+    ["https://img.test/render?id=3", []],
+  ])("image %s", (src, expected) => {
+    expect(featuresForImage(src)).toEqual(expected);
+  });
+
+  it.each([
+    ["progress", ["html-progress"]],
+    ["MARQUEE", ["html-marquee"]],
+    ["ol", ["html-lists"]],
+    ["mark", ["html-semantics"]],
+    ["details", []],
+    ["video", []],
+    ["x-widget", []],
+  ])("tag %s", (tag, expected) => {
+    expect(featuresForTag(tag)).toEqual(expected);
   });
 });

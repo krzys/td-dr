@@ -9,14 +9,15 @@ import type { SrcLoc } from "../loc.ts";
 import { INITIAL, isInherited } from "../style/props.ts";
 import type { StyledElement, StyledNode } from "../style/types.ts";
 import { hasTemplateAttrs } from "../template/hints.ts";
-import { featuresFor } from "../targets/features.ts";
+import { featuresFor, featuresForImage, featuresForTag } from "../targets/features.ts";
 
 // Properties the layout IR replaces, or that already get their own E00x (offsets), so
-// they never reach the output as authored. Everywhere:
+// they never reach the output as authored. Everywhere (z-index goes with position):
 const LOWERED =
-  /^(flex(-|$)|grid-|gap$|row-gap$|column-gap$|align-|justify-|box-sizing$|order$|float$|transform|animation|transition|--|top$|right$|bottom$|left$)/;
+  /^(flex(-|$)|grid-|gap$|row-gap$|column-gap$|align-|justify-|box-sizing$|order$|float$|transform|animation|transition|--|top$|right$|bottom$|left$|z-index$)/;
 // On containers the IR also owns the box model; on pass-through text it is emitted as authored.
-const LOWERED_ON_CONTAINERS = /^(margin(-|$)|padding(-|$)|width$|max-width$)/;
+// border-spacing becomes cellspacing or spacer cells (table-display); what's left is inherited onto cells, where it does nothing.
+const LOWERED_ON_CONTAINERS = /^(margin(-|$)|padding(-|$)|width$|max-width$|border-spacing$)/;
 // What the container emitter writes from the box besides inherited text properties.
 const CONTAINER_WRITES = /^(border-(top|right|bottom|left)-(width|style|color)|border-.*-radius|background-color)$/;
 const LOWERED_VALUES: Readonly<Record<string, ReadonlySet<string>>> = {
@@ -71,7 +72,29 @@ const VALUE_LABEL: Readonly<Record<string, string>> = {
   "css-radial-gradient": "radial-gradient()",
   "css-conic-gradient": "conic-gradient()",
   "css-important": "!important",
+  "css-rgb": "rgb()",
+  "css-modern-color": "lab()/lch() colours",
+  "css-function-light-dark": "light-dark()",
+  "css-function-clamp": "clamp()",
+  "css-function-min": "min()",
+  "css-function-max": "max()",
+  "css-intrinsic-size": "fit-content/min-content/max-content",
+  "css-unit-initial": "the initial keyword",
+  "css-sytem-ui": "system-ui fonts",
+  "css-list-style-image": "list-style-image",
+  ...Object.fromEntries(
+    ["ch", "ex", "vw", "vh", "vmin", "vmax", "pt", "pc", "in", "cm", "mm"].map((u) => [`css-unit-${u}`, `the ${u} unit`]),
+  ),
 };
+
+// Image formats by their caniemail slug: image-webp is "a WebP image".
+const IMAGE_LABEL: Readonly<Record<string, string>> = {
+  "image-png": "a PNG image", "image-apng": "an APNG image", "image-jpg": "a JPEG image", "image-gif": "a GIF image",
+  "image-svg": "an SVG image", "image-webp": "a WebP image", "image-avif": "an AVIF image", "image-bmp": "a BMP image",
+  "image-ico": "an ICO image", "image-tiff": "a TIFF image", "image-heif": "a HEIF image", "image-hdr": "an HDR image",
+  "image-mp4": "an MP4 image",
+};
+const URL_IN = /\burl\(\s*(["']?)([^"')]+)\1\s*\)/gi;
 
 type Seen = { prop: string; loc: SrcLoc | undefined; els: Set<StyledElement>; values: Set<string> };
 
@@ -84,13 +107,39 @@ const PARTIAL_IRRELEVANT: Readonly<Record<string, (v: string) => boolean>> = {
   "css-letter-spacing": (v) => !v.trim().startsWith("-"),
   "css-text-decoration": (v) => !/\s/.test(v.trim()),
   "css-margin": (v) => !/-|auto/.test(v),
+  // the borders the emitter writes as-is; the notes are about wide borders and odd styles
+  "css-border": (v) => [...v.matchAll(/([\d.]+)px/g)].every((m) => Number(m[1]) <= 8),
+  "css-text-align": (v) => /^(left|right|center|justify)$/.test(v.trim()),
+  "css-direction": () => true, // the notes are about clients guessing rtl themselves; dir= is written too
+  "css-text-indent": (v) => !v.trim().startsWith("-"),
+  "css-rgb": (v) => [...v.matchAll(/(?<![\w-])rgb\(([^)]*)\)/gi)].every((m) => !m[1]!.includes("/") && m[1]!.split(",").length === 3),
+  "css-list-style": (v) => !/\burl\(/i.test(v),
+  // tag features carry the element's attribute names as their value
+  "html-lists": (v) => !/\b(reversed|value)\b/.test(v),
+  "html-dfn": (v) => !/\btitle\b/.test(v),
+  // the note is Gmail rasterizing it to PNG: still shown, at its size
+  "image-svg": () => true,
 };
 
 export const lintInput = (body: StyledElement, ctx: Ctx, doc?: LintDoc): void => {
   const seen = new Map<string, Seen>();
 
+  const note = (slug: string, label: string, el: StyledElement, value: string): void => {
+    const s = seen.get(slug);
+    if (s) {
+      s.els.add(el);
+      s.values.add(value);
+    } else seen.set(slug, { prop: label, loc: el.loc, els: new Set([el]), values: new Set([value]) });
+  };
+
   // `raw`: inside an element kept as raw html, whose gradient text is made solid too (rules/unsupported.ts)
   const lint = (el: StyledElement, role: Role, raw = false): void => {
+    // passed-through HTML keeps its tags; everything else is re-emitted as tables
+    if (role === "nested" || role === "text-root") {
+      for (const slug of featuresForTag(el.tag)) note(slug, `<${el.tag}>`, el, Object.keys(el.attrs).join(" "));
+    }
+    const src = el.tag === "img" ? el.attrs["src"] : undefined;
+    if (src) for (const slug of featuresForImage(src)) note(slug, IMAGE_LABEL[slug] ?? slug, el, src);
     // the clipped gradient never reaches the output: solid colour (W001 at analysis) or the author's colour
     const clipped = (role === "text-root" || raw) && (el.style["background-clip"] ?? el.style["-webkit-background-clip"]) === "text";
     // a cell paints the image: a url is covered by VML and the fallback colour, a gradient is not
@@ -101,11 +150,10 @@ export const lintInput = (body: StyledElement, ctx: Ctx, doc?: LintDoc): void =>
       if (!painted && isLowered(el, prop, value, role)) continue;
       for (const slug of featuresFor(prop, value)) {
         if (painted && slug === "css-background-image") continue;
-        const s = seen.get(slug);
-        if (s) {
-          s.els.add(el);
-          s.values.add(value);
-        } else seen.set(slug, { prop: VALUE_LABEL[slug] ?? shownName(prop), loc: el.loc, els: new Set([el]), values: new Set([value]) });
+        note(slug, VALUE_LABEL[slug] ?? shownName(prop), el, value);
+      }
+      if (prop === "background-image") {
+        for (const [, , url] of value.matchAll(URL_IN)) for (const slug of featuresForImage(url!)) note(slug, IMAGE_LABEL[slug] ?? slug, el, url!);
       }
     }
   };

@@ -24,10 +24,19 @@ const ALLOWED: readonly Allowed[] = [
   { tag: set("td"), prop: /^display$/, value: /^none$/, why: "the hide of a block that shows on some screens only; Outlook gets mso-hide too (preheader, progressive-head-styles)" },
   { tag: set("td"), prop: /^max-height$/, value: /^0$/, why: "part of that hide (preheader)" },
   { tag: set("tr"), prop: /^(display|max-height)$/, value: /^(none|0)$/, why: "a spacer row of a vertical distribution that another screen uses; where the hide doesn't apply the row takes one more share (vertical-distribution)" },
+  { tag: set("table"), prop: /^table-layout$/, value: /^fixed$/, why: "fixed columns where it's read; Outlook lays the table out from its width attributes (clipping-and-rounded-corners)" },
+  { tag: set("td", "tr"), prop: /^overflow$/, value: /^hidden$/, why: "part of a hide, or the cut of a clipped box; Outlook gets mso-hide or the fixed table width (preheader, clipping-and-rounded-corners)" },
+  { tag: set("td"), prop: /^box-sizing$/, value: /^border-box$/, why: "a gutter or stacked cell keeps its padding inside its width; Outlook takes the width attribute and mso-padding-alt (flex-rows)" },
+  { tag: set("img"), prop: /^box-sizing$/, value: /^border-box$/, why: "the author's box-sizing on a pass-through image (a preflight reset); the IR never writes it on images" },
+  { tag: set("img"), prop: /^float$/, value: /^(left|right)$/, why: "CSS float where it's read; Outlook gets the align attribute next to it (images)" },
+  // inherited, so the emitter writes the author's value with the text styles of each cell; reported on input
+  { tag: set("td"), prop: /^(overflow-wrap|word-wrap|word-break)$/, why: "the author's text wrapping, inherited into the cell and reported on input (W005)" },
+  { tag: set("td"), prop: /^border-spacing$/, why: "inherited with the text styles; it applies to tables only, so on a cell it does nothing (grids-and-table-display)" },
   { prop: /^(mso-|-ms-)/, why: "Outlook-only properties, harmless elsewhere (outlook-quirks)" },
   { prop: /^-webkit-text-size-adjust$/, why: "iOS font inflation reset (apple-ios-quirks)" },
   { tag: set("table"), prop: /^height$/, value: /^\d+(\.\d+)?px$/, why: "vertical distribution in a min-height box; Yahoo reads it as min-height, which is what it means here (vertical-distribution)" },
   { prop: /^(color|background-color|border-(top|right|bottom|left)(-color)?|text-decoration-color|outline-color)$/, value: /(rgba|hsla)\(/, why: "the author's translucent colour that couldn't be flattened, already reported (W001) on input; the emitter never writes one itself, so this can't hide a bug of ours" },
+  { prop: /^(color|background-color|border-(top|right|bottom|left)(-color)?|text-decoration-color|outline-color)$/, value: /light-dark\(/, why: "the author's light-dark() colour, kept as written and reported on input (W005); the emitter never writes one itself" },
 ];
 
 const isAllowed = (tag: string, prop: string, value: string): boolean =>

@@ -1,5 +1,15 @@
 [
   {
+    "code": "W005",
+    "severity": "warning",
+    "message": "white-space isn't supported in Outlook Windows; partly in Gmail iOS, Gmail Android, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Partial. Not supported with non Google accounts.",
+    "loc": {
+      "line": 19,
+      "col": 1
+    }
+  },
+  {
     "code": "I013",
     "severity": "info",
     "message": "Text at 11px is very small",

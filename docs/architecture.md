@@ -236,6 +236,7 @@ lays out 1px short, in the source only).
 | Examples and dev page | `examples/`, `test/harness/examples.visual.test.ts`, `dev-ui.visual.test.ts` | The React and Vue examples build through the Vite adapter and, filled, look like their HTML render; the dev UI links source and output. |
 | Package | `scripts/smoke.ts` | The tarball holds only `dist`, `NOTICE`, `README.md`, `package.json`; without peers every export and the CLI load; with peers all entries type-check, both adapters render, a folder build and `tddr dev` work. |
 | caniemail freshness | `test/unit/targets/caniemail-data.test.ts` | The data matches its hash and is under 120 days old. |
+| caniemail coverage | `test/unit/targets/features.test.ts` | Every CSS and image feature in the data is mapped from a property, value, selector or image type, or excluded with a reason. |
 
 A fixture's `intent.md` front matter says how it runs: `status`, `expect` (`compile` or a
 diagnostic case), `codes`, `feature`, `viewports`, `maxDiffRatio` (with a reason when loosened),
