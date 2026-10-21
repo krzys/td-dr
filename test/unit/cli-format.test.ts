@@ -181,4 +181,24 @@ describe("--format", () => {
     expect(log.runs[0].results[0].locations[0].physicalLocation.artifactLocation.uri).toBe("emails/my%20badge/style.css");
     expect(log.runs[0].results[0].properties).toEqual({ hint: "h", dialect: "liquid" });
   });
+
+  it("a folder build's email that wrote nothing is an E019 at its file in the report, and exits 1", async () => {
+    vi.mocked(buildEmails).mockResolvedValue([
+      { email: "boom", entry: `${process.cwd()}/emails/boom/index.jsx`, dialect: "handlebars", error: "boom: rendering with react failed: nope", diagnostics: [] },
+      { email: "badge", file: "/p/dist/emails/badge.html", diagnostics: [] },
+    ]);
+    const t = fakeIO({}, ["emails"]);
+    expect(await run(["build", "emails", "--format", "json"], t.io)).toBe(1);
+    expect(t.err()).toBe("emails/boom/index.jsx (handlebars): rendering with react failed: nope\nwrote /p/dist/emails/badge.html\n");
+    expect(JSON.parse(t.out())).toEqual([
+      { file: "emails/boom/index.jsx", code: "E019", severity: "error", message: "rendering with react failed: nope", hint: codes.E019.hint, count: 1, places: [], dialect: "handlebars" },
+    ]);
+    const s = fakeIO({}, ["emails"]);
+    expect(await run(["build", "emails", "--format", "sarif"], s.io)).toBe(1);
+    const log = JSON.parse(s.out()) as Json;
+    expect(sarifProblems(log)).toEqual([]);
+    const [result] = log.runs[0].results;
+    expect([result.ruleId, result.level, result.message.text]).toEqual(["E019", "error", "rendering with react failed: nope"]);
+    expect(result.locations[0].physicalLocation.artifactLocation.uri).toBe("emails/boom/index.jsx");
+  });
 });

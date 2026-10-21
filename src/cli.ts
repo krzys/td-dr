@@ -7,6 +7,7 @@ import { loadConfig } from "./config-file.ts";
 import type { TddrConfig } from "./config.ts";
 import { LANG_TAG } from "./ctx.ts";
 import { compile, toText, type Diagnostic, type DialectName } from "./index.ts";
+import { codes } from "./diagnostics/codes.ts";
 import { jsonReport, sarifReport, type Reported } from "./diagnostics/report.ts";
 import { decodeCss, decodeHtml } from "./parse/decode.ts";
 import { UnknownTargetError } from "./targets/capabilities.ts";
@@ -117,7 +118,7 @@ type Format = (typeof FORMATS)[number];
 
 // Text says each diagnostic on stderr as it comes. JSON and SARIF are one document on stdout, said at
 // the end, so what else a build says ("wrote …") goes to stderr instead.
-type Reporter = { progress(s: string): void; add(d: Diagnostic, file: string, dialect?: string): void; end(): void };
+type Reporter = { progress(s: string): void; add(d: Diagnostic, file: string, dialect?: string): void; failed(message: string, file: string, dialect?: string): void; end(): void };
 const reporter = (format: Format, io: CliIO): Reporter => {
   const items: Reported[] = [];
   return {
@@ -125,6 +126,11 @@ const reporter = (format: Format, io: CliIO): Reporter => {
     add(diagnostic, file, dialect) {
       if (format === "text") io.stderr(formatDiagnostic(diagnostic, file, dialect));
       else items.push({ diagnostic, file, ...(dialect !== undefined && { dialect }) });
+    },
+    // an email the folder build wrote nothing for: said on stderr, and an E019 in a report
+    failed(message, file, dialect) {
+      io.stderr(`${dialect ? `${file} (${dialect})` : file}: ${message}\n`);
+      if (format !== "text") items.push({ diagnostic: { code: "E019", severity: "error", message, hint: codes.E019.hint }, file, ...(dialect !== undefined && { dialect }) });
     },
     end() {
       if (format === "json") io.stdout(jsonReport(items));
@@ -184,11 +190,10 @@ const buildDir = async (
   let warnings = 0;
   for (const r of results) {
     const where = r.entry ? rel(r.entry) : r.email;
-    const what = r.dialect ? `${where} (${r.dialect})` : where;
     if (r.skipped) report.progress(`skipped ${r.email}: ${r.skipped}\n`);
     if (r.error) {
       // a render failure starts with the email's name already
-      io.stderr(`${what}: ${r.error.startsWith(`${r.email}: `) ? r.error.slice(r.email.length + 2) : r.error}\n`);
+      report.failed(r.error.startsWith(`${r.email}: `) ? r.error.slice(r.email.length + 2) : r.error, where, r.dialect);
       failed = true;
     }
     if (r.file) report.progress(`wrote ${r.file}\n`);

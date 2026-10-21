@@ -89,7 +89,7 @@ loses a field: E016, E012, E013) and 2 for usage errors.
 `--format json` prints the diagnostics to stdout instead, as a list of
 `{ file, line?, column?, code, severity, message, hint?, count, places, dialect? }`, and
 `--format sarif` as a SARIF 2.1.0 log for code scanning; anything else the build says moves to
-stderr, so a file build needs `-o`.
+stderr, so a file build needs `-o`. A folder's email that wrote nothing is in it too, as an E019 at its file.
 
 `tddr check <file|dir>` builds as `tddr build` does, with its flags bar `-o`, `--text` and
 `--file-name`, and says the same diagnostics, but writes nothing; `--format json|sarif` goes to

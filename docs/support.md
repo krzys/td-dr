@@ -825,6 +825,7 @@ and notes keep their level.
 | E016 | Filled template differs from the HTML render, or a data set doesn't meet a dialect's data needs (folder builds). |
 | E017 | A media, dark or hover rule changes the structure, text or attributes ([what a screen may change](#what-a-screen-may-change)). |
 | E018 | Elements nested too deep to compile (thousands of levels): no output, at the deepest element. |
+| E019 | A folder build wrote nothing for an email: rendering threw, or a template failed its check (`--format json` and `sarif`; text says it on stderr). |
 | W001 | Dropped or changed: no email-safe way to keep it exactly. |
 | W002 | Invalid CSS (a syntax error, a value such as a negative gap, or rules nested over 128 deep); ignored. |
 | W003 | Approximated layout ([approximations](#approximations)). |
