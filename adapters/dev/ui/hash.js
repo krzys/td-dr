@@ -1,5 +1,5 @@
 // The selection lives in the URL hash so a reload (or a shared link) lands on the same view.
-const KEYS = /** @type {const} */ (["email", "data", "mode", "view", "width", "fields"]);
+const KEYS = /** @type {const} */ (["email", "data", "mode", "view", "width", "fields", "sim"]);
 
 /** @typedef {Partial<Record<(typeof KEYS)[number], string>>} Hash */
 /** @typedef {Partial<Record<(typeof KEYS)[number], string | number | undefined>>} HashState */
