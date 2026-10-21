@@ -2,16 +2,6 @@
   {
     "code": "W005",
     "severity": "warning",
-    "message": "overflow isn't supported in Outlook Windows; partly in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook.com, Apple Mail macOS, Apple Mail iOS, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (3 places)",
-    "hint": "Partial. `overflow-block` & `overflow-inline` not supported.",
-    "loc": {
-      "line": 11,
-      "col": 3
-    }
-  },
-  {
-    "code": "W005",
-    "severity": "warning",
     "message": "text-overflow isn't supported in Outlook Windows, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail iOS, Gmail Android (2 places)",
     "hint": "Partial. Not supported with non Google accounts.",
     "loc": {

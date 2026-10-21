@@ -146,6 +146,11 @@ describe("lintInput", () => {
       expect(real('<hr style="height:0">')).toEqual([]);
     });
 
+    it("a no-wrap text block's overflow is its cell's clip (W003); text-overflow still counts", () => {
+      expect(real('<p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">x</p>')).toEqual(["white-space", "text-overflow"]);
+      expect(real('<p style="overflow:hidden">x</p>')).toEqual(["overflow"]);
+    });
+
     it("a margin nested in pass-through HTML does reach the output", () => {
       expect(real('<p>a <span style="margin-left:4px">b</span></p>')).toEqual(["margin"]);
     });

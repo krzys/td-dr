@@ -1,3 +1,4 @@
+import { clipMode } from "../analyze/box-clip.ts";
 import { isReset } from "../analyze/box.ts";
 import { BOX_PROP, isBlank, KEEPS_BOX } from "../analyze/children.ts";
 import { isHidden, isInlineLevel } from "../analyze/classify.ts";
@@ -51,6 +52,7 @@ const isLowered = (el: StyledElement, prop: string, value: string, role: Role): 
       return /^border-.*-radius$/.test(prop) || isLowered(el, prop, value, "container");
     case "text-root":
       if (/^margin(-|$)/.test(prop)) return true; // passThrough writes margin:0
+      if (/^overflow(-[xy])?$/.test(prop) && clipMode(el) === "line") return true; // its cell's clip, said with W003
       return !isInlineLevel(el) && !KEEPS_BOX.has(el.tag) && BOX_PROP.test(prop);
     default:
       return false;
