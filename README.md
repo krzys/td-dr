@@ -15,17 +15,22 @@ dropped silently. The package, binary and import name is `tddr`.
 
 ## Install
 
-Node.js 22 or later and pnpm. td;dr isn't published to a registry; build and pack it, then add the
-tarball:
+Node.js 22.18 or later.
 
 ```sh
-pnpm install && pnpm build && pnpm pack   # writes tddr-0.0.0.tgz
-cd ../your-project && pnpm add ../td-dr/tddr-0.0.0.tgz
+npm install tddr   # or: pnpm add tddr
 ```
 
 Optional peers, only for what you use: `vite` (`tddr dev`, folder builds, `tddr/vite`), `react` and
 `react-dom` (`tddr/react`), `vue` (`tddr/vue`), `handlebars` and `liquidjs` (the template
 equivalence check and engine-filled previews).
+
+## Status
+
+td;dr is at 0.x: options, diagnostics and output may change between minor versions (see
+`CHANGELOG.md`). Output is checked by golden tests and rendered in Chromium, Firefox and WebKit;
+client behaviour not confirmed in a real client is marked **unverified** in
+[Support and limits](docs/support.md), Outlook's Word engine included.
 
 ## Compile
 
@@ -181,9 +186,10 @@ and `render(Component, props)`; `tddr/vite` exports the Vite plugin and `buildEm
 and `pnpm smoke` are described with the other commands in
 [architecture.md](docs/architecture.md#verification).
 
-The tarball holds `dist/`, `NOTICE`, `README.md` and `package.json`. The `tddr/react`, `tddr/vue`
-and `tddr/vite` types import their framework's types (`@types/react`, Vue with the `DOM` lib,
-`@types/node`).
+The tarball holds `dist/`, `LICENSE`, `NOTICE`, `README.md` and `package.json`. To try a local build
+in another project, `pnpm build && pnpm pack`, then add the `.tgz` there. The `tddr/react`,
+`tddr/vue` and `tddr/vite` types import their framework's types (`@types/react`, Vue with the `DOM`
+lib, `@types/node`).
 
 ## Documentation
 
