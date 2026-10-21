@@ -108,7 +108,9 @@ skipped.
 
 **Dev server.** `tddr dev [dir]` (default `./emails`) shows source and compiled output side by side
 or as a difference overlay at any width, with editable data sets, diagnostics linked into both
-panes, the size against Gmail's clip and reload on save. It uses the project's Vite config when
+panes, the size against Gmail's clip and reload on save. Simulate shows the compiled frame as a
+stricter client would: without `<style>`, without `@media`, with images off or in an approximate
+forced dark; the code, size and Copy stay the real output. It uses the project's Vite config when
 there is one; without one it adds the Vue and Tailwind Vite plugins when they are installed. A `.vue`
 email no Vue plugin compiled fails with a message saying so.
 
