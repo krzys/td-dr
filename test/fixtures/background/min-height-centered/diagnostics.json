@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I014",
+    "severity": "info",
+    "message": "Dark design without a dark-mode style",
+    "hint": "Gmail on iOS and classic Outlook invert dark backgrounds to light. Test it, or add a prefers-color-scheme block.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

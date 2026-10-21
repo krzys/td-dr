@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W010",
+    "severity": "warning",
+    "message": "<svg> kept: Gmail and Outlook don't show it",
+    "hint": "Apple Mail and iOS show inline SVG; Gmail and Outlook drop it. Use a PNG for them.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

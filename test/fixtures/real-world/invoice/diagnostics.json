@@ -1,0 +1,174 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "letter-spacing is only partly supported in Outlook Windows (3 places)",
+    "hint": "Partial. Big negative values are rendered differently from CSS standards.",
+    "loc": {
+      "line": 63,
+      "col": 7
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (3 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 74,
+      "col": 5
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (16 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 74,
+      "col": 5
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #d873b0: found 3.0:1, needs 4.5:1 (4 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 57,
+      "col": 9
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #ff8a3d: found 2.3:1, needs 4.5:1 (3 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 74,
+      "col": 5
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #8a94a6 on #ffffff: found 3.0:1, needs 4.5:1 (4 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 82,
+      "col": 9
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #9ca3af on #f8fafc: found 2.4:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 121,
+      "col": 70
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #b0b6c1 on #ffffff: found 2.0:1, needs 4.5:1 (4 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 136,
+      "col": 11
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 11px is very small",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 82,
+      "col": 9
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 9px is very small (2 places)",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 90,
+      "col": 9
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "box-shadow: 0 2px 8px rgba(15, 42, 74, 0.06) is dropped (2 places)",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 79,
+      "col": 5
+    },
+    "locs": [
+      {
+        "line": 79,
+        "col": 5
+      },
+      {
+        "line": 132,
+        "col": 5
+      }
+    ]
+  },
+  {
+    "code": "I004",
+    "severity": "info",
+    "message": "<a href> around a block: the link moves onto the 2 text runs or images inside (3 places)",
+    "hint": "Email clients can't make a whole box a link (Outlook drops a link around a table), so each text run and image inside gets the href; the padding between them isn't clickable.",
+    "loc": {
+      "line": 157,
+      "col": 7
+    },
+    "locs": [
+      {
+        "line": 157,
+        "col": 7
+      },
+      {
+        "line": 161,
+        "col": 7
+      },
+      {
+        "line": 165,
+        "col": 7
+      }
+    ]
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch (4 places)",
+    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
+    "loc": {
+      "line": 176,
+      "col": 9
+    },
+    "locs": [
+      {
+        "line": 176,
+        "col": 9
+      },
+      {
+        "line": 177,
+        "col": 9
+      },
+      {
+        "line": 178,
+        "col": 9
+      },
+      {
+        "line": 179,
+        "col": 9
+      }
+    ]
+  }
+]

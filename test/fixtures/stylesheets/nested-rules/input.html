@@ -1,0 +1,57 @@
+<style>
+@layer base, components;
+@layer base {
+  body { margin: 0; background: #f4f6f3; font-family: Georgia, "Times New Roman", serif; color: #1f2a22; }
+}
+.letter {
+  &[data-v-11aa] { max-width: 600px; margin: 0 auto; padding: 24px 16px; }
+  & .grid[data-v-11aa] { display: flex; flex-direction: column; gap: 16px; }
+}
+@layer components {
+  .card {
+    &[data-v-22bb] {
+      background: #ffffff;
+      border: 1px solid #c9d6cc;
+      padding: 20px;
+    }
+    .tag[data-v-22bb] {
+      display: inline-block;
+      padding: 4px 8px;
+      background: #dfeee2;
+      color: #2f6b3f;
+      font: bold 11px/1 Arial, sans-serif;
+      text-transform: uppercase;
+    }
+    & > .title[data-v-22bb] { margin: 12px 0 8px; font-size: 20px; line-height: 26px; }
+    p { margin: 0; color: #4a5a4f; font-size: 15px; line-height: 22px; }
+    &.featured {
+      &[data-v-22bb] { background: #eaf4ec; border-color: #eaf4ec; }
+      & .title[data-v-22bb] { font-size: 26px; line-height: 32px; }
+    }
+  }
+}
+.signoff {
+  margin-top: 32px;
+  .small, .tiny { font: 12px/18px Arial, sans-serif; }
+  text-align: center;
+  color: #6b7a70;
+}
+</style>
+<div class="letter" data-v-11aa>
+  <div class="grid" data-v-11aa>
+    <div class="card featured" data-v-22bb>
+      <span class="tag" data-v-22bb>Field notes</span>
+      <h2 class="title" data-v-22bb>Rebuilding the greenhouse</h2>
+      <p data-v-22bb>Our grow team spent September replacing the old roof. Here is what we learned about light and heat.</p>
+    </div>
+    <div class="card" data-v-22bb>
+      <span class="tag" data-v-22bb>How-to</span>
+      <h2 class="title" data-v-22bb>Three soil mixes for winter sowing</h2>
+      <p data-v-22bb>Peat-free recipes we tested on chard, kale and broad beans.</p>
+    </div>
+  </div>
+  <div class="signoff">
+    <p>Happy growing, the Fernhill team</p>
+    <p class="small">You get this because you joined the mailing list.</p>
+  </div>
+</div>

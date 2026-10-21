@@ -1,0 +1,22 @@
+[
+  {
+    "code": "I010",
+    "severity": "info",
+    "message": "Link text \"Click here\" doesn't say where it goes",
+    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
+    "loc": {
+      "line": 2,
+      "col": 57
+    }
+  },
+  {
+    "code": "I010",
+    "severity": "info",
+    "message": "Link text \"https://example.com/a-very-long-url\" doesn't say where it goes",
+    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
+    "loc": {
+      "line": 4,
+      "col": 25
+    }
+  }
+]

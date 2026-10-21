@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #9ca3af on #ffffff: found 2.5:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #fde68a: found 1.2:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 8,
+      "col": 5
+    }
+  }
+]

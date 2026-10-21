@@ -1,0 +1,7 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 24px; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+  <p style="margin: 0 0 12px 0; font-size: 16px; line-height: 24px;">Hi <tddr-if test="user.first">{{user.first}}</tddr-if><tddr-else>there</tddr-else>, your order is
+    <b data-email-if="order.status == 'paid'" style="color: #15803d;">paid</b>
+    <b data-email-else-if="order.status == 'shipped'" style="color: #1d4ed8;">on its way</b>
+    <b data-email-else style="color: #b45309;">being prepared</b>.</p>
+  <p style="margin: 0; font-size: 14px; line-height: 22px;">Questions? <a href="https://shop.test/help" style="color: #1d4ed8;"><span data-email-if="user.vip">Call your VIP line</span><span data-email-else>Visit the help centre</span></a> any time.</p>
+</div>

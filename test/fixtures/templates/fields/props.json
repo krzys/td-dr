@@ -1,0 +1,7 @@
+{
+  "brand": { "name": "Teahouse", "logo": "120x40.png" },
+  "user": { "name": "Ada" },
+  "order": { "id": "A-1042", "total": "$48.50", "url": "https://shop.test/orders/A-1042" },
+  "shipping": { "city": "Lisbon" },
+  "support": { "email": "help@shop.test" }
+}

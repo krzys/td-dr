@@ -1,0 +1,5 @@
+<div style="font-family: Arial, Helvetica, sans-serif; font-size: 15px; padding: 16px;">
+  <p style="margin: 0;"><a href="https://shop.test/{{#if user.vip}}vip{{/if}}{{#unless user.vip}}home{{/unless}}">Shop</a></p>
+  <p style="margin: 0;">{% if user.vip %}Welcome back.{% endif %}</p>
+  <p style="margin: 0;">Literal braces are fine: {{ like this }}.</p>
+</div>

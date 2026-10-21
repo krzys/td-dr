@@ -1,0 +1,12 @@
+<style>
+  .wrap { max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #111827; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cell { background-color: #eeeeee; padding: 8px; }
+  @media (max-width: 480px) { .desk { display: none; } }
+</style>
+<div class="wrap">
+  <div class="grid">
+    <div class="cell">One</div>
+    <div class="cell desk">Two</div>
+  </div>
+</div>

@@ -1,0 +1,1 @@
+{ "user": { "name": "Ada", "city": "Leeds", "vip": false, "tier": "gold", "currency": "GBP" }, "wish": { "sku": "K2" }, "order": { "ship": { "city": "Leeds" }, "pickup": false, "coupon": "SPRING", "currency": "GBP", "lines": [{ "sku": "K1", "name": "Kettle", "stock": true }, { "sku": "K2", "name": "Teapot", "stock": true }] } }

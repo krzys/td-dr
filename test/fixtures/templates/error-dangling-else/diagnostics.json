@@ -1,0 +1,42 @@
+[
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-else without a data-email-if or <tddr-if> before it (2 places)",
+    "hint": "An else (data-email-else, data-email-else-if, <tddr-else>, <tddr-else-if>) goes right after a data-email-if / -unless / -else-if element or a <tddr-if> / <tddr-else-if>; only whitespace may sit between them.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    },
+    "locs": [
+      {
+        "line": 2,
+        "col": 3
+      },
+      {
+        "line": 6,
+        "col": 30
+      }
+    ]
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "<tddr-else> without a data-email-if or <tddr-if> before it",
+    "hint": "An else (data-email-else, data-email-else-if, <tddr-else>, <tddr-else-if>) goes right after a data-email-if / -unless / -else-if element or a <tddr-if> / <tddr-else-if>; only whitespace may sit between them.",
+    "loc": {
+      "line": 4,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "<tddr-else-if> without a data-email-if or <tddr-if> before it",
+    "hint": "An else (data-email-else, data-email-else-if, <tddr-else>, <tddr-else-if>) goes right after a data-email-if / -unless / -else-if element or a <tddr-if> / <tddr-else-if>; only whitespace may sit between them.",
+    "loc": {
+      "line": 5,
+      "col": 3
+    }
+  }
+]

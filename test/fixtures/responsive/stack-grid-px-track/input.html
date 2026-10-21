@@ -1,0 +1,13 @@
+<style>
+  .wrap { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 24px; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #111827; }
+  .g { display: grid; grid-template-columns: 200px 1fr; column-gap: 16px; }
+  @media (max-width: 480px) {
+    .g { grid-template-columns: 1fr; }
+  }
+</style>
+<div class="wrap">
+  <div class="g">
+    <div>The first cell has a 200px track on the desktop.</div>
+    <div>The second cell takes what is left of the line.</div>
+  </div>
+</div>

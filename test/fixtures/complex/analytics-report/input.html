@@ -1,0 +1,77 @@
+<style>
+  @layer base, components;
+  :root {
+    --ink: #14171f; --muted: #5d6475; --line: #e3e6ee; --brand: #4c3fd1; --brand-soft: #eceafd;
+    --up: #127a46; --down: #b42318; --radius: 6px; --gap: 1rem;
+  }
+  @layer base {
+    body { margin: 0; background: #f2f3f7; font-family: "Helvetica Neue", Arial, sans-serif; color: var(--ink); font-size: 15px; }
+    h1, h2, h3 { margin: 0; }
+    p { margin: 0; line-height: 1.5; }
+  }
+  @layer components {
+    .report { max-width: 600px; margin: 0 auto; background: #ffffff; }
+    .bar-top { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 2rem; background: var(--ink); color: #ffffff; }
+    .bar-top .period { font-size: 0.8em; letter-spacing: 0.08em; text-transform: uppercase; color: #b8bdcc; }
+    .lead { padding: 2rem 2rem 1rem; }
+    .lead h1 { font-size: 1.75rem; line-height: 1.2; margin-bottom: 0.5rem; }
+    .lead p { color: var(--muted); }
+  }
+  .kpis { display: flex; gap: var(--gap); padding: 0.5rem 2rem 1.5rem; }
+  .kpi { flex: 1; padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius); }
+  .kpi .label { font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .kpi .value { font-size: 1.6rem; font-weight: bold; margin: 0.25rem 0; }
+  .kpi [data-trend="up"] { color: var(--up); font-size: 0.8125rem; }
+  .kpi [data-trend="down"] { color: var(--down); font-size: 0.8125rem; }
+  .section { padding: 0 2rem 1.75rem; }
+  .section > h2 { font-size: 0.8125rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-bottom: 0.75rem; border-bottom: 1px solid var(--line); margin-bottom: 0.75rem; }
+  .chart-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .chart-row .name { width: 110px; font-size: 0.8125rem; color: var(--muted); }
+  .chart-row .track { flex: 1; background: var(--brand-soft); }
+  .chart-row .fill { padding-top: 10px; background: var(--brand); }
+  .chart-row .num { width: 48px; text-align: right; font-size: 0.8125rem; font-weight: bold; }
+  .usage { border: 1px solid var(--line); border-radius: var(--radius); }
+  .usage .row { display: flex; padding: 0.75rem 1rem; font-size: 0.875rem; }
+  .usage .row:not(:first-child) { border-top: 1px solid var(--line); }
+  .usage .row:first-child { background: #f7f8fb; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .usage .c1 { flex: 2; }
+  .usage .c2, .usage .c3 { flex: 1; text-align: right; }
+  .callout { display: flex; gap: 1rem; align-items: center; margin: 0 2rem 2rem; padding: 1rem 1.25rem; background: var(--brand-soft); border-radius: var(--radius); }
+  .callout img { width: 40px; height: 40px; }
+  .callout p { font-size: 0.875rem; }
+  .callout a { color: var(--brand); font-weight: bold; }
+  .foot { padding: 1.5rem 2rem 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid var(--line); }
+</style>
+<div class="report">
+  <div class="bar-top"><strong>Quarry Analytics</strong><span class="period">September 2026</span></div>
+  <div class="lead">
+    <h1>Your workspace grew 18% in September</h1>
+    <p>Here's how the Northvale team used Quarry last month, and where the time went.</p>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="label">Queries run</div><div class="value">48,210</div><div data-trend="up">▲ 18% vs August</div></div>
+    <div class="kpi"><div class="label">Dashboards</div><div class="value">126</div><div data-trend="up">▲ 9 new</div></div>
+    <div class="kpi"><div class="label">Avg. query time</div><div class="value">1.4s</div><div data-trend="down">▼ 0.3s slower</div></div>
+  </div>
+  <div class="section">
+    <h2>Busiest data sources</h2>
+    <div class="chart-row"><div class="name">orders_prod</div><div class="track"><div class="fill" style="width: 92%"></div></div><div class="num">19.4k</div></div>
+    <div class="chart-row"><div class="name">events_raw</div><div class="track"><div class="fill" style="width: 64%"></div></div><div class="num">13.5k</div></div>
+    <div class="chart-row"><div class="name">billing</div><div class="track"><div class="fill" style="width: 38%"></div></div><div class="num">8.0k</div></div>
+    <div class="chart-row"><div class="name">support_tix</div><div class="track"><div class="fill" style="width: 21%"></div></div><div class="num">4.4k</div></div>
+  </div>
+  <div class="section">
+    <h2>Seats and usage</h2>
+    <div class="usage">
+      <div class="row"><div class="c1">Team</div><div class="c2">Seats</div><div class="c3">Queries</div></div>
+      <div class="row"><div class="c1">Finance</div><div class="c2">8</div><div class="c3">14,902</div></div>
+      <div class="row"><div class="c1">Growth</div><div class="c2">12</div><div class="c3">21,377</div></div>
+      <div class="row"><div class="c1">Platform</div><div class="c2">5</div><div class="c3">11,931</div></div>
+    </div>
+  </div>
+  <div class="callout">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%234c3fd1'/%3E%3Ctext x='20' y='26' font-family='Arial' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3E!%3C/text%3E%3C/svg%3E" alt="">
+    <p>Three dashboards haven't been opened in 60 days. <a href="https://example.com/cleanup">Review them</a> to keep your workspace tidy.</p>
+  </div>
+  <div class="foot">Quarry Analytics · 21 Albion Place, Leeds LS1 6JL · Manage email settings in your workspace.</div>
+</div>

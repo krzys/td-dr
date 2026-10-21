@@ -1,0 +1,9 @@
+<style>
+  :root { --space-5vw: 20px; --pad: 5vw; }
+  .a { padding-left: var(--space-5vw); background-color: #e0e7ff; }
+  .b { padding: 0 var(--pad); margin-top: 8px; background-color: #fde68a; }
+</style>
+<div style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 20px; color: #1f2937;">
+  <div class="a">A hyphenated name that ends in 5vw is not a length: padding stays 20px</div>
+  <div class="b">A custom property holding 5vw resolves to 30px</div>
+</div>

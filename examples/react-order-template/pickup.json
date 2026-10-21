@@ -1,0 +1,53 @@
+{
+  "customer": {
+    "firstName": "Lotte"
+  },
+  "store": {
+    "code": "eu",
+    "helpUrl": "https://example.com/help",
+    "unsubscribeUrl": "https://example.com/preferences"
+  },
+  "order": {
+    "number": "FW-20517",
+    "placedOn": "16 October 2026",
+    "url": "https://example.com/orders/FW-20517",
+    "delivery": {
+      "method": "pickup",
+      "free": true,
+      "store": {
+        "name": "Fernwood Amsterdam",
+        "line1": "Haarlemmerstraat 88",
+        "city": "Amsterdam",
+        "postcode": "1013 EV",
+        "country": "Netherlands"
+      }
+    },
+    "taxExempt": false,
+    "subscription": null,
+    "billingSameAsShipping": true,
+    "items": [
+      {
+        "sku": "TEA-007",
+        "name": "First Flush Darjeeling",
+        "variant": "100 g pouch",
+        "qty": 3,
+        "price": "€11.50",
+        "listPrice": "€11.50",
+        "image": "https://img.example/128x128/ecfccb/3f6212.png?text=Tea"
+      }
+    ],
+    "shipping": {
+      "name": "Lotte de Vries",
+      "line1": "Prinsengracht 412",
+      "city": "Amsterdam",
+      "postcode": "1016 HZ",
+      "country": "Netherlands"
+    },
+    "totals": {
+      "subtotal": "€34.50",
+      "delivery": "€0.00",
+      "tax": "€5.99",
+      "total": "€34.50"
+    }
+  }
+}

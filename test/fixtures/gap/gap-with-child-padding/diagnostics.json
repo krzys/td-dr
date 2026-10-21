@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "overflow-wrap isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Mobile Webmail, Apple Mail macOS, Apple Mail iOS",
+    "hint": "Buggy. Requires `word-break:normal` to reset Apple Mail default style (See [issue#394](https://github.com/hteumeuleu/caniemail/issues/394).)",
+    "loc": {
+      "line": 12,
+      "col": 5
+    }
+  }
+]

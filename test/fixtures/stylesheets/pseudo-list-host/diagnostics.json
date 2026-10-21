@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Selector \"ul::before\" puts text directly inside <ul>, which can't hold it, so it was skipped",
+    "hint": "Text straight inside a list is invalid HTML and email clients move or drop it; put the pseudo-element on the <li>, or write the text as its own element.",
+    "loc": {
+      "line": 2,
+      "col": 16
+    }
+  }
+]

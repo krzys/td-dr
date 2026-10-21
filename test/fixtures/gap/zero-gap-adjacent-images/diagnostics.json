@@ -1,0 +1,26 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "width: 33% on an image is approximated as filling its column (3 places)",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 7,
+      "col": 3
+    },
+    "locs": [
+      {
+        "line": 7,
+        "col": 3
+      },
+      {
+        "line": 8,
+        "col": 3
+      },
+      {
+        "line": 9,
+        "col": 3
+      }
+    ]
+  }
+]

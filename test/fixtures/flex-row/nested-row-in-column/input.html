@@ -1,0 +1,25 @@
+<style>
+  .card { background-color: #ffffff; padding: 20px; font-family: Arial, Helvetica, sans-serif; }
+  .card-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eeeeee; }
+  .label-group { display: flex; align-items: center; gap: 8px; }
+  .label { font-size: 14px; color: #374151; }
+  .amount { font-size: 14px; font-weight: bold; color: #111827; }
+  .total { font-size: 16px; font-weight: bold; color: #111827; }
+</style>
+<div class="card">
+  <div class="card-row">
+    <span class="label-group">
+      <img src="https://img.example/16x16.png" width="16" height="16" alt="">
+      <span class="label">Subtotal</span>
+    </span>
+    <span class="amount">$84.00</span>
+  </div>
+  <div class="card-row">
+    <span class="label">Shipping</span>
+    <span class="amount">$6.50</span>
+  </div>
+  <div class="card-row" style="border-bottom: 0;">
+    <span class="total">Total</span>
+    <span class="total">$90.50</span>
+  </div>
+</div>

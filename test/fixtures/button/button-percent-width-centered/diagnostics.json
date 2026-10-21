@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook shows square corners; give the button a px width",
+    "hint": "Outlook can only round a button of a known pixel size, so a percentage width keeps square corners there.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

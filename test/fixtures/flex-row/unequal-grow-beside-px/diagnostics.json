@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow columns beside a px column share the space by their content, not by flex-grow",
+    "hint": "Give the growing columns a % flex-basis (or px widths), or keep a single growing column next to the px one.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

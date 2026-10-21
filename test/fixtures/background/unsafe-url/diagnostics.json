@@ -1,0 +1,52 @@
+[
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed behavior: it loads script",
+    "hint": "Scripts, event handlers and framework markers are stripped from email output.",
+    "loc": {
+      "line": 2,
+      "col": 27
+    }
+  },
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed -moz-binding: it loads script",
+    "hint": "Scripts, event handlers and framework markers are stripped from email output.",
+    "loc": {
+      "line": 2,
+      "col": 52
+    }
+  },
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed width: expression() runs script",
+    "hint": "Scripts, event handlers and framework markers are stripped from email output.",
+    "loc": {
+      "line": 2,
+      "col": 83
+    }
+  },
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed background: javascript: URL",
+    "hint": "Links and images keep http, https, mailto, tel, sms and cid URLs, data: images, fragments, relative URLs and placeholders.",
+    "loc": {
+      "line": 5,
+      "col": 3
+    }
+  },
+  {
+    "code": "I001",
+    "severity": "info",
+    "message": "Removed background-image: vbscript: URL",
+    "hint": "Links and images keep http, https, mailto, tel, sms and cid URLs, data: images, fragments, relative URLs and placeholders.",
+    "loc": {
+      "line": 9,
+      "col": 3
+    }
+  }
+]

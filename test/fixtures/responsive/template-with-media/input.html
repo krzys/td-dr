@@ -1,0 +1,19 @@
+<style>
+  .wrap { max-width: 600px; margin: 0 auto; padding: 32px; background-color: #ffffff; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; color: #111827; }
+  .wrap p { margin: 0; }
+  .line { padding: 8px 0; }
+  .hint { padding: 8px 12px; background-color: #fef3c7; }
+  .tier { color: #b45309; }
+  @media (max-width: 480px) {
+    .wrap { padding: 16px; }
+    .hint { display: none; }
+    .tier { color: #92400e; }
+  }
+</style>
+<div class="wrap">
+  <p class="line">Hi {{user.name}}, your <span class="tier">{{user.tierName}}</span> perks are active.</p>
+  <div data-email-each="items" data-email-as="item">
+    <p class="line">{{item.title}}</p>
+  </div>
+  <div class="hint" data-email-if="user.vip">Tap and hold the card to save it.</div>
+</div>

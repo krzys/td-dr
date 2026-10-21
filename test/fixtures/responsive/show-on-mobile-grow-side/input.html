@@ -1,0 +1,13 @@
+<style>
+  .wrap { max-width: 600px; margin: 0 auto; padding: 24px; background-color: #ffffff; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #111827; }
+  .row { display: flex; gap: 16px; }
+  .main { flex: 1; padding: 12px; background-color: #f3f4f6; }
+  .side { width: 100px; padding: 12px; background-color: #dbeafe; display: none; }
+  @media (max-width: 480px) { .side { display: block; } }
+</style>
+<div class="wrap">
+  <div class="row">
+    <div class="main">Your order ships tomorrow.</div>
+    <div class="side">Track it</div>
+  </div>
+</div>

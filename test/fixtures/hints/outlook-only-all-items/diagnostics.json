@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "width is only partly supported in Outlook Windows (3 places)",
+    "hint": "Partial. Not supported on `<body>`, `<span>`, `<div>`, `<p>` or `<img>` elements.",
+    "loc": {
+      "line": 4,
+      "col": 5
+    }
+  }
+]

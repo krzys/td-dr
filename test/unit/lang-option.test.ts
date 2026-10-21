@@ -1,0 +1,43 @@
+import { describe, expect, it } from "vitest";
+import { compile } from "../../src/index.ts";
+
+const langs = (html: string) => [...html.matchAll(/<(?:html|div role="article")[^>]* lang="([^"]*)"/g)].map((m) => m[1]);
+const i009 = (r: ReturnType<typeof compile>) => r.diagnostics.filter((d) => d.code === "I009");
+
+describe("lang", () => {
+  it("comes from the option when the source sets none", () => {
+    const r = compile("<p>Hallo</p>", { lang: "de" });
+    expect(langs(r.html)).toEqual(["de", "de"]);
+    expect(i009(r)).toEqual([]);
+  });
+  it("comes from <html lang> before the option", () => {
+    expect(langs(compile('<!doctype html><html lang="fr"><body><p>x</p></body></html>', { lang: "de" }).html)).toEqual(["fr", "fr"]);
+  });
+  it("comes from xml:lang on <html> when lang is missing", () => {
+    const xhtml = (attrs: string) => `<!doctype html><html xmlns="http://www.w3.org/1999/xhtml" ${attrs}><body><p>Hallo</p></body></html>`;
+    const r = compile(xhtml('xml:lang="nl"'), { lang: "de" });
+    expect(langs(r.html)).toEqual(["nl", "nl"]);
+    expect(i009(r)).toEqual([]);
+    expect(langs(compile(xhtml('lang="fr" xml:lang="nl"')).html)).toEqual(["fr", "fr"]);
+  });
+  it("defaults to en with an I009, for a component as much as a whole document", () => {
+    for (const input of ["<p>x</p>", "<!doctype html><html><body><p>x</p></body></html>"]) {
+      const r = compile(input);
+      expect(langs(r.html)).toEqual(["en", "en"]);
+      expect(i009(r)).toHaveLength(1);
+    }
+  });
+});
+
+describe("title", () => {
+  const i015 = (input: string) => compile(input, { lang: "en" }).diagnostics.filter((d) => d.code === "I015");
+  it("is an I015 when a whole page has none, or an empty one", () => {
+    for (const input of ["<!doctype html><html><body><p>x</p></body></html>", "<head><title> </title></head><p>x</p>"]) {
+      expect(i015(input), input).toEqual([expect.objectContaining({ severity: "info", hint: expect.stringMatching(/<title>/) })]);
+    }
+  });
+  it("says nothing for a page with a title, or for a fragment the caller places in its own page", () => {
+    expect(i015("<html><head><title>Spring guide</title></head><body><p>x</p></body></html>")).toEqual([]);
+    expect(i015("<p>x</p>")).toEqual([]);
+  });
+});

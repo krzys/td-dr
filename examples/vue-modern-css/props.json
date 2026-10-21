@@ -1,0 +1,20 @@
+{
+  "issue": 37,
+  "date": "October 2026",
+  "lead": {
+    "kicker": "Field notes",
+    "title": "Rebuilding the greenhouse, one pane at a time",
+    "body": "Our grow team spent September replacing the old polycarbonate roof. Here is what we learned about light, heat and patience, and why the seedlings came back stronger.",
+    "href": "https://example.com/journal/greenhouse"
+  },
+  "stories": [
+    { "id": "soil", "tag": "How-to", "title": "Three soil mixes for winter sowing", "blurb": "Peat-free recipes we tested on chard, kale and broad beans.", "href": "https://example.com/journal/soil" },
+    { "id": "tools", "tag": "Gear", "title": "The hand tools we actually use", "blurb": "A short list, chosen by the people who dig every day.", "href": "https://example.com/journal/tools" },
+    { "id": "seed", "tag": "Community", "title": "Seed swap recap", "blurb": "Over 400 packets changed hands at the Harbour Market stall.", "href": "https://example.com/journal/seed-swap" }
+  ],
+  "events": [
+    { "day": "02", "month": "Nov", "title": "Bulb planting workshop", "place": "Riverside plot" },
+    { "day": "16", "month": "Nov", "title": "Compost open morning", "place": "North yard" }
+  ],
+  "unsubscribeUrl": "https://example.com/unsubscribe"
+}

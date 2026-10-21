@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E017",
+    "severity": "error",
+    "message": "The max-width 480px rules change the order of elements: the base has <td> (from line 11, column 5) where this screen has <td> (from line 12, column 5)",
+    "hint": "Head rules can only change styles: the text, images, links, attributes and order of elements must be the same on every screen. Put each version in the markup and hide the others with display: none per screen.",
+    "loc": {
+      "line": 11,
+      "col": 5
+    }
+  }
+]

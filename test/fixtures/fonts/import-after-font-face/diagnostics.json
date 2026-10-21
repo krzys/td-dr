@@ -1,0 +1,18 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "@import url(\"https://fonts.googleapis.com/css2?family=Inter\") comes after other rules, so browsers ignore it; it was dropped",
+    "hint": "Move the @import to the top of its <style> block, before any other rule.",
+    "loc": {
+      "line": 3,
+      "col": 1
+    }
+  },
+  {
+    "code": "I008",
+    "severity": "info",
+    "message": "Web font kept: Brand",
+    "hint": "Apple Mail, iOS and Samsung load it; Gmail, Yahoo and Outlook show the next font in the stack."
+  }
+]

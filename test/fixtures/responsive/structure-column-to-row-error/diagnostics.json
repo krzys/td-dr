@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E017",
+    "severity": "error",
+    "message": "The max-width 480px rules change the layout structure of the <div> at line 10, column 3 with { flex-direction: row }; the container at line 10, column 3 is a column in the base and a row here; only a row that stacks on narrow screens can change, so write the row as the base and stack it below",
+    "hint": "Head rules can change padding, sizes, colours, show or hide blocks and stack a flex row or grid (flex-direction: column, display: block, one grid track) on narrow screens, but not change the column count, reverse the order or turn a column into a row; fluid rows already wrap on phones.",
+    "loc": {
+      "line": 11,
+      "col": 5
+    }
+  }
+]

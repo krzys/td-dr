@@ -1,0 +1,32 @@
+[
+  {
+    "code": "I015",
+    "severity": "info",
+    "message": "Email has no title",
+    "hint": "The online copy (view in browser) shows the <title> in its tab, and a screen reader says it first. Add a <title> to the <head>; a component can write one in its markup.",
+    "loc": {
+      "line": 4,
+      "col": 1
+    }
+  },
+  {
+    "code": "W002",
+    "severity": "warning",
+    "message": "row-gap: -4px is invalid (a gap can't be negative) and was ignored",
+    "hint": "The declaration or rule could not be parsed and was ignored.",
+    "loc": {
+      "line": 6,
+      "col": 3
+    }
+  },
+  {
+    "code": "W002",
+    "severity": "warning",
+    "message": "column-gap: -6px is invalid (a gap can't be negative) and was ignored",
+    "hint": "The declaration or rule could not be parsed and was ignored.",
+    "loc": {
+      "line": 10,
+      "col": 3
+    }
+  }
+]

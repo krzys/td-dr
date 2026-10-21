@@ -1,0 +1,615 @@
+import { describe, expect, test } from "vitest";
+import type { CompileOptions } from "../../src/ctx.ts";
+import { findElement } from "../../src/parse/dom.ts";
+import { parse } from "../../src/parse/html.ts";
+import { cascade } from "../../src/style/cascade.ts";
+import { compile } from "../../src/index.ts";
+import { codesOf, styledFrom, testCtx } from "../helpers/index.ts";
+import { DESKTOP, type StyledElement } from "../../src/style/types.ts";
+
+const run = (html: string, tag = "p", o: CompileOptions = {}) => {
+  const ctx = testCtx(o);
+  const doc = parse(html, ctx);
+  const el = findElement(doc.body, (e) => e.name === tag)!;
+  return { ...cascade(doc, ctx, DESKTOP).styleOf(el), ctx };
+};
+const styled = (css: string, body = '<p id="a" class="b">x</p>') => run(`<style>${css}</style>${body}`);
+
+describe("cascade", () => {
+  test("more specific selector wins regardless of order", () => {
+    expect(styled("#a{color:red} .b{color:blue} p{color:green}").values["color"]).toBe("red");
+  });
+
+  test("later rule wins on a tie", () => {
+    expect(styled(".b{color:red} .b{color:blue}").values["color"]).toBe("blue");
+  });
+
+  test("!important beats specificity, and is stripped from the value", () => {
+    expect(styled("p{color:red !important} #a{color:blue}").values["color"]).toBe("red");
+  });
+
+  test("style attribute beats selectors, but not their !important", () => {
+    expect(run('<style>#a{color:red}</style><p id="a" style="color:blue">x</p>').values["color"]).toBe("blue");
+    expect(run('<style>#a{color:red!important}</style><p id="a" style="color:blue">x</p>').values["color"]).toBe("red");
+    expect(run('<style>#a{color:red!important}</style><p id="a" style="color:blue !important">x</p>').values["color"]).toBe("blue");
+  });
+
+  test("extra css comes after <style> blocks", () => {
+    const r = run("<style>p{color:red}</style><p>x</p>", "p", { css: ["p{color:blue}"] });
+    expect(r.values["color"]).toBe("blue");
+  });
+
+  test("the list type attribute is list-style-type; nested lists lose their block margins", () => {
+    expect(run('<ol type="a"><li>x</li></ol>', "ol").values["list-style-type"]).toBe("lower-alpha");
+    expect(run('<ol type="A"><li>x</li></ol>', "ol").values["list-style-type"]).toBe("upper-alpha");
+    expect(run('<ul type="NONE"><li>x</li></ul>', "ul").values["list-style-type"]).toBe("none");
+    expect(run('<ul><li type="square">x</li></ul>', "li").values["list-style-type"]).toBe("square");
+    const nested = run("<ul><li>x<ul><li>y</li></ul></li></ul>", "ul").values;
+    expect(nested["list-style-type"]).toBe("disc");
+    const inner = run("<ul><li>x<ol><li>y<ul><li>z</li></ul></li></ol></li></ul>", "ol").values;
+    expect([inner["margin-top"], inner["margin-bottom"]]).toEqual(["0", "0"]);
+  });
+
+  test("author beats UA, UA fills the rest", () => {
+    const r = styled("p{margin-top:3px}");
+    expect(r.values["margin-top"]).toBe("3px");
+    expect(r.values["margin-bottom"]).toBe("1em");
+    expect(r.values["display"]).toBe("block");
+  });
+
+  test("authored holds only author longhands", () => {
+    const r = styled("p{margin-top:3px}", '<p style="Color: red">x</p>');
+    expect([...r.authored].sort()).toEqual(["color", "margin-top"]);
+  });
+
+  test("property names are lowercased, custom properties are not", () => {
+    const r = styled("p{COLOR: red; --Brand:  #fff }");
+    expect(r.values["color"]).toBe("red");
+    expect(r.values["--Brand"]).toBe("#fff");
+  });
+
+  test("empty values are ignored", () => {
+    expect(styled("p{color:}").values["color"]).toBeUndefined();
+  });
+
+  test(":hover on the subject is quiet and does not apply on desktop", () => {
+    const r = run('<style>a:hover{color:red}</style><a href="#">x</a>', "a");
+    expect(codesOf(r.ctx)).toEqual([]);
+    expect(r.values["color"]).not.toBe("red");
+  });
+
+  test(":hover elsewhere is skipped with W001", () => {
+    const r = styled(".c:hover p{color:red}", '<div class="c"><p>x</p></div>');
+    expect(codesOf(r.ctx)).toEqual(["W001"]);
+  });
+
+  test("::before with content other than a string is skipped with W001", () => {
+    expect(codesOf(styled("p::before{content:attr(title)}").ctx)).toEqual(["W001"]);
+  });
+
+  test("an @media with an unsupported feature is not applied and reports W001 with a loc", () => {
+    const r = styled("@media (orientation:landscape){p{color:red}}");
+    expect(r.values["color"]).toBeUndefined();
+    const d = r.ctx.diagnostics.list();
+    expect(d.map((x) => x.code)).toEqual(["W001"]);
+    expect(d[0]?.loc).toEqual({ line: 1, col: 8 });
+  });
+
+  test("silent at-rules", () => {
+    const r = styled("@charset 'utf-8'; @keyframes k{from{color:red}} p{color:red}");
+    expect(codesOf(r.ctx)).toEqual([]);
+    expect(r.values["color"]).toBe("red");
+  });
+
+  test("broken CSS gives W002 on the right line", () => {
+    const r = run("<p>x</p>\n<style>\np{color:red}\n}\n</style>");
+    const d = r.ctx.diagnostics.list();
+    expect(d.map((x) => x.code)).toEqual(["W002"]);
+    expect(d[0]?.loc?.line).toBe(4);
+  });
+
+  test("broken CSS on the style tag's first line offsets the column", () => {
+    const r = run("<style>}</style><p>x</p>");
+    expect(r.ctx.diagnostics.list()[0]?.loc).toEqual({ line: 1, col: 8 });
+  });
+
+  test("bad selector gives W002", () => {
+    expect(codesOf(styled("p:nope-not-real{color:red}").ctx)).toEqual(["W002"]);
+  });
+
+  test("broken style attribute gives W002 at the element", () => {
+    const r = run('\n<p style="color:red}">x</p>');
+    const d = r.ctx.diagnostics.list();
+    expect(d.map((x) => x.code)).toEqual(["W002"]);
+    expect(d[0]?.loc?.line).toBe(2);
+  });
+
+  test("unlayered beats layered; layers fixed by the statement", () => {
+    const css = "@layer a, b; @layer b{p{color:blue}} @layer a{p{color:green}} ";
+    expect(styled(css).values["color"]).toBe("blue");
+    expect(styled(css + "p{color:red}").values["color"]).toBe("red");
+  });
+
+  test("layer order follows first appearance without a statement", () => {
+    expect(styled("@layer x{p{color:red}} @layer y{p{color:blue}}").values["color"]).toBe("blue");
+  });
+
+  test("layered !important flips the order", () => {
+    const r = styled("@layer a, b; @layer a{p{color:green!important}} @layer b{p{color:blue!important}} p{color:red!important}");
+    expect(r.values["color"]).toBe("green");
+  });
+
+  test("nested layers are their own layers, in first-appearance order", () => {
+    expect(styled("@layer a{@layer inner{p{color:red}} p{color:blue}}").values["color"]).toBe("red");
+  });
+
+  test("IE star and underscore hacks are ignored", () => {
+    const r = styled("p{display:inline-block;*display:inline;_height:1px}");
+    expect(r.values["display"]).toBe("inline-block");
+    expect(r.values["height"]).toBeUndefined();
+  });
+
+  test("a rule counts with its best matching selector", () => {
+    expect(styled("p, #a{color:red} .b{color:blue}").values["color"]).toBe("red");
+  });
+
+  test("a broken second style block keeps the first and points at the second", () => {
+    const r = run("<style>p{color:red}</style>\n<style>\n}</style><p>x</p>");
+    expect(r.values["color"]).toBe("red");
+    const d = r.ctx.diagnostics.list();
+    expect(d.map((x) => x.code)).toEqual(["W002"]);
+    expect(d[0]?.loc?.line).toBe(3);
+  });
+
+  test("rules before a syntax error still apply", () => {
+    const r = styled("p{color:red;}\n\n p{margin-top:2px;");
+    expect(r.values["color"]).toBe("red");
+    expect(codesOf(r.ctx)).toEqual(["W002"]);
+  });
+
+  test("inline !important beats layered !important", () => {
+    const r = run('<style>@layer a{p{color:red!important}}</style><p style="color:blue!important">x</p>');
+    expect(r.values["color"]).toBe("blue");
+  });
+
+  test("@layer statement inside a layer orders its sublayers", () => {
+    const css = "@layer a{@layer y, x;} @layer a.x{p{color:red}} @layer a.y{p{color:blue}}";
+    expect(styled(css).values["color"]).toBe("red");
+  });
+
+  test("@scope and other unknown block at-rules report W001", () => {
+    const r = styled("@scope (.a){p{color:red}}");
+    expect(r.values["color"]).toBeUndefined();
+    expect(codesOf(r.ctx)).toEqual(["W001"]);
+  });
+
+
+  test("a style attribute that splits into several rules gives W002", () => {
+    const r = run('<p style="color:red} p{color:blue">x</p>');
+    expect(codesOf(r.ctx)).toEqual(["W002"]);
+  });
+
+  test("an unclosed string in a later rule keeps the earlier rule", () => {
+    const r = styled('p{color:red} b{content:"x}');
+    expect(r.values["color"]).toBe("red");
+    const d = r.ctx.diagnostics.list();
+    expect(d.map((x) => x.code)).toEqual(["W002"]);
+    expect(d[0]?.loc).toEqual({ line: 1, col: 31 });
+  });
+
+  test("an unclosed bracket in a later rule keeps the earlier rule", () => {
+    const r = styled("p{color:red} b{background:url(x}");
+    expect(r.values["color"]).toBe("red");
+    expect(codesOf(r.ctx)).toEqual(["W002"]);
+  });
+
+  test("recovery works across lines and reports the right column", () => {
+    const r = run('<style>\n\n  p{color:red}\n  q{color:"x}</style><p>x</p>');
+    expect(r.values["color"]).toBe("red");
+    expect(r.ctx.diagnostics.list()[0]?.loc).toEqual({ line: 4, col: 11 });
+  });
+
+  test("a stray } does not take the rest of the sheet with it", () => {
+    const r = styled("p{color:red} } p{margin-top:2px}");
+    expect(r.values["margin-top"]).toBe("2px");
+    expect(codesOf(r.ctx)).toEqual(["W002"]);
+  });
+
+  test("one junk declaration only loses itself", () => {
+    const r = styled("p{color} p{margin-top:2px}");
+    expect(r.values["margin-top"]).toBe("2px");
+    expect(codesOf(r.ctx)).toEqual(["W002"]);
+  });
+
+  test("IE # hack is ignored", () => {
+    const r = styled("p{#color:red; margin-top:1px}");
+    expect(r.values).not.toHaveProperty("#color");
+    expect(r.authored.has("#color")).toBe(false);
+    expect(r.values["margin-top"]).toBe("1px");
+  });
+
+  test("repeated property in a style attribute: last wins", () => {
+    expect(run('<p style="color:red;color:blue">x</p>').values["color"]).toBe("blue");
+  });
+
+  test("later !important wins inside the same tier", () => {
+    expect(styled("p{color:red!important} p{color:blue!important}").values["color"]).toBe("blue");
+  });
+});
+
+describe("cascade recovery keeps what parsed", () => {
+  test("many stray braces don't lose the first rule", () => {
+    const r = styled(`p{color:red} ${"} ".repeat(120)}`);
+    expect(r.values["color"]).toBe("red");
+    expect(codesOf(r.ctx)).toContain("W002");
+  });
+
+  test("many junk rules don't lose the first rule", () => {
+    expect(styled(`p{color:red} ${"q{a} ".repeat(120)}`).values["color"]).toBe("red");
+  });
+
+  test("an error without a position keeps the valid prefix", () => {
+    const r = styled("p{color:red} : ;");
+    expect(r.values["color"]).toBe("red");
+    expect(codesOf(r.ctx)).toContain("W002");
+  });
+});
+
+const pick = (tag: string, html: string) => {
+  const ctx = testCtx();
+  const find = (e: StyledElement): StyledElement | undefined => {
+    if (e.tag === tag) return e;
+    for (const k of e.children) if (k.type === "element") { const hit = find(k); if (hit) return hit; }
+    return undefined;
+  };
+  return { style: find(styledFrom(html, ctx))!.style, ctx };
+};
+
+describe("nesting", () => {
+  test("nested rules apply with & and as descendants", () => {
+    const body = '<div class="a"><p class="b">x</p></div>';
+    expect(styled(".a{ &>.b{color:red} }", body).values["color"]).toBe("red");
+    expect(styled(".a{ .b{color:red} }", body).values["color"]).toBe("red");
+    expect(styled(".b{ .a &{color:red} }", body).values["color"]).toBe("red");
+    expect(codesOf(styled(".a{ .b{color:red} }", body).ctx)).toEqual([]);
+  });
+
+  test("declarations keep source order around nested rules", () => {
+    const r = styled(".b{ color:red; &{color:blue} color:green }");
+    expect(r.values["color"]).toBe("green");
+  });
+
+  test("parent and child lists combine", () => {
+    const body = '<div class="y"><p class="b">x</p></div>';
+    expect(styled(".x, .y{ .z, .b{color:red} }", body).values["color"]).toBe("red");
+  });
+
+  test("& takes the specificity of the whole parent list, like :is()", () => {
+    // only .b matches, but & counts as :is(.b, #a): (1,1,0) beats (0,3,0)
+    expect(styled(".b, #a{ &.b{color:red} } .b.b.b{color:blue}", '<p class="b">x</p>').values["color"]).toBe("red");
+  });
+
+  test("Vue scoped shape: &[data-v] next to nested children, inside @layer", () => {
+    const css = "@layer base{ .card{ &[data-v-1]{color:red} & .t[data-v-1]{margin-top:2px} &.f{ &[data-v-1]{color:blue} } } }";
+    const r = styled(css, '<div class="card f" data-v-1><p class="t" data-v-1>x</p></div>');
+    expect(r.values["margin-top"]).toBe("2px");
+    expect(codesOf(r.ctx)).toEqual([]);
+    expect(run(`<style>${css}</style><div class="card f" data-v-1>x</div>`, "div").values["color"]).toBe("blue");
+  });
+
+  test("nested @media is reported like a top-level one", () => {
+    const r = styled("p{ color:red; @media (orientation:landscape){ color:blue } }");
+    expect(r.values["color"]).toBe("red");
+    expect(codesOf(r.ctx)).toEqual(["W001"]);
+  });
+
+  test("nested @supports and @layer hold declarations for the parent", () => {
+    expect(styled("p{ color:red; @supports (color: oklch(0 0 0)){ color:blue } }").values["color"]).toBe("blue");
+    expect(styled("p{ color:red; @supports (-moz-orient: inline){ color:blue } }").values["color"]).toBe("red");
+    expect(styled("@layer a, b; p{ @layer b{ color:blue } @layer a{ color:red } }").values["color"]).toBe("blue");
+  });
+
+  test("a dynamic parent still warns, and its children too", () => {
+    const r = styled("a:focus{ color:red; & span{color:blue} }", '<a href="#"><span>x</span></a>');
+    expect(codesOf(r.ctx)).toEqual(["W001", "W001"]);
+    expect(codesOf(styled("a:hover{ color:red; & span{color:blue} }", '<a href="#"><span>x</span></a>').ctx)).toEqual(["W001"]);
+  });
+
+  test("nested declarations keep their own location", () => {
+    const r = run("<style>\np{\n  .x{\n    margin: 1px 2px 3px 4px 5px;\n  }\n}</style><p>x</p>");
+    expect(r.ctx.diagnostics.list().map((d) => [d.code, d.loc])).toEqual([["W002", { line: 4, col: 5 }]]);
+  });
+
+  test("a rule in a style attribute is still reported", () => {
+    expect(codesOf(run('<p style="color:red; .x{color:blue}">x</p>').ctx)).toEqual(["W001"]);
+  });
+});
+
+describe("selector noise", () => {
+  test("preflight-only selectors are skipped silently", () => {
+    const css = ":host{color:red} :-moz-focusring{outline:auto} :-moz-ui-invalid{box-shadow:none} " +
+      "::-webkit-search-decoration{appearance:none} ::file-selector-button{margin:0} ::placeholder{opacity:1} " +
+      "::backdrop{color:red} ::selection{color:red} p::before{margin:0}";
+    expect(codesOf(styled(css).ctx)).toEqual([]);
+  });
+
+  test("list markers and first-letter/line are visible, so they warn with a hint", () => {
+    for (const sel of ["li::marker", "p::first-letter", "p::first-line"]) {
+      const r = styled(`${sel}{color:red}`, "<ul><li>x</li></ul><p>y</p>");
+      expect(codesOf(r.ctx), sel).toEqual(["W001"]);
+      expect(r.ctx.diagnostics.list()[0]?.hint, sel).toBeTruthy();
+    }
+    expect(styled("li::marker{color:red}", "<ul><li>x</li></ul>").ctx.diagnostics.list()[0]?.hint).toContain("marker");
+  });
+
+  test("a skipped selector says what it is that can't be followed", () => {
+    const note = (sel: string) => styled(`${sel}{color:red;content:"!"}`, '<ul><li class="c"><p class="t">x</p><a href="#">y</a></li></ul>').ctx.diagnostics.list();
+    expect(note("p::first-letter")[0]?.message).toContain("styles ::first-letter, which inline styles can't reach");
+    expect(note("p::first-letter")[0]?.hint).toContain("<span>");
+    expect(note("li::marker")[0]?.message).not.toContain("state");
+    expect(note("a:focus")[0]?.message).toContain("depends on :focus");
+    expect(note("a:hover:focus")[0]?.message).toContain("depends on :focus");
+    expect(note(".c:hover .t")[0]?.message).toContain("puts :hover on an element other than the one it styles");
+    expect(note(".t:hover::before")[0]?.message).toContain("adds ::before only on :hover");
+    for (const sel of ["p::first-letter", "a:focus", ".c:hover .t", ".t:hover::before"]) expect(note(sel)[0]?.hint, sel).not.toMatch(/ignore :hover and ::before/);
+  });
+
+  test("a form or media state css-select doesn't know is a skipped state, not a syntax error", () => {
+    for (const sel of ["p:default", "p:invalid", "p:placeholder-shown", "p:open"]) {
+      const r = styled(`${sel}{color:red}`);
+      expect(codesOf(r.ctx), sel).toEqual(["W001"]);
+      expect(r.ctx.diagnostics.list()[0]?.message, sel).toContain(`depends on ${sel.slice(1)}`);
+    }
+  });
+
+  test("the usable part of a list still applies", () => {
+    const r = styled("*, ::after, ::before, ::backdrop, ::file-selector-button{margin-top:0} html, :host{color:red}");
+    expect(r.values["margin-top"]).toBe("0");
+    expect(codesOf(r.ctx)).toEqual([]);
+  });
+
+  test("::before with content still warns when its element exists", () => {
+    expect(codesOf(styled("p::before{content:attr(title)}").ctx)).toEqual(["W001"]);
+    expect(codesOf(styled("q::before{content:attr(title)}").ctx)).toEqual([]);
+  });
+
+  test(":hover on something that isn't there is silent", () => {
+    expect(codesOf(styled(".nope:hover{color:red}").ctx)).toEqual([]);
+    expect(codesOf(styled("p:focus{color:red}").ctx)).toEqual(["W001"]);
+  });
+});
+
+describe("@supports", () => {
+  test("true applies, false skips, both silently", () => {
+    const r = styled("@supports (color: color-mix(in lab, red, red)){ p{color:red} } @supports (-webkit-hyphens: none){ p{margin-top:1px} }");
+    expect(r.values["color"]).toBe("red");
+    expect(r.values["margin-top"]).toBe("1em");
+    expect(codesOf(r.ctx)).toEqual([]);
+  });
+
+  test("an undecidable condition is skipped with W001 at the rule", () => {
+    const r = styled("@supports (margin-trim: inline){ p{color:red} }");
+    expect(r.values["color"]).toBeUndefined();
+    const d = r.ctx.diagnostics.list();
+    expect(d.map((x) => x.code)).toEqual(["W001"]);
+    expect(d[0]?.loc).toEqual({ line: 1, col: 8 });
+  });
+
+  test("a condition that doesn't parse is W002", () => {
+    expect(codesOf(styled("@supports display: flex { p{color:red} }").ctx)).toEqual(["W002"]);
+  });
+
+  test("Tailwind's nested shape keeps the lowered colour", () => {
+    const css = ".x{ border-color: red; @supports (color: color-mix(in lab, red, red)){ border-color: blue } }";
+    const r = styled(css, '<p class="x">x</p>');
+    expect(r.values["border-top-color"]).toBe("blue");
+  });
+});
+
+describe("@property", () => {
+  test("initial-value fills var() where nothing sets it", () => {
+    const css = "@property --s{syntax:'*';inherits:false;initial-value:solid} p{border-top-style:var(--s);border-top-width:1px}";
+    const { style, ctx } = pick("p", `<style>${css}</style><p>x</p>`);
+    expect(style["border-top-style"]).toBe("solid");
+    expect(codesOf(ctx)).toEqual([]);
+  });
+
+  test("a set value still wins", () => {
+    const css = "@property --c{syntax:'*';inherits:false;initial-value:red} p{--c:blue;color:var(--c)}";
+    expect(pick("p", `<style>${css}</style><p>x</p>`).style["color"]).toBe("blue");
+  });
+
+  test("inherits: false stops at the element that sets it", () => {
+    const css = "@property --c{syntax:'*';inherits:false;initial-value:red} div{--c:blue} p{color:var(--c)}";
+    expect(pick("p", `<style>${css}</style><div><p>x</p></div>`).style["color"]).toBe("red");
+  });
+
+  test("without an initial value a non-inherited one falls back", () => {
+    const css = "@property --w{syntax:'*';inherits:false} div{--w:700} p{font-weight:var(--w, 300)}";
+    expect(pick("p", `<style>${css}</style><div><p>x</p></div>`).style["font-weight"]).toBe("300");
+  });
+
+  test("inherits: true flows down from the root", () => {
+    const css = "@property --c{syntax:'<color>';inherits:true;initial-value:red} div{--c:blue} p{color:var(--c)} span{color:var(--c)}";
+    const html = `<style>${css}</style><div><p>x</p></div><span>y</span>`;
+    expect(pick("p", html).style["color"]).toBe("blue");
+    expect(pick("span", html).style["color"]).toBe("red");
+  });
+
+  test("initial means the registered initial value", () => {
+    const css = "@property --c{syntax:'*';inherits:false;initial-value:red} p{--c:initial;color:var(--c)}";
+    expect(pick("p", `<style>${css}</style><p>x</p>`).style["color"]).toBe("red");
+  });
+
+  test("it works wherever the rule sits in the sheet", () => {
+    const css = "p{color:var(--c)} @layer x{ @property --c{syntax:'*';inherits:false;initial-value:red} }";
+    expect(pick("p", `<style>${css}</style><p>x</p>`).style["color"]).toBe("red");
+  });
+
+  test("an invalid registration is W002 and ignored", () => {
+    const css = "@property --c{syntax:'<color>';inherits:false} p{color:var(--c, blue)}";
+    const { style, ctx } = pick("p", `<style>${css}</style><p>x</p>`);
+    expect(style["color"]).toBe("blue");
+    expect(codesOf(ctx)).toEqual(["W002"]);
+  });
+});
+
+describe("logical properties", () => {
+  test("inline sides map to left/right, block sides to top/bottom", () => {
+    const v = styled("p{padding-inline:24px;padding-block:16px;margin-inline:auto}").values;
+    expect(v).toMatchObject({ "padding-left": "24px", "padding-right": "24px", "padding-top": "16px", "padding-bottom": "16px", "margin-left": "auto", "margin-right": "auto" });
+    expect(v["padding-inline-start"]).toBeUndefined();
+  });
+
+  test("logical and physical share longhands, so order and specificity decide", () => {
+    expect(styled("p{padding-left:1px;padding-inline:2px}").values["padding-left"]).toBe("2px");
+    expect(styled("p{padding-inline:2px;padding-left:1px}").values["padding-left"]).toBe("1px");
+    expect(styled("p{padding-inline-start:2px;padding-left:1px}").values["padding-left"]).toBe("1px");
+    expect(styled("p{padding-left:1px;padding-inline-start:2px}").values["padding-left"]).toBe("2px");
+    expect(styled("#a{padding-left:1px} p{padding-inline-start:2px}").values["padding-left"]).toBe("1px");
+    expect(styled("p{padding-top:1px;padding-block:2px}").values["padding-top"]).toBe("2px");
+  });
+
+  test("authored holds the physical names", () => {
+    expect([...styled("p{margin-inline-end:1px}").authored]).toEqual(["margin-right"]);
+  });
+
+  test("rtl flips inline start and end, from direction or the dir attribute", () => {
+    const css = "<style>p{padding-inline:1px 2px;margin-inline-start:3px}</style>";
+    const rtl = run(`${css}<div style="direction:rtl"><p>x</p></div>`).values;
+    expect(rtl).toMatchObject({ "padding-right": "1px", "padding-left": "2px", "margin-right": "3px" });
+    expect(rtl["margin-left"]).toBeUndefined();
+    expect(run(`${css}<div dir="rtl"><p>x</p></div>`).values).toMatchObject({ "padding-right": "1px", "padding-left": "2px" });
+    expect(run(`${css}<div dir="rtl"><p style="direction:ltr">x</p></div>`).values).toMatchObject({ "padding-left": "1px" });
+    expect(run(`${css}<div dir="rtl" style="direction:ltr"><p>x</p></div>`).values).toMatchObject({ "padding-left": "1px" });
+  });
+
+  test("the dir attribute is a direction hint: inherited, and any author direction beats it", () => {
+    expect(run('<div dir="rtl"><p>x</p></div>', "div").values["direction"]).toBe("rtl");
+    expect(run('<div dir="RTL" style="direction:ltr"><p>x</p></div>', "div").values["direction"]).toBe("ltr");
+    expect(run('<div dir="auto"><p>x</p></div>', "div").values["direction"]).toBeUndefined();
+    expect(run('<div dir="rtl"><p>x</p></div>', "div").authored.has("direction")).toBe(false);
+  });
+
+  test("in rtl, inline-start competes with padding-right", () => {
+    const html = (css: string) => run(`<style>${css}</style><div dir="rtl"><p>x</p></div>`).values;
+    expect(html("p{padding-right:1px;padding-inline-start:2px}")["padding-right"]).toBe("2px");
+    expect(html("p{padding-inline-start:2px;padding-right:1px}")["padding-right"]).toBe("1px");
+    expect(html("p{padding-inline-start:2px;padding-left:1px}")["padding-left"]).toBe("1px");
+  });
+
+  describe("empty-content pseudo-elements", () => {
+    const bar = ".d::after{content:'';display:block;width:40px;height:3px;background:red}";
+    test("a bar is reported once per selector, however many hosts it matches", () => {
+      expect(codesOf(styled(bar, '<p class="d">a</p><p class="d">b</p>').ctx)).toEqual(["W001"]);
+    });
+    test("a display:none host is not reported", () => {
+      expect(codesOf(styled(`${bar} .d{display:none}`, '<p class="d">a</p>').ctx)).toEqual([]);
+    });
+    test("a pseudo with its own display:none is not reported", () => {
+      expect(codesOf(styled(".d::after{content:'';display:none;width:4px;height:4px;background:red}", '<p class="d">a</p>').ctx)).toEqual([]);
+    });
+    test("border-radius alone draws nothing", () => {
+      expect(codesOf(styled(".d::after{content:'';display:table;clear:both;border-radius:50%}", '<p class="d">a</p>').ctx)).toEqual([]);
+    });
+    test("clearfixes with zero or hidden boxes stay quiet", () => {
+      expect(codesOf(styled(".d::after{content:'';display:block;height:0;clear:both;visibility:hidden}", '<p class="d">a</p>').ctx)).toEqual([]);
+      expect(codesOf(styled(".d::after{content:'';display:table;clear:both;border:0}", '<p class="d">a</p>').ctx)).toEqual([]);
+    });
+  });
+});
+
+describe("legacy attributes (presentational hints)", () => {
+  const body = (html: string) => {
+    const ctx = testCtx();
+    const doc = parse(html, ctx);
+    return cascade(doc, ctx, DESKTOP).styleOf(doc.body);
+  };
+
+  test("body bgcolor, text and background become its colours and image", () => {
+    const r = body('<body bgcolor="#102030" text="ffffff" background="paper.png"><p>x</p></body>');
+    expect(r.values["background-color"]).toBe("#102030");
+    expect(r.values["color"]).toBe("#ffffff");
+    expect(r.values["background-image"]).toBe('url("paper.png")');
+    expect(r.authored.has("background-color")).toBe(true);
+  });
+
+  test("any author rule beats them, even a type selector", () => {
+    const r = body('<style>body{background-color:#fff}</style><body bgcolor="#102030" text="#ffffff"><p>x</p></body>');
+    expect(r.values["background-color"]).toBe("#fff");
+    expect(r.values["color"]).toBe("#ffffff");
+  });
+
+  test("body link colours every link over the UA blue; an author rule still wins", () => {
+    expect(run('<body link="#ffcc00"><a href="https://x.example/">x</a></body>', "a").values["color"]).toBe("#ffcc00");
+    expect(run('<body link="#ffcc00"><a>x</a></body>', "a").values["color"]).toBe("#0000ee");
+    expect(run('<style>a{color:red}</style><body link="#ffcc00"><a href="https://x.example/">x</a></body>', "a").values["color"]).toBe("red");
+  });
+
+  test("a colour they can't read is left out", () => {
+    const r = body('<body bgcolor="chucknorris" text="rgb(1,2,3)"><p>x</p></body>');
+    expect(r.values["background-color"]).toBeUndefined();
+    expect(r.values["color"]).toBeUndefined();
+  });
+
+  test("body background keeps only a relative, http(s), cid or data:image url, with quotes and parens encoded", () => {
+    const image = (attr: string) => body(`<body background="${attr}"><p>x</p></body>`).values["background-image"];
+    expect(image("javascript:alert(1)")).toBeUndefined();
+    expect(image(" JaVaScRiPt:alert(1)")).toBeUndefined();
+    expect(image("java&#9;script:alert(1)")).toBeUndefined();
+    expect(image("&#x6a;avascript:alert(1)")).toBeUndefined();
+    expect(image("vbscript:x")).toBeUndefined();
+    expect(image("data:text/html,x")).toBeUndefined();
+    expect(image("https://img.example/a b.png')x(")).toBe('url("https://img.example/a%20b.png%27%29x%28")');
+    expect(image("x&quot;);color:red;b:url(&quot;y")).toBe('url("x%22%29;color:red;b:url%28%22y")');
+    expect(image("cid:bg-1")).toBe('url("cid:bg-1")');
+    expect(image("data:image/png;base64,AAAA")).toBe('url("data:image/png;base64,AAAA")');
+    expect(image("img/paper.png")).toBe('url("img/paper.png")');
+  });
+
+  test("a body background url can't reach the output as script or break out of its attribute", () => {
+    for (const attr of ["javascript:alert(1)", "java&#10;script:alert(1)", "x');background:url(javascript:alert(1)"]) {
+      const { html } = compile(`<body background="${attr}" bgcolor="#102030"><p>x</p></body>`);
+      expect(html).not.toMatch(/(?:url\(['"]?|background=["'])\s*javascript:/i);
+      expect(html).not.toMatch(/url\('x'\)/);
+    }
+    expect(compile(`<body background="x');b:url(javascript:alert(1)"><p>x</p></body>`).html).toContain("background-image:url('x%27%29;b:url%28javascript:alert%281%29')");
+    const { html } = compile('<body background="https://img.example/bg.png" bgcolor="#102030"><p>x</p></body>');
+    expect(html).toContain('background="https://img.example/bg.png"');
+  });
+
+  test("hr size is its full thickness: 1px borders and the height between", () => {
+    expect(run('<hr size="6">', "hr").values["height"]).toBe("4px");
+    const thin = run('<hr size="1">', "hr").values;
+    expect(thin["border-bottom-width"]).toBe("0");
+    expect(thin["height"]).toBeUndefined();
+  });
+
+  test("hr color fills it and its solid borders; noshade alone is gray", () => {
+    const r = run('<hr color="#c2410c">', "hr").values;
+    expect([r["background-color"], r["border-top-color"], r["border-top-style"]]).toEqual(["#c2410c", "#c2410c", "solid"]);
+    const n = run("<hr noshade>", "hr").values;
+    expect([n["background-color"], n["border-top-color"], n["border-top-style"]]).toEqual(["gray", "gray", "solid"]);
+  });
+
+  test("hr width in px stays content-box; a percentage is border-box with the size as height", () => {
+    const px = run('<hr width="200" size="4">', "hr").values;
+    expect([px["width"], px["height"], px["box-sizing"]]).toEqual(["200px", "2px", undefined]);
+    const pc = run('<hr width="50%" size="4">', "hr").values;
+    expect([pc["width"], pc["height"], pc["box-sizing"]]).toEqual(["50%", "4px", "border-box"]);
+  });
+
+  test("hr width 0 is 1px as in Chromium; a width it can't read is left out", () => {
+    expect(run('<hr width="0">', "hr").values["width"]).toBe("1px");
+    expect(run('<hr width="abc">', "hr").values["width"]).toBeUndefined();
+  });
+
+  test("hr align sets its side margins; author css beats every hr attribute", () => {
+    const l = run('<hr align="LEFT" width="50%">', "hr").values;
+    expect([l["margin-left"], l["margin-right"]]).toEqual(["0", "auto"]);
+    const r = run('<hr align="right" width="50%">', "hr").values;
+    expect([r["margin-left"], r["margin-right"]]).toEqual(["auto", "0"]);
+    const css = run('<style>hr{width:100px;height:1px;background-color:#eee}</style><hr width="50%" size="8" color="red">', "hr").values;
+    expect([css["width"], css["height"], css["background-color"]]).toEqual(["100px", "1px", "#eee"]);
+  });
+});

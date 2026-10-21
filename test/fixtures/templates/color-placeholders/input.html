@@ -1,0 +1,13 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+  <div style="padding: 24px; background: {{brand.bg}}; color: {{brand.fg}};">
+    <h1 style="margin: 0 0 8px; font-size: 22px; line-height: 28px;">Hi {{user.name}}</h1>
+    <p style="margin: 0; font-size: 14px; line-height: 20px;">Your order is on its way.</p>
+    <p style="margin: 12px 0 0; padding: 8px 12px; background: rgba(255, 255, 255, 0.25); font-size: 14px; line-height: 20px;">Tracking: {{order.tracking}}</p>
+  </div>
+  <div style="padding: 16px 24px; border-top: 3px solid {{brand.accent}}; font-size: 14px; line-height: 20px;">
+    Need help? Reply to this email.
+  </div>
+  <div style="padding: 0 24px 24px;">
+    <a href="{{order.url}}" style="display: inline-block; width: 160px; padding: 12px 24px; text-align: center; background-color: {{brand.button}}; color: #ffffff; border: 2px solid {{brand.edge}}; border-radius: 6px; font-size: 16px; line-height: 20px; font-weight: bold; text-decoration: none;">View order</a>
+  </div>
+</div>

@@ -1,0 +1,1 @@
+{ "plan": { "name": "Pro", "price": "$12", "renews": true, "renewsOn": "1 July", "endsOn": "" }, "usage": { "used": "80 GB", "limit": "100 GB", "over": false, "near": true } }

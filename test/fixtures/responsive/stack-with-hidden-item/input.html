@@ -1,0 +1,17 @@
+<style>
+  .wrap { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 24px; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #111827; }
+  .row { display: flex; gap: 16px; }
+  .col { flex: 1; }
+  .promo { display: none; }
+  @media (max-width: 480px) {
+    .row { flex-direction: column; }
+    .promo { display: block; }
+  }
+</style>
+<div class="wrap">
+  <div class="row">
+    <div class="col promo">Promo shown on the phone only.</div>
+    <div class="col">Free returns within 30 days.</div>
+    <div class="col">Gift wrapping at checkout.</div>
+  </div>
+</div>

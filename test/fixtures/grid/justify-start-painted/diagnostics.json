@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "justify: start would not shrink this item's box (2 places)",
+    "hint": "The painted box still fills its column; give the item a px width to size and place it.",
+    "loc": {
+      "line": 3,
+      "col": 5
+    },
+    "locs": [
+      {
+        "line": 3,
+        "col": 5
+      },
+      {
+        "line": 4,
+        "col": 5
+      }
+    ]
+  }
+]

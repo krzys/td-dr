@@ -1,0 +1,7 @@
+<style>
+@layer base { @font-face { font-family: "A"; src: url(a.woff2); } }
+@supports (display:flex) { @font-face { font-family: "B"; src: url(b.woff2); } }
+</style>
+<div style="padding:20px;background:#f4f4f4;font-family:A,B,Arial,sans-serif">
+  <p style="margin:0">Fallback fonts are used.</p>
+</div>

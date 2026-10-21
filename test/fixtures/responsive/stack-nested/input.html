@@ -1,0 +1,20 @@
+<style>
+  .wrap { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 24px; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #111827; }
+  .outer { display: flex; gap: 16px; }
+  .inner { display: flex; gap: 8px; }
+  .col { flex: 1; }
+  @media (max-width: 480px) {
+    .outer, .inner { flex-direction: column; }
+  }
+</style>
+<div class="wrap">
+  <div class="outer">
+    <div class="col">
+      <div class="inner">
+        <div class="col">Inner one</div>
+        <div class="col">Inner two</div>
+      </div>
+    </div>
+    <div class="col">Outer two</div>
+  </div>
+</div>

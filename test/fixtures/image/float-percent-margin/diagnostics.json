@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "a floated image's margin can't be written for Outlook: it ignores image margin, so the gap to the wrapped text is lost there",
+    "hint": "Use the same px margin on both sides (and top and bottom): it becomes hspace/vspace, which Outlook honours.",
+    "loc": {
+      "line": 8,
+      "col": 6
+    }
+  }
+]

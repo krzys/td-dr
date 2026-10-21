@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "justify: center would not shrink this item's box",
+    "hint": "The painted box still fills its column; give the item a px width to size and place it.",
+    "loc": {
+      "line": 3,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch",
+    "hint": "Only full-width boxes can stretch to the row's height in email; align the items to the top.",
+    "loc": {
+      "line": 4,
+      "col": 5
+    }
+  }
+]

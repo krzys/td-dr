@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I004",
+    "severity": "info",
+    "message": "<a href> around a block: the link moves onto the 3 text runs or images inside",
+    "hint": "Email clients can't make a whole box a link (Outlook drops a link around a table), so each text run and image inside gets the href; the padding between them isn't clickable.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

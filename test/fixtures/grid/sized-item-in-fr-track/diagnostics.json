@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch",
+    "hint": "Only full-width boxes can stretch to the row's height in email; align the items to the top.",
+    "loc": {
+      "line": 6,
+      "col": 3
+    }
+  }
+]

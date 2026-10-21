@@ -1,0 +1,42 @@
+[
+  {
+    "code": "I010",
+    "severity": "info",
+    "message": "Link text \"link\" doesn't say where it goes",
+    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
+    "loc": {
+      "line": 4,
+      "col": 88
+    }
+  },
+  {
+    "code": "E013",
+    "severity": "error",
+    "message": "bgcolor=\"{{brand.bg}}\" on <div> is dropped",
+    "hint": "A look can't come from the ESP: td;dr needs it to lower the layout. Instead, write one copy of the element per look, each under its own condition (v-if / v-else in Vue, cond ? <A/> : <B/> in JSX, data-email-if / -unless in HTML).",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "title=\"{{brand.name}}\" on <div> is dropped",
+    "hint": "td;dr lowers this element to table markup and keeps only the attributes it needs. Put the field where it stays: text, a link's href, an image's src or alt, or an attribute of a text-level element.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-sku=\"{{item.sku}}\" on <span> is dropped",
+    "hint": "td;dr lowers this element to table markup and keeps only the attributes it needs. Put the field where it stays: text, a link's href, an image's src or alt, or an attribute of a text-level element.",
+    "loc": {
+      "line": 4,
+      "col": 27
+    }
+  }
+]

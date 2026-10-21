@@ -1,0 +1,52 @@
+<style>
+  body { margin: 0; padding: 24px 0; background: #f1f5f9; font-family: Arial, Helvetica, sans-serif; color: #0f172a; }
+  .email { max-width: 600px; margin: 0 auto; }
+  .top { display: flex; justify-content: space-between; align-items: center; padding: 0 8px 16px; }
+  .top img { display: block; }
+  .top span { font-size: 13px; color: #64748b; }
+  .card { background: #ffffff; border-radius: 10px; padding: 24px; }
+  .card h1 { margin: 0 0 4px 0; font-size: 22px; line-height: 28px; }
+  .card .sub { margin: 0 0 16px 0; font-size: 14px; line-height: 20px; color: #64748b; }
+  .badge { padding: 10px 14px; background: #dcfce7; color: #166534; font-size: 14px; line-height: 20px; border-radius: 6px; margin-bottom: 16px; }
+  .due { padding: 14px; background: #fff7ed; color: #9a3412; font-size: 14px; line-height: 20px; border-radius: 6px; margin-bottom: 16px; }
+  .due a { display: inline-block; padding: 10px 20px; background: #ea580c; color: #ffffff; font-size: 14px; text-decoration: none; border-radius: 6px; }
+  .item { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid #e2e8f0; font-size: 15px; line-height: 22px; }
+  .item small { display: block; font-size: 12px; color: #64748b; }
+  .discount { display: flex; justify-content: space-between; padding: 0 0 12px; font-size: 13px; line-height: 18px; color: #15803d; }
+  .totals { padding: 12px 0 0; border-top: 2px solid #e2e8f0; font-size: 16px; line-height: 24px; font-weight: bold; display: flex; justify-content: space-between; }
+  .addr { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 20px; font-size: 13px; line-height: 20px; color: #334155; }
+  .addr b { display: block; color: #0f172a; }
+  .foot { padding: 16px 8px 0; text-align: center; font-size: 12px; line-height: 18px; color: #64748b; }
+  .foot a { color: #475569; }
+</style>
+<div style="display: none; max-height: 0; overflow: hidden;" data-email="preheader">Receipt {{order.id}}: {{order.total}}</div>
+<div class="email">
+  <div class="top">
+    <img src="https://img.test/{{brand.logo}}" alt="{{brand.name}}" width="96" height="32">
+    <span>Order {{order.id}}</span>
+  </div>
+  <div class="card">
+    <h1>Thanks, {{user.name}}</h1>
+    <p class="sub">Placed on {{order.date}}</p>
+    <div class="badge" data-email-if="paid">Paid with {{order.card}}. No further action needed.</div>
+    <div class="due" data-email-unless="paid">
+      <p style="margin: 0 0 8px 0;">Payment of {{order.total}} is still open.</p>
+      <a href="{{order.payUrl}}">Pay now</a>
+    </div>
+    <div>
+      <div data-email-each="order.items" data-email-as="line">
+        <div class="item">
+          <span>{{line.name}}<small>Qty {{line.qty}}</small></span>
+          <span>{{line.price}}</span>
+        </div>
+        <div class="discount" data-email-if="line.discount"><span>Discount</span><span>{{line.discount}}</span></div>
+      </div>
+    </div>
+    <div class="totals"><span>Total</span><span>{{order.total}}</span></div>
+    <div class="addr">
+      <div><b>Ship to</b>{{shipping.name}}<br>{{shipping.street}}<br>{{shipping.city}}</div>
+      <div><b>Billing</b>{{billing.name}}<br>{{billing.street}}<br>{{billing.city}}</div>
+    </div>
+  </div>
+  <p class="foot">Questions about {{order.id}}? <a href="mailto:{{support.email}}">{{support.email}}</a></p>
+</div>

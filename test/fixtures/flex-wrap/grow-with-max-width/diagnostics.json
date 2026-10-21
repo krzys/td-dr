@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "flex-grow in a wrapping row is resolved at the design width (600px); below it, grown items keep that width as a cap",
+    "hint": "On a phone, stacked grow items fill the line only up to their grown width, and a line stacks earlier than in the browser.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  }
+]

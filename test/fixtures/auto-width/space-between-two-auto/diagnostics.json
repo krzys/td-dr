@@ -1,0 +1,26 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "align-items: baseline is approximated as top (3 places)",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 11,
+      "col": 3
+    },
+    "locs": [
+      {
+        "line": 11,
+        "col": 3
+      },
+      {
+        "line": 15,
+        "col": 3
+      },
+      {
+        "line": 19,
+        "col": 3
+      }
+    ]
+  }
+]

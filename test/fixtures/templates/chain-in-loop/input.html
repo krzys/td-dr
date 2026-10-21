@@ -1,0 +1,9 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #1f2937; font-size: 15px; line-height: 22px;">
+  <h2 style="margin: 0; padding: 16px 24px; font-size: 18px; line-height: 24px;">Your items</h2>
+  <div data-email-each="order.lines" data-email-as="line" style="padding: 10px 24px; border-top: 1px solid #e5e7eb;">
+    <p style="margin: 0;"><b>{{line.name}}</b> <span data-email-if="line.free" style="color: #15803d;">free</span><span data-email-else>{{line.price}}</span></p>
+    <p data-email-if="line.backorder" style="margin: 4px 0 0 0; font-size: 13px; color: #b45309;">Back-ordered: ships {{line.eta}}.</p>
+    <p data-email-else-if="line.sku == promo.sku && !line.gift" style="margin: 4px 0 0 0; font-size: 13px; color: #1d4ed8;">Part of the {{promo.name}} offer.</p>
+    <p data-email-else style="margin: 4px 0 0 0; font-size: 13px; color: #6b7280;">In stock.</p>
+  </div>
+</div>

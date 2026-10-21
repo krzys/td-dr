@@ -1,0 +1,62 @@
+[
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-else-if=\"b === 'x'\" can't be written as a template condition: unexpected \"=\"",
+    "hint": "Compare with == or !=; == compares like JS ===.",
+    "loc": {
+      "line": 4,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "<tddr-if> test=\"(a || b\" can't be written as a template condition: a ( isn't closed",
+    "hint": "A condition is a dotted name (paid), a comparison (status == 'paid', qty == 0, a.id != b.id, flag == true, note == null), a list test (items.length != 0), or these combined with !, && and || and parentheses.",
+    "loc": {
+      "line": 5,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "<tddr-if> without a test",
+    "hint": "Write the condition in test: <tddr-if test=\"order.paid\">.",
+    "loc": {
+      "line": 6,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-else=\"x\" takes no condition",
+    "hint": "data-email-else is valueless and shows when nothing before it does; for a condition use data-email-else-if.",
+    "loc": {
+      "line": 8,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "<tddr-if> class is dropped",
+    "hint": "<tddr-if> has no box of its own; its children take its place. Put classes, styles and other attributes on them.",
+    "loc": {
+      "line": 9,
+      "col": 3
+    }
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-if=\"a &&\" can't be written as a template condition: it ends too early",
+    "hint": "A condition is a dotted name (paid), a comparison (status == 'paid', qty == 0, a.id != b.id, flag == true, note == null), a list test (items.length != 0), or these combined with !, && and || and parentheses.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

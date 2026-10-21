@@ -1,0 +1,13 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #1f2937; font-size: 15px; line-height: 22px;">
+  <div style="padding: 20px 24px; background: #f3f4f6;">
+    <h1 style="margin: 0; font-size: 20px; line-height: 26px;">Your order, {{user.name}}</h1>
+  </div>
+  <div data-email-if="order.ship.city == user.city && !order.pickup" style="padding: 12px 24px; background: #dcfce7; color: #166534;">Delivered to your door in {{user.city}}.</div>
+  <div data-email-if="order.coupon != '' || user.vip" style="padding: 12px 24px; background: #fef3c7;">A discount was applied to this order.</div>
+  <div data-email-if="user.tier == 'gold' && order.currency == user.currency" style="padding: 12px 24px; border-top: 1px solid #e5e7eb;">Gold members pay no fees.</div>
+  <div data-email-else-if="order.currency != user.currency" style="padding: 12px 24px; border-top: 1px solid #e5e7eb;">Charged in {{order.currency}}; your bank may add a fee.</div>
+  <div data-email-else style="padding: 12px 24px; border-top: 1px solid #e5e7eb;">No fees on this order.</div>
+  <div data-email-each="order.lines" data-email-as="line" style="padding: 6px 24px;">
+    {{line.name}}<b data-email-if="line.sku == wish.sku && line.stock" style="color: #b45309;"> (on your wish list)</b>
+  </div>
+</div>

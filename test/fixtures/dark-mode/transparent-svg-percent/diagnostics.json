@@ -1,0 +1,22 @@
+[
+  {
+    "code": "I012",
+    "severity": "info",
+    "message": "Alt text \"Logo\" looks like a placeholder",
+    "hint": "A file name or a word like \"image\" tells the reader nothing. Describe what the image shows, or use alt=\"\" if it's decoration.",
+    "loc": {
+      "line": 1,
+      "col": 48
+    }
+  },
+  {
+    "code": "W017",
+    "severity": "warning",
+    "message": "Transparent image may vanish in dark mode",
+    "hint": "Gmail apps and Outlook darken the background behind it, so dark ink disappears. Give it a light outline or a solid background baked into the image.",
+    "loc": {
+      "line": 1,
+      "col": 48
+    }
+  }
+]

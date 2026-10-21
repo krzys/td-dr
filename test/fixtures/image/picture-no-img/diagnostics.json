@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E008",
+    "severity": "error",
+    "message": "<picture> without an <img> has no email-safe equivalent",
+    "hint": "Every client shows the <picture>'s <img>; add one inside it.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W014",
+    "severity": "warning",
+    "message": "an item hidden on some screens leaves its track empty, so the items after it don't move up",
+    "hint": "A grid fills a display:none item's cell with the next item; a table keeps it empty. Hide the last item, or place the items in explicit cells.",
+    "loc": {
+      "line": 10,
+      "col": 5
+    }
+  }
+]

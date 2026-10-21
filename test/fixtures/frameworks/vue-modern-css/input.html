@@ -1,0 +1,157 @@
+<style>
+.masthead {
+&[data-v-20690164] {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: calc(var(--space) * 2);
+  margin-bottom: calc(var(--space) * 3);
+  border-bottom: 2px solid var(--leaf);
+}
+.brand[data-v-20690164] {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--leaf);
+}
+.meta[data-v-20690164] {
+    font: 0.8rem/1 Arial, sans-serif;
+    color: var(--muted);
+}
+}
+.card {
+&[data-v-5dfd3874] {
+  --card-bg: white;
+  background: var(--card-bg);
+  border: 1px solid color-mix(in oklch, var(--leaf) 25%, transparent);
+  border-radius: var(--radius);
+  padding: calc(var(--space) * 2.5);
+}
+& .tag[data-v-5dfd3874] {
+    display: inline-block;
+    padding: calc(var(--space) / 2) var(--space);
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--leaf) 15%, white);
+    color: oklch(0.4 0.1 150);
+    font: 700 0.7rem/1 Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+& .title[data-v-5dfd3874] {
+    margin: calc(var(--space) * 1.5) 0 var(--space);
+    font-size: 1.25rem;
+    line-height: 1.3;
+}
+& .text[data-v-5dfd3874] {
+    margin: 0 0 calc(var(--space) * 2);
+    color: var(--muted);
+}
+& .more {
+&[data-v-5dfd3874] {
+    color: var(--leaf);
+    font-weight: 700;
+    text-decoration: none;
+}
+&[data-v-5dfd3874]:hover {
+      text-decoration: underline;
+}
+}
+&.featured {
+&[data-v-5dfd3874] {
+    --card-bg: oklch(0.95 0.04 150);
+    border-color: transparent;
+}
+& .title[data-v-5dfd3874] {
+      font-size: 1.75rem;
+}
+}
+}
+@layer base {
+.events {
+h3[data-v-b670f37b] {
+      margin: 0 0 calc(var(--space) * 2);
+      font-size: 1.1rem;
+}
+.event {
+&[data-v-b670f37b] {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--space) * 2);
+      padding-block: calc(var(--space) * 1.5);
+      border-top: 1px solid color-mix(in oklch, var(--ink) 12%, transparent);
+}
+& p[data-v-b670f37b] {
+        margin: 0;
+}
+}
+.date {
+&[data-v-b670f37b] {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: calc(var(--space) * 7);
+      padding-block: var(--space);
+      border-radius: calc(var(--radius) / 1.5);
+      background: var(--leaf);
+      color: white;
+      font-family: Arial, sans-serif;
+}
+.day[data-v-b670f37b] { font-size: 1.25rem; font-weight: 700; line-height: 1;
+}
+.month[data-v-b670f37b] { font-size: 0.7rem; text-transform: uppercase;
+}
+}
+.where[data-v-b670f37b] {
+      font-size: 0.875rem;
+      color: var(--muted);
+}
+}
+}
+.signoff {
+&[data-v-a31fec94] {
+  margin-top: calc(var(--space) * 4);
+  text-align: center;
+}
+.small {
+&[data-v-a31fec94] {
+    font: 0.75rem/1.5 Arial, sans-serif;
+    color: var(--muted);
+}
+& a[data-v-a31fec94] { color: inherit;
+}
+}
+}
+@layer tokens, base;
+@layer tokens {
+:root {
+    --space: 0.5rem;
+    --radius: 0.75rem;
+    --ink: oklch(0.25 0.03 150);
+    --leaf: oklch(0.55 0.13 150);
+    --paper: oklch(0.98 0.01 100);
+    --muted: color-mix(in oklch, var(--ink) 60%, white);
+}
+}
+@layer base {
+body {
+    margin: 0;
+    background: color-mix(in oklch, var(--leaf) 8%, var(--paper));
+    color: var(--ink);
+    font: 1rem/1.5 Georgia, "Times New Roman", serif;
+}
+}
+.letter {
+&[data-v-42a5763b] {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: calc(var(--space) * 3) calc(var(--space) * 2);
+}
+& .grid[data-v-42a5763b] {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--space) * 2);
+    margin-block: calc(var(--space) * 3);
+}
+}
+</style>
+<div class="letter" data-v-42a5763b><div class="masthead" data-v-42a5763b data-v-20690164><span class="brand" data-v-20690164>Fernhill Gardens</span><span class="meta" data-v-20690164>Issue 37 · October 2026</span></div><div class="card featured" data-v-42a5763b data-v-5dfd3874><span class="tag" data-v-5dfd3874>Field notes</span><h2 class="title" data-v-5dfd3874>Rebuilding the greenhouse, one pane at a time</h2><p class="text" data-v-5dfd3874>Our grow team spent September replacing the old polycarbonate roof. Here is what we learned about light, heat and patience, and why the seedlings came back stronger.</p><a class="more" href="https://example.com/journal/greenhouse" data-v-5dfd3874>Read the full story →</a></div><div class="grid" data-v-42a5763b><!--[--><div class="card" id="soil" data-v-42a5763b data-v-5dfd3874><span class="tag" data-v-5dfd3874>How-to</span><h2 class="title" data-v-5dfd3874>Three soil mixes for winter sowing</h2><p class="text" data-v-5dfd3874>Peat-free recipes we tested on chard, kale and broad beans.</p><a class="more" href="https://example.com/journal/soil" data-v-5dfd3874>Read more →</a></div><div class="card" id="tools" data-v-42a5763b data-v-5dfd3874><span class="tag" data-v-5dfd3874>Gear</span><h2 class="title" data-v-5dfd3874>The hand tools we actually use</h2><p class="text" data-v-5dfd3874>A short list, chosen by the people who dig every day.</p><a class="more" href="https://example.com/journal/tools" data-v-5dfd3874>Read more →</a></div><div class="card" id="seed" data-v-42a5763b data-v-5dfd3874><span class="tag" data-v-5dfd3874>Community</span><h2 class="title" data-v-5dfd3874>Seed swap recap</h2><p class="text" data-v-5dfd3874>Over 400 packets changed hands at the Harbour Market stall.</p><a class="more" href="https://example.com/journal/seed-swap" data-v-5dfd3874>Read more →</a></div><!--]--></div><div class="events" data-v-42a5763b data-v-b670f37b><h3 data-v-b670f37b>Coming up</h3><!--[--><div class="event" data-v-b670f37b><div class="date" data-v-b670f37b><span class="day" data-v-b670f37b>02</span><span class="month" data-v-b670f37b>Nov</span></div><div data-v-b670f37b><p class="what" data-v-b670f37b>Bulb planting workshop</p><p class="where" data-v-b670f37b>Riverside plot</p></div></div><div class="event" data-v-b670f37b><div class="date" data-v-b670f37b><span class="day" data-v-b670f37b>16</span><span class="month" data-v-b670f37b>Nov</span></div><div data-v-b670f37b><p class="what" data-v-b670f37b>Compost open morning</p><p class="where" data-v-b670f37b>North yard</p></div></div><!--]--></div><div class="signoff" data-v-42a5763b data-v-a31fec94><p data-v-a31fec94>Happy growing,<br data-v-a31fec94>The Fernhill team</p><p class="small" data-v-a31fec94> You get this because you joined the Fernhill mailing list. <a href="https://example.com/unsubscribe" data-v-a31fec94>Unsubscribe</a></p></div></div>

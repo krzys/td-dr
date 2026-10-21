@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+<title></title>
+<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+<style>
+body { margin:0; padding:0; width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+table, td { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
+a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
+u + #body a { color:inherit; text-decoration:none; }
+</style>
+<!--[if mso]>
+<style>p,h1{mso-line-height-rule:exactly;}</style>
+<![endif]-->
+</head>
+<body id="body" style="margin:0;padding:0;background-color:#f1f5f9;">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:transparent;opacity:0">Receipt {{order.id}}: {{order.total}}&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
+<div role="article" aria-roledescription="email" lang="en">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#f1f5f9" style="width:100%;line-height:normal;background-color:#f1f5f9;">
+<tr><td align="center" style="padding:0;">
+<!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td width="600"><![endif]-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;table-layout:fixed;">
+<tr><td style="text-align:left;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td style="padding:24px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="width:100%;max-width:600px;margin:0 auto;table-layout:fixed;">
+<tr>
+<td style="padding:0 0 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td style="padding:0 8px 16px 8px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+<td valign="middle" align="left"><img src="https://img.test/{{brand.logo}}" alt="{{brand.name}}" width="96" height="32" style="display:block;border:0;outline:none;text-decoration:none;width:96px;height:32px;"></td>
+<td valign="middle" align="right" style="color:#64748b;font-family:Arial, Helvetica, sans-serif;font-size:13px;"><span style="font-family:Arial, Helvetica, sans-serif;color:#64748b;font-size:13px;display:inline-block;margin:0">Order {{order.id}}</span></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding:0 0 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:separate;table-layout:fixed;">
+<tr>
+<td bgcolor="#ffffff" style="padding:24px;background-color:#ffffff;border-radius:10px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td style="padding:0 0 4px 0;"><h1 style="font-family:Arial, Helvetica, sans-serif;color:#0f172a;font-size:22px;font-weight:bold;line-height:28px;margin:0">Thanks, {{user.name}}</h1></td>
+</tr>
+<tr>
+<td style="padding:0 0 16px 0;"><p style="font-family:Arial, Helvetica, sans-serif;color:#64748b;font-size:14px;line-height:20px;margin:0">Placed on {{order.date}}</p></td>
+</tr>
+{{#if paid}}
+<tr>
+<td style="padding:0 0 16px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:separate;table-layout:fixed;">
+<tr>
+<td bgcolor="#dcfce7" style="padding:10px 14px;background-color:#dcfce7;border-radius:6px;color:#166534;font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:20px;mso-line-height-rule:exactly;">Paid with {{order.card}}. No further action needed.</td>
+</tr>
+</table>
+</td>
+</tr>
+{{/if}}
+{{#unless paid}}
+<tr>
+<td style="padding:0 0 16px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:separate;table-layout:fixed;">
+<tr>
+<td bgcolor="#fff7ed" style="padding:14px;background-color:#fff7ed;border-radius:6px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td style="padding:0 0 8px 0;"><p style="font-family:Arial, Helvetica, sans-serif;color:#9a3412;font-size:14px;line-height:20px;margin:0">Payment of {{order.total}} is still open.</p></td>
+</tr>
+<tr>
+<td><!--[if mso]><v:roundrect href="{{order.payUrl}}" xmlns:w="urn:schemas-microsoft-com:office:word" style="height:40px;v-text-anchor:middle;width:99px;" arcsize="15%" stroke="f" fillcolor="#ea580c"><w:anchorlock/><center style="color:#ffffff;font-family:Arial, Helvetica, sans-serif;font-size:14px;">Pay now</center></v:roundrect><![endif]-->
+<!--[if !mso]><!--><table role="presentation" border="0" cellpadding="0" cellspacing="0" align="left" style="border-collapse:separate;">
+<tr>
+<td align="center" bgcolor="#ea580c" style="background-color:#ea580c;border-radius:6px;mso-padding-alt:10px 20px;">
+<a href="{{order.payUrl}}" style="display:inline-block;padding:10px 20px;color:#ffffff;font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:20px;text-decoration:none;text-align:left;mso-line-height-rule:exactly;">Pay now</a>
+</td>
+</tr>
+</table><!--<![endif]--></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+{{/unless}}
+{{#each order.items as |line|}}
+<tr>
+<td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td style="padding:12px 0;border-top:1px solid #e2e8f0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+<td valign="top" align="left" style="padding:0 8px 0 0;color:#0f172a;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;"><span style="font-family:Arial, Helvetica, sans-serif;color:#0f172a;font-size:15px;line-height:22px;mso-line-height-rule:exactly;display:inline-block;margin:0">{{line.name}}<small style="color:#64748b;font-size:12px;display:block">Qty {{line.qty}}</small></span></td>
+<td valign="top" align="right" style="padding:0 0 0 8px;color:#0f172a;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;"><span style="font-family:Arial, Helvetica, sans-serif;color:#0f172a;font-size:15px;line-height:22px;mso-line-height-rule:exactly;display:inline-block;margin:0">{{line.price}}</span></td>
+</tr>
+</table>
+</td>
+</tr>
+{{#if line.discount}}
+<tr>
+<td style="padding:0 0 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+<td valign="top" align="left" style="color:#15803d;font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:18px;mso-line-height-rule:exactly;"><span style="font-family:Arial, Helvetica, sans-serif;color:#15803d;font-size:13px;line-height:18px;mso-line-height-rule:exactly;display:inline-block;margin:0">Discount</span></td>
+<td valign="top" align="right" style="color:#15803d;font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:18px;mso-line-height-rule:exactly;"><span style="font-family:Arial, Helvetica, sans-serif;color:#15803d;font-size:13px;line-height:18px;mso-line-height-rule:exactly;display:inline-block;margin:0">{{line.discount}}</span></td>
+</tr>
+</table>
+</td>
+</tr>
+{{/if}}
+</table>
+</td>
+</tr>
+{{/each}}
+<tr>
+<td style="padding:12px 0 0 0;border-top:2px solid #e2e8f0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+<td valign="top" align="left" style="color:#0f172a;font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:24px;mso-line-height-rule:exactly;"><span style="font-family:Arial, Helvetica, sans-serif;color:#0f172a;font-size:16px;line-height:24px;font-weight:bold;mso-line-height-rule:exactly;display:inline-block;margin:0">Total</span></td>
+<td valign="top" align="right" style="color:#0f172a;font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:24px;mso-line-height-rule:exactly;"><span style="font-family:Arial, Helvetica, sans-serif;color:#0f172a;font-size:16px;line-height:24px;font-weight:bold;mso-line-height-rule:exactly;display:inline-block;margin:0">{{order.total}}</span></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding:20px 0 0 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+<td width="276" valign="top" style="width:50%;padding:0 8px 0 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+<td style="color:#334155;font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:20px;mso-line-height-rule:exactly;"><b style="color:#0f172a;font-weight:bold;display:block">Ship to</b>{{shipping.name}}<br>{{shipping.street}}<br>{{shipping.city}}</td>
+</tr>
+</table>
+</td>
+<td width="276" valign="top" style="width:50%;padding:0 0 0 8px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+<td style="color:#334155;font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:20px;mso-line-height-rule:exactly;"><b style="color:#0f172a;font-weight:bold;display:block">Billing</b>{{billing.name}}<br>{{billing.street}}<br>{{billing.city}}</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding:16px 8px 0 8px;"><p style="font-family:Arial, Helvetica, sans-serif;color:#64748b;font-size:12px;text-align:center;line-height:18px;margin:0">Questions about {{order.id}}? <a href="mailto:{{support.email}}" style="color:#475569;text-decoration:underline">{{support.email}}</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table></td></tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td></tr>
+</table>
+</div>
+</body>
+</html>

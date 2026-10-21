@@ -1,0 +1,22 @@
+[
+  {
+    "code": "I012",
+    "severity": "info",
+    "message": "Alt text \"Logo\" looks like a placeholder (2 places)",
+    "hint": "A file name or a word like \"image\" tells the reader nothing. Describe what the image shows, or use alt=\"\" if it's decoration.",
+    "loc": {
+      "line": 6,
+      "col": 3
+    },
+    "locs": [
+      {
+        "line": 6,
+        "col": 3
+      },
+      {
+        "line": 7,
+        "col": 3
+      }
+    ]
+  }
+]

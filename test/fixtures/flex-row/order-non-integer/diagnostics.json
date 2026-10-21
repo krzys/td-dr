@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E007",
+    "severity": "error",
+    "message": "order: 1.5 is not supported",
+    "hint": "order takes a whole number",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

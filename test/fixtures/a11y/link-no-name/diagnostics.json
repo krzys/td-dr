@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W015",
+    "severity": "warning",
+    "message": "Link has no accessible name",
+    "hint": "Screen readers announce the URL instead. Give the link visible text, or alt text on its image that says where it goes.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "height: 24px on a link around an image is dropped",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  }
+]

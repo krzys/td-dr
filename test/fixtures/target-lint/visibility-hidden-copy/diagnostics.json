@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "visibility isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows (2 places)",
+    "hint": "Those clients show what it hides. To hide content everywhere use display:none, which td;dr drops from the output (I002).",
+    "loc": {
+      "line": 11,
+      "col": 48
+    }
+  }
+]

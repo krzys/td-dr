@@ -1,0 +1,59 @@
+{
+  "customer": {
+    "firstName": "Amara"
+  },
+  "store": {
+    "code": "uk",
+    "helpUrl": "https://example.com/help",
+    "unsubscribeUrl": "https://example.com/preferences"
+  },
+  "order": {
+    "number": "FW-20481",
+    "placedOn": "16 October 2026",
+    "url": "https://example.com/orders/FW-20481",
+    "delivery": {
+      "method": "standard",
+      "free": false
+    },
+    "taxExempt": false,
+    "subscription": null,
+    "billingSameAsShipping": true,
+    "items": [
+      {
+        "sku": "TEA-001",
+        "name": "Smoked Lapsang Souchong",
+        "variant": "250 g tin",
+        "qty": 2,
+        "price": "£18.00",
+        "listPrice": "£18.00",
+        "image": "https://img.example/128x128/ecfccb/3f6212.png?text=Tea"
+      },
+      {
+        "sku": "MUG-014",
+        "name": "Stoneware Mug, Moss",
+        "variant": "350 ml",
+        "qty": 1,
+        "price": "£14.40",
+        "listPrice": "£18.00",
+        "discount": {
+          "label": "20% off mugs this week"
+        },
+        "image": "https://img.example/128x128/ecfccb/3f6212.png?text=Mug"
+      }
+    ],
+    "shipping": {
+      "name": "Amara Lewis",
+      "line1": "Flat 4, 27 Wilmslow Road",
+      "city": "Manchester",
+      "postcode": "M14 5TB",
+      "country": "United Kingdom"
+    },
+    "totals": {
+      "subtotal": "£50.40",
+      "savings": "£3.60",
+      "delivery": "£3.95",
+      "tax": "£9.07",
+      "total": "£54.35"
+    }
+  }
+}

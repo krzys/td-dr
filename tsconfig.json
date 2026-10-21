@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2023", "DOM"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "types": ["node"],
+    // the dev page is plain JS served as files; JSDoc types it (adapters/dev/ui)
+    "allowJs": true,
+    "checkJs": true
+  },
+  "include": ["src", "adapters", "test", "scripts", "*.config.ts"],
+  // email fixtures and test inputs are not checked
+  "exclude": ["**/*.jsx", "test/**/*.js"]
+}

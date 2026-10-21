@@ -1,0 +1,11 @@
+{
+  "order": {
+    "currency": "EUR",
+    "total": "63.00",
+    "items": [
+      { "qty": 2, "name": "Sencha tea", "price": "24.00" },
+      { "qty": 1, "name": "Cast iron pot", "price": "35.00" },
+      { "qty": 3, "name": "Cups", "price": "4.00" }
+    ]
+  }
+}

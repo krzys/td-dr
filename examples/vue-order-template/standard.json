@@ -1,0 +1,60 @@
+{
+  "customer": {
+    "firstName": "Priya"
+  },
+  "store": {
+    "code": "us",
+    "helpUrl": "https://example.com/help",
+    "unsubscribeUrl": "https://example.com/preferences"
+  },
+  "order": {
+    "number": "OL-58213",
+    "placedOn": "Oct 16, 2026",
+    "url": "https://example.com/account/orders/OL-58213",
+    "delivery": {
+      "method": "standard",
+      "free": false
+    },
+    "taxExempt": false,
+    "subscription": null,
+    "billingSameAsShipping": true,
+    "items": [
+      {
+        "sku": "LIN-220",
+        "name": "Washed Linen Duvet Cover",
+        "variant": "Queen, Clay",
+        "qty": 1,
+        "price": "$148.00",
+        "listPrice": "$185.00",
+        "discount": {
+          "label": "Fall bedding event: 20% off"
+        },
+        "image": "https://img.example/144x144/fff7ed/c2410c.png?text=Linen"
+      },
+      {
+        "sku": "CND-031",
+        "name": "Cedar & Smoke Candle",
+        "variant": "8 oz",
+        "qty": 2,
+        "price": "$24.00",
+        "listPrice": "$24.00",
+        "image": "https://img.example/144x144/fff7ed/c2410c.png?text=Candle"
+      }
+    ],
+    "shipping": {
+      "name": "Priya Raman",
+      "line1": "1180 Valencia St",
+      "line2": "Apt 3B",
+      "city": "San Francisco, CA",
+      "postcode": "94110",
+      "country": "United States"
+    },
+    "totals": {
+      "subtotal": "$196.00",
+      "savings": "$37.00",
+      "delivery": "$9.00",
+      "tax": "$17.15",
+      "total": "$222.15"
+    }
+  }
+}

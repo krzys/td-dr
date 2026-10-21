@@ -1,0 +1,90 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (10 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 191,
+      "col": 19
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (4 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 191,
+      "col": 1112
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #64748b on #f1f5f9: found 4.3:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 191,
+      "col": 2972
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #94a3b8 on #f1f5f9: found 2.3:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 191,
+      "col": 3062
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 11.2px is very small (5 places)",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 191,
+      "col": 513
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch (4 places)",
+    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
+    "loc": {
+      "line": 191,
+      "col": 1112
+    },
+    "locs": [
+      {
+        "line": 191,
+        "col": 1112
+      },
+      {
+        "line": 191,
+        "col": 1145
+      },
+      {
+        "line": 191,
+        "col": 1739
+      },
+      {
+        "line": 191,
+        "col": 1772
+      }
+    ]
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook button size is estimated; give the button a px width",
+    "hint": "Outlook draws rounded buttons with a fixed-size shape, so td;dr guesses it from the text.",
+    "loc": {
+      "line": 191,
+      "col": 2879
+    }
+  }
+]

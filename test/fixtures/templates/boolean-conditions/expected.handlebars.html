@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+<title></title>
+<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+<style>
+body { margin:0; padding:0; width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+table, td { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
+a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
+u + #body a { color:inherit; text-decoration:none; }
+</style>
+</head>
+<body id="body" style="margin:0;padding:0;">
+<div role="article" aria-roledescription="email" lang="en">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;line-height:normal;">
+<tr><td align="center" style="padding:0;">
+<!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td width="600"><![endif]-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;table-layout:fixed;">
+<tr><td style="text-align:left;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="width:100%;max-width:600px;margin:0 auto;table-layout:fixed;">
+<tr>
+<td bgcolor="#f3f4f6" style="padding:20px 24px;background-color:#f3f4f6;"><h1 style="font-size:20px;font-family:Arial, Helvetica, sans-serif;color:#1f2937;line-height:26px;font-weight:bold;mso-line-height-rule:exactly;margin:0">Hello {{user.name}}</h1></td>
+</tr>
+{{#if user.vip}}{{#unless user.trial}}
+<tr>
+<td bgcolor="#ede9fe" style="padding:12px 24px;background-color:#ede9fe;color:#5b21b6;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">You are a VIP member. Free shipping on everything.</td>
+</tr>
+{{/unless}}{{/if}}
+{{#if cart.empty}}
+<tr>
+<td bgcolor="#fef3c7" style="padding:12px 24px;background-color:#fef3c7;color:#92400e;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Your cart is waiting. Pick up where you left off.</td>
+</tr>
+{{else}}{{#if cart.expired}}
+<tr>
+<td bgcolor="#fef3c7" style="padding:12px 24px;background-color:#fef3c7;color:#92400e;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Your cart is waiting. Pick up where you left off.</td>
+</tr>
+{{/if}}{{/if}}
+{{#if user.vip}}{{#if promo.active}}
+<tr>
+<td bgcolor="#dcfce7" style="padding:12px 24px;background-color:#dcfce7;color:#166534;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Members' sale: {{promo.code}} takes 20% off.</td>
+</tr>
+{{/if}}{{else}}{{#if user.staff}}{{#if promo.active}}
+<tr>
+<td bgcolor="#dcfce7" style="padding:12px 24px;background-color:#dcfce7;color:#166534;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Members' sale: {{promo.code}} takes 20% off.</td>
+</tr>
+{{/if}}{{/if}}{{/if}}
+{{#if user.vip}}{{#if promo.active}}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Early access starts tonight.</td>
+</tr>
+{{else}}{{#if user.trial}}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Finish setting up your account to get early access.</td>
+</tr>
+{{else}}{{#unless user.verified}}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Finish setting up your account to get early access.</td>
+</tr>
+{{else}}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Early access opens for everyone on Friday.</td>
+</tr>
+{{/unless}}{{/if}}{{/if}}{{else}}{{#if user.trial}}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Finish setting up your account to get early access.</td>
+</tr>
+{{else}}{{#unless user.verified}}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Finish setting up your account to get early access.</td>
+</tr>
+{{else}}
+<tr>
+<td style="padding:12px 24px;border-top:1px solid #e5e7eb;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:22px;mso-line-height-rule:exactly;">Early access opens for everyone on Friday.</td>
+</tr>
+{{/unless}}{{/if}}{{/if}}
+{{#unless user.optedOut}}{{#unless user.bounced}}
+<tr>
+<td style="padding:12px 24px;"><p style="font-size:13px;font-family:Arial, Helvetica, sans-serif;color:#6b7280;line-height:22px;mso-line-height-rule:exactly;margin:0">You get this newsletter every week.</p></td>
+</tr>
+{{/unless}}{{/unless}}
+</table>
+</td>
+</tr>
+</table></td></tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td></tr>
+</table>
+</div>
+</body>
+</html>

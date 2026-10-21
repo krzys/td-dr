@@ -1,0 +1,42 @@
+[
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <div> dropped (2 places)",
+    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
+    "loc": {
+      "line": 3,
+      "col": 3
+    },
+    "locs": [
+      {
+        "line": 3,
+        "col": 3
+      },
+      {
+        "line": 5,
+        "col": 3
+      }
+    ]
+  },
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <p> dropped",
+    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
+    "loc": {
+      "line": 4,
+      "col": 3
+    }
+  },
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <dialog> dropped",
+    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
+    "loc": {
+      "line": 6,
+      "col": 3
+    }
+  }
+]

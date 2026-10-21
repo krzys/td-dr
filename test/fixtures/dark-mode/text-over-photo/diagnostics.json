@@ -1,0 +1,32 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "A background image without a background-color has no fallback for Outlook, blocked images or dark mode, which inverts text but not images",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Outlook shows the background colour; set a px min-height to get the photo in Outlook (2 places)",
+    "hint": "Outlook draws a background photo through VML, which needs a px width and height.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    },
+    "locs": [
+      {
+        "line": 2,
+        "col": 3
+      },
+      {
+        "line": 5,
+        "col": 3
+      }
+    ]
+  }
+]

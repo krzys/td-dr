@@ -1,0 +1,40 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (4 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 9,
+      "col": 5
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch (4 places)",
+    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
+    "loc": {
+      "line": 9,
+      "col": 5
+    },
+    "locs": [
+      {
+        "line": 9,
+        "col": 5
+      },
+      {
+        "line": 10,
+        "col": 5
+      },
+      {
+        "line": 11,
+        "col": 5
+      },
+      {
+        "line": 12,
+        "col": 5
+      }
+    ]
+  }
+]

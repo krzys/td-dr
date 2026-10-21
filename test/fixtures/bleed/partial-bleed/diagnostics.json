@@ -1,0 +1,22 @@
+[
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-right: -10px is negative",
+    "hint": "For a full-bleed band the margin must equal the parent's padding-right (24px); to overlap items (an avatar stack) use spacing or a single pre-composed image.",
+    "loc": {
+      "line": 9,
+      "col": 3
+    }
+  },
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-left: -10px is negative",
+    "hint": "For a full-bleed band the margin must equal the parent's padding-left (24px); to overlap items (an avatar stack) use spacing or a single pre-composed image.",
+    "loc": {
+      "line": 9,
+      "col": 3
+    }
+  }
+]

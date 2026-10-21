@@ -1,0 +1,10 @@
+<div style="display: none; max-height: 0; overflow: hidden;" data-email="preheader">
+  Order {{order.id}} is on its way, {{user.name}}
+</div>
+<div style="max-width: 600px; margin: 0 auto; padding: 24px; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+  <img src="https://img.test/{{brand.logo}}" alt="{{brand.name}} logo" width="120" height="40" style="display: block; margin-bottom: 16px;">
+  <h1 style="margin: 0 0 8px 0; font-size: 24px; line-height: 30px;">Hi {{user.name}},</h1>
+  <p style="margin: 0 0 16px 0; font-size: 15px; line-height: 22px;">Order {{order.id}} comes to {{order.total}}. It ships to {{shipping.city}}.</p>
+  <a href="{{order.url}}" style="display: inline-block; padding: 12px 24px; background: #1d4ed8; color: #ffffff; font-size: 15px; text-decoration: none; border-radius: 6px;">View order {{order.id}}</a>
+  <p style="margin: 16px 0 0 0; font-size: 13px; line-height: 20px; color: #6b7280;">Questions? Write to <a href="mailto:{{support.email}}" style="color: #1d4ed8;">{{support.email}}</a>.</p>
+</div>

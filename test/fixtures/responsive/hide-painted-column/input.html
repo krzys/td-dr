@@ -1,0 +1,20 @@
+<style>
+  .wrap { max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #1f2933; }
+  .row { display: flex; margin-bottom: 16px; }
+  .aside { width: 140px; padding: 8px; background-color: #f2e3c6; }
+  .grow { flex: 1; padding: 8px; }
+  .wide { box-sizing: border-box; width: 60%; padding: 8px; }
+  .side { box-sizing: border-box; width: 40%; padding: 8px; background-color: #f2e3c6; }
+  @media (max-width: 560px) { .aside, .side { background-color: transparent; } }
+  @media (max-width: 480px) { .aside, .side { display: none; } }
+</style>
+<div class="wrap">
+  <div class="row">
+    <div class="aside">Tide at 06:40</div>
+    <div class="grow">Low water uncovers the causeway to Gullstone Island for about three hours. Leave the island before the bell on the jetty rings.</div>
+  </div>
+  <div class="row">
+    <div class="wide">The ferry from Saltreach runs twice a day in summer.</div>
+    <div class="side">Tickets on board</div>
+  </div>
+</div>

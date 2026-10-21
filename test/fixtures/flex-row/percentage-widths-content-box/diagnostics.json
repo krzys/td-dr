@@ -1,0 +1,26 @@
+[
+  {
+    "code": "E006",
+    "severity": "error",
+    "message": "width: 40% plus padding/border (content-box) is not supported (3 places)",
+    "hint": "Use px (em, rem and vw are resolved). vh is not supported, % only works for widths, and calc() only as calc(P% ± Npx) on a flex item.",
+    "loc": {
+      "line": 10,
+      "col": 3
+    },
+    "locs": [
+      {
+        "line": 10,
+        "col": 3
+      },
+      {
+        "line": 15,
+        "col": 3
+      },
+      {
+        "line": 20,
+        "col": 3
+      }
+    ]
+  }
+]

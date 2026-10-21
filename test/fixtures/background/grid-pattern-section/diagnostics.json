@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "linear-gradient() isn't supported in Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Android",
+    "hint": "Gradients can be created in VML using `type=\"gradient\"` on a `<v:fill>`. See [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element#gradient-fill).",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "an rgba() colour isn't supported in Outlook Windows",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 2,
+      "col": 3
+    }
+  }
+]

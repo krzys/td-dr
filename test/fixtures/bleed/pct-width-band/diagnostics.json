@@ -1,0 +1,22 @@
+[
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-right: -24px is negative",
+    "hint": "A full-bleed band needs width:auto (or a px width equal to the padded width): a percentage width shifts the box instead of widening it.",
+    "loc": {
+      "line": 9,
+      "col": 3
+    }
+  },
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-left: -24px is negative",
+    "hint": "A full-bleed band needs width:auto (or a px width equal to the padded width): a percentage width shifts the box instead of widening it.",
+    "loc": {
+      "line": 9,
+      "col": 3
+    }
+  }
+]

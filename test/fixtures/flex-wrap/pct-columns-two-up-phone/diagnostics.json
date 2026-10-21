@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch in a wrapping row",
+    "hint": "Wrapped items are separate inline blocks, so painted cards of different heights on one line stay ragged. Use align-items: flex-start to make that explicit.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "% columns with a gap stop sharing a line once the row is narrower than 364px in the source, but stay side by side in the output",
+    "hint": "The gap is fixed while the columns shrink with the line; use a smaller gap or percentages that leave more room.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  }
+]

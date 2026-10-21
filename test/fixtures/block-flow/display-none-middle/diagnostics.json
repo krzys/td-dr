@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <div> dropped",
+    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  }
+]

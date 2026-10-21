@@ -1,0 +1,1 @@
+{ "user": { "name": "Bo", "city": "York", "vip": false, "tier": "silver", "currency": "EUR" }, "wish": { "sku": "K1" }, "order": { "ship": { "city": "York" }, "pickup": true, "coupon": "", "currency": "GBP", "lines": [{ "sku": "K1", "name": "Kettle", "stock": false }, { "sku": "K3", "name": "Mug", "stock": true }] } }

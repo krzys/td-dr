@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #d873b0: found 3.0:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 4,
+      "col": 5
+    }
+  }
+]

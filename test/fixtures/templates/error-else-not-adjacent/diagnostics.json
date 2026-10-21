@@ -1,0 +1,32 @@
+[
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "data-email-else isn't right after the branch it belongs to (2 places)",
+    "hint": "An else (data-email-else, data-email-else-if, <tddr-else>, <tddr-else-if>) goes right after a data-email-if / -unless / -else-if element or a <tddr-if> / <tddr-else-if>; only whitespace may sit between them.",
+    "loc": {
+      "line": 4,
+      "col": 3
+    },
+    "locs": [
+      {
+        "line": 4,
+        "col": 3
+      },
+      {
+        "line": 5,
+        "col": 71
+      }
+    ]
+  },
+  {
+    "code": "E012",
+    "severity": "error",
+    "message": "<tddr-else> isn't right after the branch it belongs to",
+    "hint": "An else (data-email-else, data-email-else-if, <tddr-else>, <tddr-else-if>) goes right after a data-email-if / -unless / -else-if element or a <tddr-if> / <tddr-else-if>; only whitespace may sit between them.",
+    "loc": {
+      "line": 8,
+      "col": 3
+    }
+  }
+]

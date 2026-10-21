@@ -1,0 +1,19 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #1f2937; font-size: 15px; line-height: 22px;">
+  <tddr-if test="trip.cancelled">
+    <h1 style="margin: 0; padding: 16px 24px 4px 24px; font-size: 20px; line-height: 26px; color: #991b1b;">Your trip was cancelled</h1>
+    <p style="margin: 0; padding: 0 24px 16px 24px;">A refund of {{trip.refund}} is on its way.</p>
+  </tddr-if>
+  <tddr-else-if test="trip.changed && !trip.accepted">
+    <h1 style="margin: 0; padding: 16px 24px; font-size: 20px; line-height: 26px; color: #92400e;">Your trip has changed</h1>
+  </tddr-else-if>
+  <tddr-else>
+    <h1 style="margin: 0; padding: 16px 24px; font-size: 20px; line-height: 26px;">Your trip to {{trip.city}}</h1>
+  </tddr-else>
+  <tddr-each of="trip.legs" as="leg">
+    <div style="padding: 8px 24px; background: #f3f4f6; font-weight: bold;">{{leg.from}} to {{leg.to}}</div>
+    <div style="padding: 4px 24px 12px 24px; font-size: 13px; color: #4b5563;">Departs {{leg.time}}<tddr-if test="leg.late">, <b style="color: #b45309;">running late</b></tddr-if>.</div>
+  </tddr-each>
+  <ul style="margin: 0; padding: 8px 24px 16px 44px;">
+    <tddr-each of="trip.notes" as="note"><li>{{note.text}}</li></tddr-each>
+  </ul>
+</div>

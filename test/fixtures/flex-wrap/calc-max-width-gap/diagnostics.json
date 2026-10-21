@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "extra space is left under the last line of this wrapping row",
+    "hint": "The row gap becomes bottom spacing on every item; a padding-bottom of 20px on the row absorbs it.",
+    "loc": {
+      "line": 1,
+      "col": 1
+    }
+  }
+]

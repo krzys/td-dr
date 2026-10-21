@@ -1,0 +1,1 @@
+{ "promo": { "sku": "C4", "name": "Summer" }, "order": { "lines": [{ "name": "Cups", "sku": "C4", "price": "$12", "free": false, "backorder": false, "gift": false, "eta": "" }] } }

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+<title></title>
+<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+<style>
+body { margin:0; padding:0; width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+table, td { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; }
+a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
+u + #body a { color:inherit; text-decoration:none; }
+</style>
+<!--[if mso]>
+<style>p,h1{mso-line-height-rule:exactly;}</style>
+<![endif]-->
+</head>
+<body id="body" style="margin:0;padding:0;">
+<div role="article" aria-roledescription="email" lang="en">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;line-height:normal;">
+<tr><td align="center" style="padding:0;">
+<!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" align="center"><tr><td width="600"><![endif]-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;table-layout:fixed;">
+<tr><td style="text-align:left;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="width:100%;max-width:600px;margin:0 auto;table-layout:fixed;">
+{{#if trip.cancelled}}
+<tr>
+<td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td style="padding:16px 24px 4px 24px;"><h1 style="font-size:20px;font-family:Arial, Helvetica, sans-serif;color:#991b1b;line-height:26px;font-weight:bold;margin:0">Your trip was cancelled</h1></td>
+</tr>
+<tr>
+<td style="padding:0 24px 16px 24px;"><p style="font-size:15px;font-family:Arial, Helvetica, sans-serif;color:#1f2937;line-height:22px;margin:0">A refund of {{trip.refund}} is on its way.</p></td>
+</tr>
+</table>
+</td>
+</tr>
+{{else}}{{#if trip.changed}}{{#unless trip.accepted}}
+<tr>
+<td style="padding:16px 24px;"><h1 style="font-size:20px;font-family:Arial, Helvetica, sans-serif;color:#92400e;line-height:26px;font-weight:bold;margin:0">Your trip has changed</h1></td>
+</tr>
+{{else}}
+<tr>
+<td style="padding:16px 24px;"><h1 style="font-size:20px;font-family:Arial, Helvetica, sans-serif;color:#1f2937;line-height:26px;font-weight:bold;margin:0">Your trip to {{trip.city}}</h1></td>
+</tr>
+{{/unless}}{{else}}
+<tr>
+<td style="padding:16px 24px;"><h1 style="font-size:20px;font-family:Arial, Helvetica, sans-serif;color:#1f2937;line-height:26px;font-weight:bold;margin:0">Your trip to {{trip.city}}</h1></td>
+</tr>
+{{/if}}{{/if}}
+{{#each trip.legs as |leg|}}
+<tr>
+<td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;">
+<tr>
+<td bgcolor="#f3f4f6" style="padding:8px 24px;background-color:#f3f4f6;color:#1f2937;font-family:Arial, Helvetica, sans-serif;font-size:15px;font-weight:bold;line-height:22px;mso-line-height-rule:exactly;">{{leg.from}} to {{leg.to}}</td>
+</tr>
+<tr>
+<td style="padding:4px 24px 12px 24px;color:#4b5563;font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:22px;mso-line-height-rule:exactly;">Departs {{leg.time}}{{#if leg.late}}, <b style="color:#b45309;font-weight:bold">running late</b>{{/if}}.</td>
+</tr>
+</table>
+</td>
+</tr>
+{{/each}}
+<tr>
+<td><ul style="font-size:15px;font-family:Arial, Helvetica, sans-serif;color:#1f2937;line-height:22px;padding:8px 24px 16px 44px;list-style-type:disc;mso-line-height-rule:exactly;margin:0">
+    {{#each trip.notes as |note|}}<li>{{note.text}}</li>{{/each}}
+  </ul></td>
+</tr>
+</table>
+</td>
+</tr>
+</table></td></tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td></tr>
+</table>
+</div>
+</body>
+</html>

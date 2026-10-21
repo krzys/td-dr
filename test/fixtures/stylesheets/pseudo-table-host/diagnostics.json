@@ -1,0 +1,22 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Selector \".t::before\" puts text directly inside <table>, which can't hold it, so it was skipped",
+    "hint": "Browsers move such text out of the table, so it would land in the wrong place; put the text in a cell, or put the pseudo-element on the <td>.",
+    "loc": {
+      "line": 3,
+      "col": 16
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Selector \".t tr::after\" puts text directly inside <tr>, which can't hold it, so it was skipped",
+    "hint": "Browsers move such text out of the table, so it would land in the wrong place; put the text in a cell, or put the pseudo-element on the <td>.",
+    "loc": {
+      "line": 2,
+      "col": 18
+    }
+  }
+]

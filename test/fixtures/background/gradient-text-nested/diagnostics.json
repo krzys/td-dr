@@ -1,0 +1,42 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "background-image isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Background images can be used in VML. See [backgrounds.cm](https://backgrounds.cm/) and [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element).",
+    "loc": {
+      "line": 2,
+      "col": 31
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "linear-gradient() isn't supported in Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Android",
+    "hint": "Gradients can be created in VML using `type=\"gradient\"` on a `<v:fill>`. See [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element#gradient-fill).",
+    "loc": {
+      "line": 2,
+      "col": 31
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "-webkit-background-clip isn't supported in Gmail Mobile Webmail, Outlook Windows, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail iOS, Gmail Android",
+    "hint": "Partial. Not supported with non Google accounts. But it can be used in the `background` shorthand property instead.",
+    "loc": {
+      "line": 2,
+      "col": 31
+    }
+  },
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "gradient text is invisible where gradients are dropped (Outlook, Yahoo)",
+    "hint": "Give the text a solid color instead of color: transparent.",
+    "loc": {
+      "line": 2,
+      "col": 31
+    }
+  }
+]

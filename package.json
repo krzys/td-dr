@@ -1,0 +1,133 @@
+{
+  "name": "tddr",
+  "version": "0.1.0",
+  "description": "td;dr (too divvy; didn't render) — compile normal HTML/CSS into email-safe HTML",
+  "keywords": [
+    "email",
+    "html-email",
+    "email-templates",
+    "outlook",
+    "mso",
+    "compiler",
+    "css-inliner",
+    "responsive-email",
+    "react",
+    "vue",
+    "vite"
+  ],
+  "license": "MIT",
+  "author": "Krzysztof Sternik",
+  "homepage": "https://github.com/krzys/td-dr#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krzys/td-dr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/krzys/td-dr/issues"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "bin": {
+    "tddr": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/types/src/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/types/adapters/react/index.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./vue": {
+      "types": "./dist/types/adapters/vue/index.d.ts",
+      "import": "./dist/vue.js"
+    },
+    "./vite": {
+      "types": "./dist/types/adapters/vite/index.d.ts",
+      "import": "./dist/vite.js"
+    }
+  },
+  "files": [
+    "dist",
+    "NOTICE"
+  ],
+  "scripts": {
+    "build": "tsup && tsc -p tsconfig.build.json && node --experimental-strip-types scripts/dts-extensions.ts",
+    "smoke": "node --experimental-strip-types scripts/smoke.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "tsc --noEmit && vitest run",
+    "test:visual": "vitest run --config vitest.visual.config.ts",
+    "gallery": "node --experimental-strip-types scripts/gallery.ts",
+    "capture": "node scripts/capture.ts",
+    "caniemail": "node --experimental-strip-types scripts/caniemail.ts"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "dependencies": {
+    "css-select": "^7.0.0",
+    "dom-serializer": "^3.1.1",
+    "lightningcss": "^1.33.0",
+    "parse5": "^8.0.1",
+    "parse5-htmlparser2-tree-adapter": "^8.0.1",
+    "postcss": "^8.5.30"
+  },
+  "peerDependencies": {
+    "vite": "^8.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "vue": "^3.5.0",
+    "handlebars": "^4.7.0",
+    "liquidjs": "^10.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    },
+    "handlebars": {
+      "optional": true
+    },
+    "liquidjs": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@tailwindcss/node": "4.3.3",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/pngjs": "^6.0.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-vue": "6.0.9",
+    "esbuild": "0.28.2",
+    "handlebars": "4.7.10",
+    "liquidjs": "10.30.0",
+    "pixelmatch": "^8.0.0",
+    "playwright": "1.56.1",
+    "pngjs": "^7.0.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "4.3.3",
+    "tsup": "^9.0.0",
+    "typescript": "^7.0.2",
+    "vite": "8.3.4",
+    "vitest": "^5.0.5",
+    "vue": "^3.5.44"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

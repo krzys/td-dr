@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "fr columns beside a px column are sized by their content, not by their fr ratio",
+    "hint": "Rows are separate tables, so such columns may not line up across rows. Use px or % for every column, or a single fr column.",
+    "loc": {
+      "line": 5,
+      "col": 1
+    }
+  }
+]

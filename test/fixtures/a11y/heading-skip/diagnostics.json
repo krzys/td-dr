@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I011",
+    "severity": "info",
+    "message": "<h4> follows <h2>, skipping a level",
+    "hint": "Screen reader users jump by heading. Use one h1 and don't skip levels (h2 then h4).",
+    "loc": {
+      "line": 3,
+      "col": 3
+    }
+  }
+]

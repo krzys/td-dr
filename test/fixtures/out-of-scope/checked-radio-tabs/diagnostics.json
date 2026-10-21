@@ -1,0 +1,62 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Interactive :checked rules collapse to the initial state; 1 block and 2 labels dropped",
+    "hint": "Styles are inlined and most clients, Gmail and Outlook among them, ignore :checked, so only what starts checked is sent; tab labels go with their hidden inputs (I002), a label holding a heading stays. Show every panel in turn, or link to the web version.",
+    "loc": {
+      "line": 6,
+      "col": 3
+    }
+  },
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <input> dropped (2 places)",
+    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
+    "loc": {
+      "line": 12,
+      "col": 5
+    },
+    "locs": [
+      {
+        "line": 12,
+        "col": 5
+      },
+      {
+        "line": 13,
+        "col": 5
+      }
+    ]
+  },
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <label> dropped (2 places)",
+    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
+    "loc": {
+      "line": 14,
+      "col": 5
+    },
+    "locs": [
+      {
+        "line": 14,
+        "col": 5
+      },
+      {
+        "line": 15,
+        "col": 5
+      }
+    ]
+  },
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <div> dropped",
+    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
+    "loc": {
+      "line": 17,
+      "col": 5
+    }
+  }
+]

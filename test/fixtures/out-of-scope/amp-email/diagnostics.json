@@ -1,0 +1,22 @@
+[
+  {
+    "code": "E008",
+    "severity": "error",
+    "message": "AMP for Email input is not compiled",
+    "hint": "td;dr compiles the text/html part of an email. AMP for Email goes in its own text/x-amp-html MIME part next to it; compile a plain HTML version of the message here.",
+    "loc": {
+      "line": 2,
+      "col": 1
+    }
+  },
+  {
+    "code": "I015",
+    "severity": "info",
+    "message": "Email has no title",
+    "hint": "The online copy (view in browser) shows the <title> in its tab, and a screen reader says it first. Add a <title> to the <head>; a component can write one in its markup.",
+    "loc": {
+      "line": 10,
+      "col": 1
+    }
+  }
+]

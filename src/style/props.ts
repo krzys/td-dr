@@ -1,0 +1,101 @@
+// Inherited properties. Also what an InlineNode carries in `style` (minus custom props).
+export const INHERITED: ReadonlySet<string> = new Set([
+  "color",
+  "font-family",
+  "font-size",
+  "font-style",
+  "font-variant",
+  "font-weight",
+  "line-height",
+  "letter-spacing",
+  "word-spacing",
+  "text-align",
+  "text-indent",
+  "text-transform",
+  "white-space",
+  "word-break",
+  "overflow-wrap",
+  "direction",
+  "visibility",
+  "list-style-type",
+  "list-style-position",
+  "list-style-image",
+  "border-collapse",
+  "border-spacing",
+]);
+
+// The side a -webkit-center / -webkit-left / -webkit-right text-align (center, div align) places the
+// blocks inside on: inherited with text-align, and as a custom property never serialized.
+export const LEGACY_ALIGN = "--tddr-legacy-align";
+
+export const isInherited = (prop: string): boolean => INHERITED.has(prop) || prop.startsWith("--");
+
+const HEADINGS = ["h1", "h2", "h3", "h4", "h5", "h6"];
+// Font properties no client sets but on these tags (ua.ts; Word's heading
+// styles, a webmail's h1–h6 and dt rules), with their initial values.
+const QUIET: Readonly<Record<string, { initial: readonly string[]; tags: ReadonlySet<string> }>> = {
+  "font-style": { initial: ["normal"], tags: new Set([...HEADINGS, "em", "i", "cite", "var", "dfn", "address"]) },
+  "font-variant": { initial: ["normal"], tags: new Set(HEADINGS) },
+  "font-weight": { initial: ["normal", "400"], tags: new Set([...HEADINGS, "b", "strong", "th", "dt", "optgroup"]) },
+  "font-optical-sizing": { initial: ["auto"], tags: new Set() },
+};
+const setAbove = (prop: string): string => `--tddr-set-${prop}`;
+const atInitial = (prop: string, v: string | undefined): boolean => v === undefined || !!QUIET[prop]?.initial.includes(v.trim().toLowerCase());
+
+// Marks the elements where one of them leaves its initial value; as a custom property the mark
+// inherits, so everything below knows something above says another value. font-variant:normal also
+// takes back font-variant-caps & co.
+export const markQuiet = (style: Record<string, string>): void => {
+  for (const prop of Object.keys(QUIET)) if (!atInitial(prop, style[prop])) style[setAbove(prop)] = "1";
+  if (Object.entries(style).some(([p, v]) => p.startsWith("font-variant-") && !atInitial("font-variant", v))) style[setAbove("font-variant")] = "1";
+};
+
+// At its initial value with nothing above saying another, one of them says nothing the element
+// doesn't get anyway, in every client (docs/support.md#text-styles). `tag` undefined: an emitted cell.
+export const saysNothing = (tag: string | undefined, style: Readonly<Record<string, string>>, prop: string, v: string): boolean =>
+  QUIET[prop] !== undefined && atInitial(prop, v) && style[setAbove(prop)] === undefined && !(tag !== undefined && QUIET[prop].tags.has(tag));
+
+// Initial values for properties rules ask about; a missing computed value means this.
+export const INITIAL: Readonly<Record<string, string>> = {
+  display: "inline",
+  position: "static",
+  float: "none",
+  transform: "none",
+  "flex-direction": "row",
+  "flex-wrap": "nowrap",
+  "flex-grow": "0",
+  "flex-shrink": "1",
+  "flex-basis": "auto",
+  "justify-content": "normal",
+  "align-items": "normal",
+  "align-self": "auto",
+  "box-sizing": "content-box",
+  "row-gap": "normal",
+  "column-gap": "normal",
+  "font-size": "16px",
+  "font-weight": "400",
+  "line-height": "normal",
+  "text-align": "start",
+  color: "#000000",
+};
+
+// Unitless line-height inherits as a factor; clients need px (and Outlook needs
+// mso-line-height-rule next to it).
+export const lineHeightPx = (style: Readonly<Record<string, string>>): string | undefined => {
+  const lh = style["line-height"];
+  if (lh === undefined || !/^\d*\.?\d+$/.test(lh)) return lh;
+  const fs = Number.parseFloat(style["font-size"] ?? "16");
+  return `${Math.round(Number.parseFloat(lh) * fs * 100) / 100}px`;
+};
+
+// text-align as a side: Word and LiteHTML know no start or end. Wherever a direction is set the side is
+// always stated, as the cells above it state the document's (docs/support.md#the-email-shell).
+export const textAlignOf = (style: Readonly<Record<string, string>>): string | undefined => {
+  const ta = style["text-align"];
+  if (ta !== undefined && ta !== "start" && ta !== "end") return ta;
+  if (ta === undefined && style["direction"] === undefined) return undefined;
+  return (ta !== "end") === (style["direction"] !== "rtl") ? "left" : "right";
+};
+
+export const get = (style: Readonly<Record<string, string>>, prop: string): string | undefined =>
+  style[prop] ?? INITIAL[prop];

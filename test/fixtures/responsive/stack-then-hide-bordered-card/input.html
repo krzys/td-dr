@@ -1,0 +1,14 @@
+<style>
+  .wrap { max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #1f2933; }
+  .row { display: flex; }
+  .side { width: 40%; box-sizing: border-box; padding: 10px; background-color: #f2e3c6; border-left: 4px solid #8a6d3b; border-radius: 6px; }
+  .main { width: 60%; box-sizing: border-box; padding: 10px 10px 10px 26px; }
+  @media (max-width: 520px) { .row { flex-direction: column; } }
+  @media (max-width: 400px) { .side { display: none; } }
+</style>
+<div class="wrap">
+  <div class="row">
+    <div class="side">Side note with a few words</div>
+    <div class="main">The ferry from Saltreach leaves the north pier twice a day, so the main copy runs longer than the note beside it.</div>
+  </div>
+</div>

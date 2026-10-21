@@ -1,0 +1,12 @@
+[
+  {
+    "code": "I007",
+    "severity": "info",
+    "message": "<picture> sources dropped, the <img> is used",
+    "hint": "A <picture> compiles as its <img>, so every client shows that one; Apple Mail, which picks a <source>, loses the choice too. Size the <img> for every client.",
+    "loc": {
+      "line": 7,
+      "col": 19
+    }
+  }
+]

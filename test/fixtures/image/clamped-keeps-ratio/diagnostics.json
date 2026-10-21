@@ -1,0 +1,50 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "overflow: hidden is dropped: content that sticks out of this box will show instead of being cut off",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 11,
+      "col": 3
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "columns overflow the row (560 > 548) and were scaled down",
+    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
+    "loc": {
+      "line": 11,
+      "col": 3
+    }
+  },
+  {
+    "code": "W004",
+    "severity": "warning",
+    "message": "image wider than its column (140 > 137) (4 places)",
+    "hint": "Fixed widths larger than the space they sit in are clamped (and overflow in Outlook).",
+    "loc": {
+      "line": 12,
+      "col": 5
+    },
+    "locs": [
+      {
+        "line": 12,
+        "col": 5
+      },
+      {
+        "line": 13,
+        "col": 5
+      },
+      {
+        "line": 14,
+        "col": 5
+      },
+      {
+        "line": 15,
+        "col": 5
+      }
+    ]
+  }
+]

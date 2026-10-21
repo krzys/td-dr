@@ -1,0 +1,42 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "a WebP image isn't supported in Outlook Windows; partly in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail",
+    "hint": "Partial: Converts file to jpg.",
+    "loc": {
+      "line": 10,
+      "col": 3
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "text-wrap isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Android, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Those clients ignore it; drop the property or narrow --targets.",
+    "loc": {
+      "line": 11,
+      "col": 3
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "<progress> isn't supported in Gmail Desktop Webmail, Gmail iOS, Gmail Mobile Webmail, Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Android",
+    "hint": "Partial. Supported with non Google accounts only.",
+    "loc": {
+      "line": 12,
+      "col": 20
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "width is only partly supported in Outlook Windows",
+    "hint": "Partial. Not supported on `<body>`, `<span>`, `<div>`, `<p>` or `<img>` elements.",
+    "loc": {
+      "line": 12,
+      "col": 20
+    }
+  }
+]

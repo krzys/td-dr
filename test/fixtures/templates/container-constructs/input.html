@@ -1,0 +1,10 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 24px; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 22px; color: #1f2937;">
+  <div data-email-if="promo" style="display: flex; gap: 12px; padding: 12px; background: #ecfccb;">
+    <div style="width: 120px; font-weight: bold;">{{promo.code}}</div>
+    <div style="flex: 1;">{{promo.text}}</div>
+  </div>
+  <div data-email-each="people" data-email-as="p" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e5e7eb;">
+    <div style="font-weight: bold;">{{p.name}}</div>
+    <div>{{p.role}}</div>
+  </div>
+</div>

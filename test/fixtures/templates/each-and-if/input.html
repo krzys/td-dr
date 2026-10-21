@@ -1,0 +1,8 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 24px; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+  <p style="margin: 0 0 12px 0; font-size: 16px; line-height: 24px;">Hello {{user.name}}.</p>
+  <div data-email-if="show" data-email-each="deals" data-email-as="deal" style="padding: 12px 16px; margin-bottom: 8px; background: #fef3c7; border-radius: 6px; font-size: 15px; line-height: 22px;">
+    <b>{{deal.title}}</b> for {{deal.price}}
+    <div data-email-if="deal.onSale" style="margin-top: 4px; color: #b45309; font-size: 13px;">On sale: was {{deal.was}}</div>
+  </div>
+  <p style="margin: 0; font-size: 13px; line-height: 20px; color: #6b7280;">Prices include tax.</p>
+</div>

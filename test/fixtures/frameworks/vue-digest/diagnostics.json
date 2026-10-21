@@ -1,0 +1,124 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (14 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 132,
+      "col": 90
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "width is only partly supported in Outlook Windows (6 places)",
+    "hint": "Partial. Not supported on `<body>`, `<span>`, `<div>`, `<p>` or `<img>` elements.",
+    "loc": {
+      "line": 132,
+      "col": 4088
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "height isn't supported in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Outlook Windows (6 places)",
+    "hint": "Buggy. Replaces `height` by `min-height`.",
+    "loc": {
+      "line": 132,
+      "col": 4088
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #6b7280 on #f3f4f6: found 4.3:1, needs 4.5:1 (3 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 132,
+      "col": 606
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #347fb2: found 4.3:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 132,
+      "col": 4214
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #40b234: found 2.7:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 132,
+      "col": 4340
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #34b26a: found 2.7:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 132,
+      "col": 4465
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #34b25a: found 2.7:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 132,
+      "col": 4587
+    }
+  },
+  {
+    "code": "I013",
+    "severity": "info",
+    "message": "Text at 11.2px is very small (5 places)",
+    "hint": "Under 12px is hard to read on phones; 14px or more is the usual floor for body text.",
+    "loc": {
+      "line": 132,
+      "col": 511
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "shorter items' backgrounds won't stretch (5 places)",
+    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
+    "loc": {
+      "line": 132,
+      "col": 4088
+    },
+    "locs": [
+      {
+        "line": 132,
+        "col": 4088
+      },
+      {
+        "line": 132,
+        "col": 4214
+      },
+      {
+        "line": 132,
+        "col": 4340
+      },
+      {
+        "line": 132,
+        "col": 4465
+      },
+      {
+        "line": 132,
+        "col": 4587
+      }
+    ]
+  }
+]

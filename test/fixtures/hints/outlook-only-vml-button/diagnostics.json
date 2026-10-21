@@ -1,0 +1,42 @@
+[
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 4,
+      "col": 34
+    }
+  },
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 4,
+      "col": 34
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook button size is estimated; give the button a px width (2 places)",
+    "hint": "Outlook draws rounded buttons with a fixed-size shape, so td;dr guesses it from the text.",
+    "loc": {
+      "line": 3,
+      "col": 36
+    },
+    "locs": [
+      {
+        "line": 3,
+        "col": 36
+      },
+      {
+        "line": 4,
+        "col": 34
+      }
+    ]
+  }
+]

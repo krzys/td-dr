@@ -1,0 +1,21 @@
+{
+  "bookingRef": "QX7P2L",
+  "customer": "Maya Okafor",
+  "segments": [
+    { "id": "out", "airline": "Northvale Air", "flight": "NW 412", "from": { "code": "LHR", "city": "London" }, "to": { "code": "JFK", "city": "New York" }, "departs": "09:40", "arrives": "12:35", "date": "Fri 6 Nov", "minutes": 415, "cabin": "Economy", "seat": "23A" },
+    { "id": "back", "airline": "Northvale Air", "flight": "NW 413", "from": { "code": "JFK", "city": "New York" }, "to": { "code": "LHR", "city": "London" }, "departs": "18:15", "arrives": "06:20", "date": "Sun 15 Nov", "minutes": 425, "cabin": "Economy", "seat": "24C" }
+  ],
+  "passengers": [
+    { "name": "Maya Okafor", "type": "Adult", "bag": "1 x 23kg" },
+    { "name": "Daniel Okafor", "type": "Adult", "bag": "1 x 23kg" },
+    { "name": "Nora Okafor", "type": "Child", "bag": "1 x 15kg" }
+  ],
+  "lines": [
+    { "label": "Fare (2 adults)", "amount": 612.5 },
+    { "label": "Fare (1 child)", "amount": 241 },
+    { "label": "Seat selection", "amount": 36 },
+    { "label": "Taxes and carrier charges", "amount": 148.75, "tax": true }
+  ],
+  "upgrade": { "cabin": "Premium Economy", "extra": 129 },
+  "manageUrl": "https://example.com/trips/QX7P2L"
+}

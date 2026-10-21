@@ -1,0 +1,11 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 16px 24px; font-family: Arial, Helvetica, sans-serif; color: #1f2937; font-size: 15px; line-height: 22px;">
+  <p style="margin: 0 0 8px 0;"><b>Flags</b> a: {{a.label}}, b: {{b.label}}</p>
+  <p data-email-if="(a.x || a.y) && (b.x || b.y)" style="margin: 0; padding: 6px 10px; background: #dbeafe;">one of a and one of b</p>
+  <p data-email-if="a.x && a.y || b.x && b.y" style="margin: 0; padding: 6px 10px; background: #dcfce7;">all of a, or all of b</p>
+  <p data-email-if="!(a.x || a.y) && b.x" style="margin: 0; padding: 6px 10px; background: #fee2e2;">none of a, but b.x</p>
+  <p data-email-if="a.x || a.y && b.x" style="margin: 0; padding: 6px 10px; background: #fef3c7;">a.x, or a.y with b.x</p>
+  <p data-email-if="a.x && a.y || b.x" style="margin: 0; padding: 6px 10px; background: #ede9fe;">a.x with a.y, or b.x</p>
+  <p data-email-if="a.x && b.x" style="margin: 0; padding: 6px 10px; border-top: 1px solid #e5e7eb;">first branch: a.x and b.x</p>
+  <p data-email-else-if="(a.y || b.y) && !(a.x && b.y)" style="margin: 0; padding: 6px 10px; border-top: 1px solid #e5e7eb;">second branch</p>
+  <p data-email-else style="margin: 0; padding: 6px 10px; border-top: 1px solid #e5e7eb;">no branch</p>
+</div>

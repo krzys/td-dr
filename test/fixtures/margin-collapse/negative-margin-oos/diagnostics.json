@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E005",
+    "severity": "error",
+    "message": "margin-top: -12px is negative",
+    "hint": "A negative vertical margin can only cancel the parent's padding on its first or last child; use less spacing instead.",
+    "loc": {
+      "line": 11,
+      "col": 3
+    }
+  }
+]

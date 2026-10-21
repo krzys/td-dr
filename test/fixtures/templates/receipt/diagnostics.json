@@ -1,0 +1,52 @@
+[
+  {
+    "code": "W005",
+    "severity": "warning",
+    "message": "border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android (4 places)",
+    "hint": "Round corners can be used in VML with the `RoundRect` element. See the [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/msdn-online-vml-roundrect-element).",
+    "loc": {
+      "line": 28,
+      "col": 3
+    }
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (5 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 31,
+      "col": 5
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #64748b on #f1f5f9: found 4.3:1, needs 4.5:1 (2 places)",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 26,
+      "col": 5
+    }
+  },
+  {
+    "code": "W016",
+    "severity": "warning",
+    "message": "Text #ffffff on #ea580c: found 3.5:1, needs 4.5:1",
+    "hint": "WCAG AA asks for 4.5:1 (3:1 for text at 24px, or 18.66px bold). Darken the text or lighten the background.",
+    "loc": {
+      "line": 34,
+      "col": 7
+    }
+  },
+  {
+    "code": "W003",
+    "severity": "warning",
+    "message": "Outlook button size is estimated; give the button a px width",
+    "hint": "Outlook draws rounded buttons with a fixed-size shape, so td;dr guesses it from the text.",
+    "loc": {
+      "line": 34,
+      "col": 7
+    }
+  }
+]

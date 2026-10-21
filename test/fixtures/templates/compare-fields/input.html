@@ -1,0 +1,15 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #1f2937;">
+  <div style="padding: 20px 24px; background: #f3f4f6;">
+    <h1 style="margin: 0; font-size: 22px; line-height: 28px;">Delivery for {{user.name}}</h1>
+  </div>
+  <div data-email-if="order.ship.city == user.city" style="padding: 12px 24px; background: #dcfce7; color: #166534; font-size: 14px; line-height: 20px;">
+    Ships to your home city, {{user.city}}.
+  </div>
+  <div data-email-unless="order.ship.city == user.city" style="padding: 12px 24px; font-size: 14px; line-height: 20px;">
+    Ships to {{order.ship.city}}, away from {{user.city}}.
+  </div>
+  <p style="margin: 0; padding: 12px 24px; font-size: 14px; line-height: 20px;">Billing<span data-email-if="order.bill.zip != order.ship.zip"> to a different address</span>.</p>
+  <div data-email-each="order.stores" data-email-as="store" style="padding: 4px 24px; font-size: 14px; line-height: 20px;">
+    {{store.name}}<b data-email-if="store.id == user.store"> (your store)</b>
+  </div>
+</div>

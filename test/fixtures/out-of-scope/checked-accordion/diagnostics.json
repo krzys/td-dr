@@ -1,0 +1,52 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "Interactive :checked rules collapse to the initial state; 1 block dropped",
+    "hint": "Styles are inlined and most clients, Gmail and Outlook among them, ignore :checked, so only what starts checked is sent; tab labels go with their hidden inputs (I002), a label holding a heading stays. Show every panel in turn, or link to the web version.",
+    "loc": {
+      "line": 6,
+      "col": 3
+    }
+  },
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <input> dropped (2 places)",
+    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
+    "loc": {
+      "line": 11,
+      "col": 5
+    },
+    "locs": [
+      {
+        "line": 11,
+        "col": 5
+      },
+      {
+        "line": 14,
+        "col": 5
+      }
+    ]
+  },
+  {
+    "code": "I003",
+    "severity": "info",
+    "message": "padding is only partly supported in Outlook Windows (2 places)",
+    "hint": "Partial. Only supported on table cells.",
+    "loc": {
+      "line": 12,
+      "col": 27
+    }
+  },
+  {
+    "code": "I002",
+    "severity": "info",
+    "message": "Hidden <div> dropped",
+    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
+    "loc": {
+      "line": 13,
+      "col": 5
+    }
+  }
+]

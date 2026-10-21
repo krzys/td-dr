@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W001",
+    "severity": "warning",
+    "message": "overflow: hidden is dropped: content that sticks out of this box will show instead of being cut off",
+    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
+    "loc": {
+      "line": 7,
+      "col": 3
+    }
+  }
+]

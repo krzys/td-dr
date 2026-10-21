@@ -1,0 +1,298 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`the natively written example templates > react-order-template renders to tddr markup 1`] = `
+"<div class="wrap">
+<div class="head">
+<span class="brand">Fernwood</span>
+<span class="meta">Order <strong>#{{order.number}}</strong>
+<br/>{{order.placedOn}}</span>
+</div>
+<div class="card">
+<h1>Thanks for your order, {{customer.firstName}}.</h1>
+<p class="lead">
+<tddr-if test="order.delivery.method == &#x27;pickup&#x27;">We&#x27;ll email you as soon as it&#x27;s ready to collect.</tddr-if>
+<tddr-else>We&#x27;re getting it ready and will email you when it ships.</tddr-else>
+</p>
+<tddr-if test="order.subscription" prints-zero="order.subscription">
+<div class="note">
+<strong>Subscribe &amp; save</strong>
+<span>Your {{order.subscription.plan}} plan renews every {{order.subscription.interval}}. Next delivery {{order.subscription.nextDate}}.</span>
+</div>
+</tddr-if>
+<div class="items">
+<tddr-each of="order.items" as="item">
+<div class="item">
+<img src="{{item.image}}" alt="{{item.name}}" width="64" height="64"/>
+<div class="item-text">
+<p class="item-name">{{item.name}}</p>
+<p class="item-meta">{{item.variant}} · Qty {{item.qty}}</p>
+<tddr-if test="item.discount" prints-zero="item.discount">
+<p class="item-sale">{{item.discount.label}}</p>
+</tddr-if>
+</div>
+<div class="item-price">
+<tddr-if test="item.discount">
+<s>{{item.listPrice}}</s>
+<br/>
+<strong>{{item.price}}</strong>
+</tddr-if>
+<tddr-else>
+<strong>{{item.price}}</strong>
+</tddr-else>
+</div>
+</div>
+</tddr-each>
+</div>
+<div class="totals">
+<div class="charges">
+<div class="row">
+<span>Subtotal</span>
+<span>{{order.totals.subtotal}}</span>
+</div>
+<tddr-if test="order.totals.savings" prints-zero="order.totals.savings">
+<div class="row">
+<span>You saved</span>
+<span>-{{order.totals.savings}}</span>
+</div>
+</tddr-if>
+<div class="row">
+<span>Delivery</span>
+<span>
+<tddr-if test="order.delivery.method == &#x27;pickup&#x27;">Free in-store pickup</tddr-if>
+<tddr-else-if test="order.delivery.free">Free</tddr-else-if>
+<tddr-else>{{order.totals.delivery}}</tddr-else>
+</span>
+</div>
+<tddr-if test="order.taxExempt">
+<div class="row exempt">
+<span>Tax</span>
+<span>Exempt ({{order.taxExemptId}})</span>
+</div>
+</tddr-if>
+<tddr-else>
+<div class="row">
+<span>Tax</span>
+<span>{{order.totals.tax}}</span>
+</div>
+</tddr-else>
+</div>
+<div class="row grand">
+<span>Total</span>
+<span>{{order.totals.total}}</span>
+</div>
+</div>
+</div>
+<div class="addresses">
+<div class="column">
+<tddr-if test="order.delivery.method == &#x27;pickup&#x27;">
+<div class="address">
+<h2>Collect from</h2>
+<p>{{order.delivery.store.name}}<br/>{{order.delivery.store.line1}}<br/>
+<tddr-if test="order.delivery.store.line2" prints-zero="order.delivery.store.line2">{{order.delivery.store.line2}}<br/>
+</tddr-if>{{order.delivery.store.city}} {{order.delivery.store.postcode}}<br/>{{order.delivery.store.country}}</p>
+</div>
+</tddr-if>
+<tddr-else>
+<div class="address">
+<h2>Shipping to</h2>
+<p>{{order.shipping.name}}<br/>{{order.shipping.line1}}<br/>
+<tddr-if test="order.shipping.line2" prints-zero="order.shipping.line2">{{order.shipping.line2}}<br/>
+</tddr-if>{{order.shipping.city}} {{order.shipping.postcode}}<br/>{{order.shipping.country}}</p>
+</div>
+</tddr-else>
+</div>
+<div class="column">
+<tddr-if test="order.billingSameAsShipping">
+<div class="address">
+<h2>Billing</h2>
+<p>Same as shipping address</p>
+</div>
+</tddr-if>
+<tddr-else>
+<div class="address">
+<h2>Billing</h2>
+<p>{{order.billing.name}}<br/>{{order.billing.line1}}<br/>
+<tddr-if test="order.billing.line2" prints-zero="order.billing.line2">{{order.billing.line2}}<br/>
+</tddr-if>{{order.billing.city}} {{order.billing.postcode}}<br/>{{order.billing.country}}</p>
+</div>
+</tddr-else>
+</div>
+</div>
+<div class="cta">
+<a href="{{order.url}}">View your order</a>
+</div>
+<div class="foot">
+<p>Questions? Reply to this email or visit <a href="{{store.helpUrl}}">our help centre</a>.</p>
+<tddr-if test="store.code == &#x27;uk&#x27;">
+<p>Fernwood Supply Ltd, 14 Canal Street, Manchester M1 3HE, United Kingdom</p>
+</tddr-if>
+<tddr-else-if test="store.code == &#x27;eu&#x27;">
+<p>Fernwood Supply B.V., Herengracht 210, 1016 BS Amsterdam, Netherlands</p>
+</tddr-else-if>
+<tddr-else>
+<p>Fernwood Supply Inc., 820 SE Alder St, Portland, OR 97214, USA</p>
+</tddr-else>
+<p>
+<a href="{{store.unsubscribeUrl}}">Email preferences</a>
+</p>
+</div>
+</div>"
+`;
+
+exports[`the natively written example templates > vue-order-template renders to tddr markup 1`] = `
+"<div class="page" data-v-5880bd4d>
+<div class="masthead" data-v-5880bd4d>
+<span class="logo" data-v-5880bd4d>Oakline<span class="logo-dot" data-v-5880bd4d>.</span>
+</span>
+<span class="order-no" data-v-5880bd4d>Order {{order.number}}</span>
+</div>
+<div class="sheet" data-v-5880bd4d>
+<p class="kicker" data-v-5880bd4d>Order confirmed · {{order.placedOn}}</p>
+<h1 data-v-5880bd4d>Hi {{customer.firstName}}, thank you.</h1>
+<tddr-if test="order.delivery.method == 'pickup'">
+<p class="lead" data-v-5880bd4d> Your order is being picked at {{order.delivery.store.name}}. We&#39;ll text you when it&#39;s ready to collect. </p>
+</tddr-if>
+<tddr-else-if test="order.delivery.method == 'express'">
+<p class="lead" data-v-5880bd4d> Express delivery: it should arrive {{order.delivery.eta}}. </p>
+</tddr-else-if>
+<tddr-else>
+<p class="lead" data-v-5880bd4d>We&#39;re packing it now and will send tracking as soon as it ships.</p>
+</tddr-else>
+<tddr-if test="order.subscription">
+<div class="subscription" data-v-5880bd4d>
+<span class="badge" data-v-5880bd4d>Repeat order</span>
+<p data-v-5880bd4d> You&#39;re on the <strong data-v-5880bd4d>{{order.subscription.plan}}</strong> plan, delivered every {{order.subscription.interval}}. The next one ships {{order.subscription.nextDate}}. </p>
+</div>
+</tddr-if>
+<h2 class="section" data-v-5880bd4d>In this order</h2>
+<!--[-->
+<tddr-each of="order.items" as="item">
+<div class="item" data-v-5880bd4d data-v-3fd42a7a>
+<img src="{{item.image}}" alt="{{item.name}}" width="72" height="72" data-v-3fd42a7a>
+<div class="text" data-v-3fd42a7a>
+<p class="name" data-v-3fd42a7a>{{item.name}}</p>
+<p class="variant" data-v-3fd42a7a>{{item.variant}} · Qty {{item.qty}}</p>
+<tddr-if test="item.discount">
+<p class="deal" data-v-3fd42a7a>{{item.discount.label}}</p>
+</tddr-if>
+</div>
+<div class="price" data-v-3fd42a7a>
+<tddr-if test="item.discount">
+<!--[-->
+<s data-v-3fd42a7a>{{item.listPrice}}</s>
+<br data-v-3fd42a7a>
+<!--]-->
+</tddr-if>
+<strong data-v-3fd42a7a>{{item.price}}</strong>
+</div>
+</div>
+</tddr-each>
+<!--]-->
+<div class="totals" data-v-5880bd4d data-v-42496b38>
+<div class="row" data-v-42496b38>
+<span data-v-42496b38>Subtotal</span>
+<span data-v-42496b38>{{order.totals.subtotal}}</span>
+</div>
+<tddr-if test="order.totals.savings">
+<div class="row saving" data-v-42496b38>
+<span data-v-42496b38>Savings</span>
+<span data-v-42496b38>-{{order.totals.savings}}</span>
+</div>
+</tddr-if>
+<div class="row" data-v-42496b38>
+<span data-v-42496b38>Delivery</span>
+<span data-v-42496b38>
+<tddr-if test="order.delivery.method == 'pickup'">
+<!--[-->Free pickup<!--]-->
+</tddr-if>
+<tddr-else-if test="order.delivery.free">
+<!--[-->Free<!--]-->
+</tddr-else-if>
+<tddr-else>
+<!--[-->{{order.totals.delivery}}<!--]-->
+</tddr-else>
+</span>
+</div>
+<tddr-if test="order.taxExempt">
+<div class="row" data-v-42496b38>
+<span data-v-42496b38>Sales tax</span>
+<span data-v-42496b38>Exempt</span>
+</div>
+</tddr-if>
+<tddr-else>
+<div class="row" data-v-42496b38>
+<span data-v-42496b38>Sales tax</span>
+<span data-v-42496b38>{{order.totals.tax}}</span>
+</div>
+</tddr-else>
+<div class="row total" data-v-42496b38>
+<span data-v-42496b38>Total</span>
+<span data-v-42496b38>{{order.totals.total}}</span>
+</div>
+<tddr-if test="order.taxExempt">
+<p class="exempt" data-v-42496b38>Tax-exempt certificate {{order.taxExemptId}} is on file for this account.</p>
+</tddr-if>
+</div>
+<div class="button-row" data-v-5880bd4d>
+<a class="button" href="{{order.url}}" data-v-5880bd4d>Manage your order</a>
+</div>
+</div>
+<div class="addresses" data-v-5880bd4d>
+<div class="column" data-v-5880bd4d>
+<tddr-if test="order.delivery.method == 'pickup'">
+<div class="card" data-v-5880bd4d data-v-98faaefe>
+<h3 data-v-98faaefe>Pickup store</h3>
+<p data-v-98faaefe>{{order.delivery.store.name}}<br data-v-98faaefe> {{order.delivery.store.line1}}<br data-v-98faaefe>
+<tddr-if test="order.delivery.store.line2">
+<!--[-->{{order.delivery.store.line2}}<br data-v-98faaefe>
+<!--]-->
+</tddr-if> {{order.delivery.store.city}} {{order.delivery.store.postcode}}<br data-v-98faaefe> {{order.delivery.store.country}}</p>
+</div>
+</tddr-if>
+<tddr-else>
+<div class="card" data-v-5880bd4d data-v-98faaefe>
+<h3 data-v-98faaefe>Delivering to</h3>
+<p data-v-98faaefe>{{order.shipping.name}}<br data-v-98faaefe> {{order.shipping.line1}}<br data-v-98faaefe>
+<tddr-if test="order.shipping.line2">
+<!--[-->{{order.shipping.line2}}<br data-v-98faaefe>
+<!--]-->
+</tddr-if> {{order.shipping.city}} {{order.shipping.postcode}}<br data-v-98faaefe> {{order.shipping.country}}</p>
+</div>
+</tddr-else>
+</div>
+<div class="column" data-v-5880bd4d>
+<tddr-if test="order.billingSameAsShipping">
+<div class="same" data-v-5880bd4d>
+<h3 data-v-5880bd4d>Billing</h3>
+<p data-v-5880bd4d>Same as the delivery address.</p>
+</div>
+</tddr-if>
+<tddr-else>
+<div class="card" data-v-5880bd4d data-v-98faaefe>
+<h3 data-v-98faaefe>Billing</h3>
+<p data-v-98faaefe>{{order.billing.name}}<br data-v-98faaefe> {{order.billing.line1}}<br data-v-98faaefe>
+<tddr-if test="order.billing.line2">
+<!--[-->{{order.billing.line2}}<br data-v-98faaefe>
+<!--]-->
+</tddr-if> {{order.billing.city}} {{order.billing.postcode}}<br data-v-98faaefe> {{order.billing.country}}</p>
+</div>
+</tddr-else>
+</div>
+</div>
+<div class="footer" data-v-5880bd4d data-v-22749a4d>
+<p data-v-22749a4d>Need a hand? <a href="{{store.helpUrl}}" data-v-22749a4d>Visit the help centre</a> or reply to this email.</p>
+<tddr-if test="store.code == 'uk'">
+<p data-v-22749a4d>Oakline Home Ltd · 3 Tannery Lane, Bristol BS1 6QH · VAT GB 284 1190 32</p>
+</tddr-if>
+<tddr-else-if test="store.code == 'eu'">
+<p data-v-22749a4d>Oakline Home GmbH · Torstraße 140, 10119 Berlin · USt-IdNr. DE 318 552 904</p>
+</tddr-else-if>
+<tddr-else>
+<p data-v-22749a4d>Oakline Home Inc. · 455 Bryant St, San Francisco, CA 94107</p>
+</tddr-else>
+<p data-v-22749a4d>
+<a href="{{store.unsubscribeUrl}}" data-v-22749a4d>Email preferences</a>
+</p>
+</div>
+</div>"
+`;

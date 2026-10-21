@@ -1,0 +1,5 @@
+{
+  "user": { "name": "A<b>&\"x\"" },
+  "order": { "note": "<script>alert(1)</script> & 'quotes'" },
+  "item": { "sku": "s\"3", "ref": "a&b=<c>", "name": "Tea & \"Cups\" <set>" }
+}

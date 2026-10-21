@@ -1,0 +1,1 @@
+{ "plan": { "name": "Team", "price": "$40", "renews": true, "renewsOn": "9 July", "endsOn": "" }, "usage": { "used": "5 GB", "limit": "1 TB", "over": false, "near": false } }

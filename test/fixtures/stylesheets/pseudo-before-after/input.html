@@ -1,0 +1,13 @@
+<style>
+  .card { font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 20px; color: #1f2937; max-width: 600px; margin: 0 auto; }
+  .price::before { content: "$"; color: #6b7280; }
+  .price::after { content: " / month"; font-size: 12px; color: #6b7280; }
+  .note:before { content: "Note: " "&" " <b>"; font-weight: bold; }
+  .tag::before { content: "New"; display: block; color: #b91c1c; }
+  .tag::before { font-size: 11px; }
+</style>
+<div class="card">
+  <p class="price">49</p>
+  <p class="note">Inserted text is escaped.</p>
+  <div class="tag">The block above comes from a pseudo rule.</div>
+</div>
