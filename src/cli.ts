@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync, realpathSync, statSync, writeFileSync } from "node:fs";
+import { relative } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { LANG_TAG } from "./ctx.ts";
@@ -75,7 +76,7 @@ type BuildEmails = (o: {
   verify?: boolean;
   compile: { strict: boolean; allowSvg?: boolean; targets?: string[]; width?: number; lang?: string };
 }) => Promise<
-  Array<{ email: string; dialect?: string; file?: string; skipped?: string; error?: string; assets?: string[]; diagnostics: Array<{ severity: string; code: string; message: string; hint?: string }> }>
+  Array<{ email: string; entry?: string; dialect?: string; file?: string; skipped?: string; error?: string; assets?: string[]; diagnostics: Array<{ severity: string; code: string; message: string; hint?: string }> }>
 >;
 
 // "file:line:col: severity code: message", then the other places of one said for several, then the hint
@@ -110,10 +111,13 @@ const buildDir = async (
   }
   let failed = false;
   for (const r of results) {
-    const what = r.dialect ? `${r.email} (${r.dialect})` : r.email;
+    // a diagnostic's line is in the rendered page, so the place said is the email's file
+    const where = r.entry ? relative(process.cwd(), r.entry).replaceAll("\\", "/") : r.email;
+    const what = r.dialect ? `${where} (${r.dialect})` : where;
     if (r.skipped) io.stdout(`skipped ${r.email}: ${r.skipped}\n`);
     if (r.error) {
-      io.stderr(`${what}: ${r.error}\n`);
+      // a render failure starts with the email's name already
+      io.stderr(`${what}: ${r.error.startsWith(`${r.email}: `) ? r.error.slice(r.email.length + 2) : r.error}\n`);
       failed = true;
     }
     if (r.file) io.stdout(`wrote ${r.file}\n`);

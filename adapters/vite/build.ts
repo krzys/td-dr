@@ -20,6 +20,7 @@ export type BuildOptions = {
 // one per written file, or per email that wasn't built
 export type BuildResult = {
   email: string;
+  entry?: string; // the email's own file
   dialect?: DialectName;
   file?: string;
   skipped?: string;
@@ -65,7 +66,7 @@ export const buildEmails = async (o: BuildOptions): Promise<BuildResult[]> => {
   try {
     for (const email of emails) {
       if (email.template.length === 0) {
-        results.push({ email: email.name, skipped: PLAIN, diagnostics: [] });
+        results.push({ email: email.name, entry: email.entry, skipped: PLAIN, diagnostics: [] });
         continue;
       }
       let checked: Diagnostic[] = [];
@@ -74,11 +75,11 @@ export const buildEmails = async (o: BuildOptions): Promise<BuildResult[]> => {
         try {
           ({ diagnostics: checked, templates } = await verifyEmail(vite, email, o));
         } catch (err) {
-          results.push({ email: email.name, error: (err as Error).message, diagnostics: [] });
+          results.push({ email: email.name, entry: email.entry, error: (err as Error).message, diagnostics: [] });
           continue;
         }
         if (checked.some((d) => d.code === "E016")) {
-          results.push({ email: email.name, error: "its templates don't match the HTML render; nothing written", diagnostics: checked });
+          results.push({ email: email.name, entry: email.entry, error: "its templates don't match the HTML render; nothing written", diagnostics: checked });
           continue;
         }
       }
@@ -88,7 +89,7 @@ export const buildEmails = async (o: BuildOptions): Promise<BuildResult[]> => {
           const lost = [...new Set(t.diagnostics.filter((d) => d.severity === "error" && LOSES_FIELD.has(d.code)).map((d) => d.code))];
           if (lost.length) {
             const error = `its ${dialect} template would lose what a field fills in (${lost.join(", ")}); nothing written`;
-            results.push({ email: email.name, dialect, error, diagnostics: [...checked.splice(0), ...t.diagnostics] });
+            results.push({ email: email.name, entry: email.entry, dialect, error, diagnostics: [...checked.splice(0), ...t.diagnostics] });
             continue;
           }
           const file = files.get(`${email.name}\0${dialect}`)!;
@@ -96,9 +97,9 @@ export const buildEmails = async (o: BuildOptions): Promise<BuildResult[]> => {
           writeFileSync(file, t.template);
           if (t.assets.length) mkdirSync(join(out, "assets"), { recursive: true });
           for (const a of t.assets) copyFileSync(a.from, join(out, "assets", a.name));
-          results.push({ email: email.name, dialect, file, assets: t.assets.map((a) => a.name), diagnostics: [...checked.splice(0), ...t.diagnostics] });
+          results.push({ email: email.name, entry: email.entry, dialect, file, assets: t.assets.map((a) => a.name), diagnostics: [...checked.splice(0), ...t.diagnostics] });
         } catch (err) {
-          results.push({ email: email.name, dialect, error: (err as Error).message, diagnostics: [] });
+          results.push({ email: email.name, entry: email.entry, dialect, error: (err as Error).message, diagnostics: [] });
           break; // the other dialects render the same component
         }
       }

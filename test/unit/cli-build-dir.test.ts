@@ -62,6 +62,7 @@ describe("tddr build <folder>", () => {
     vi.mocked(buildEmails).mockResolvedValue([
       {
         email: "badge",
+        entry: `${process.cwd()}/emails/badge/index.jsx`,
         dialect: "liquid",
         file: "/p/dist/emails/badge.liquid.html",
         diagnostics: [{ code: "E015", severity: "error", message: "/badge/logo.png needs a hosted URL", hint: "Pass --base-url" }],
@@ -71,7 +72,13 @@ describe("tddr build <folder>", () => {
     const t = io();
     expect(await run(["build", "emails"], t.io)).toBe(1);
     expect(t.err()).toBe(
-      ["badge (liquid): error E015: /badge/logo.png needs a hosted URL", "  hint: Pass --base-url", "boom (handlebars): boom: rendering with react failed: nope", ""].join("\n"),
+      [
+        // the file the email starts in, and the email's name said once
+        "emails/badge/index.jsx (liquid): error E015: /badge/logo.png needs a hosted URL",
+        "  hint: Pass --base-url",
+        "boom (handlebars): rendering with react failed: nope",
+        "",
+      ].join("\n"),
     );
   });
 
