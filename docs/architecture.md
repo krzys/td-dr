@@ -30,7 +30,7 @@ located at the deepest element.
 | Stage | Module | Contract |
 |---|---|---|
 | parse | `src/parse/` | `parse(html, ctx) → ParsedDoc`. Every element keeps its source location; font host links are recognized (`font-hosts.ts`). |
-| sanitize | `src/sanitize/` | `sanitize(doc, ctx) → ParsedDoc`, a copy. Removes unsafe and framework markup, compiles `<picture>` to its `<img>`, turns template chains and `<tddr-*>` into markers, extracts the preheader. |
+| sanitize | `src/sanitize/` | `sanitize(doc, ctx) → ParsedDoc`, a copy. Removes unsafe and framework markup, compiles `<picture>` to its `<img>`, turns template chains and `<tddr-*>` into markers, extracts the preheader. Removed radios and checkboxes stay in place as `stateOnly`, for `:checked` to match; the style stage reports and skips them. |
 | style | `src/style/` | `computeStyles(doc, ctx, env, keep?, stacked?) → { body, fonts, conditions }`. Each element carries `style` (computed), `declared` (authored, for re-serialization) and `parentStyle`. `conditions` says which screens the author's rules tell apart. |
 | design width | `src/analyze/design-width.ts` | `widthDecision(body, ctx)` from a quiet probe cascade, before anything is lowered ([support.md](support.md#design-width)). |
 | input lint | `src/lint/` | Client support for CSS that reaches the output, accessibility and dark-mode checks, on the styled tree only. |

@@ -3,7 +3,8 @@ import { adapter } from "parse5-htmlparser2-tree-adapter";
 import { describe, expect, test } from "vitest";
 import { parse } from "../../src/parse/html.ts";
 import { sanitize } from "../../src/sanitize/sanitize.ts";
-import { codesOf, testCtx } from "../helpers/index.ts";
+import { codesOf, styledFrom, testCtx } from "../helpers/index.ts";
+import type { StyledElement } from "../../src/style/types.ts";
 
 const ser = (n: unknown): string => serialize(n as never, { treeAdapter: adapter });
 
@@ -107,6 +108,30 @@ describe("sanitize", () => {
       const r = run('<p>a<input type="HIDDEN" name="t" value="x"></p>');
       expect(r.html).toBe("<p>a</p>");
       expect(codesOf(r.ctx)).toEqual(["I002"]);
+    });
+
+    test("a radio or checkbox is removed but kept for the cascade to read its state", () => {
+      const r = run('<p>a<input type="radio" checked><input type="Checkbox"><input type="text"></p>');
+      expect(codesOf(r.ctx)).toEqual(["E008"]);
+      expect([...(r.out.stateOnly ?? [])].map((e) => e.attribs["type"])).toEqual(["radio", "Checkbox"]);
+      expect(r.html).toBe('<p>a<input type="radio" checked=""><input type="Checkbox"></p>');
+    });
+
+    test("the panel a :checked hack starts on stays, the inputs don't compile", () => {
+      const css = "<style>.p{display:none}#a:checked~.p1{display:block}#b:checked~.p2{display:block}</style>";
+      const all = (n: StyledElement): StyledElement[] => [n, ...n.children.flatMap((c) => (c.type === "element" ? all(c) : []))];
+      const ctx = testCtx();
+      const els = all(styledFrom(`${css}<div><input type="radio" id="a" name="t" checked><input type="radio" id="b" name="t"><div class="p p1">one</div><div class="p p2">two</div></div>`, ctx));
+      expect(els.map((e) => e.tag)).not.toContain("input");
+      expect(els.filter((e) => e.attrs["class"]?.startsWith("p ")).map((e) => e.style["display"])).toEqual(["block", "none"]);
+      // the reader would see these two, so the controls are lost
+      expect(codesOf(ctx).filter((c) => c === "E008")).toHaveLength(2);
+    });
+
+    test("a checkbox the stylesheet hides is hidden content, I002", () => {
+      const ctx = testCtx();
+      styledFrom('<style>input{display:none}</style><p>a<input type="checkbox" id="x"><label for="x">b</label></p>', ctx);
+      expect(ctx.diagnostics.list().map((d) => [d.code, d.message])).toEqual([["I002", "Hidden <input> dropped"]]);
     });
 
     test("srcdoc and formaction go wherever they sit", () => {

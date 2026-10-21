@@ -2,6 +2,7 @@ import type { Ctx } from "../ctx.ts";
 import { withLoc } from "../loc.ts";
 import { isElement, locOf } from "../parse/dom.ts";
 import type { ParsedDoc } from "../parse/html.ts";
+import { removedControl } from "../sanitize/sanitize.ts";
 import { backdropOf, flattenStyle, translucentLeft, type RGB } from "./alpha.ts";
 import { cascade } from "./cascade.ts";
 import { computeValues } from "./inherit.ts";
@@ -126,7 +127,12 @@ export const computeStyles = (doc: ParsedDoc, ctx: Ctx, env: Env = DESKTOP, show
 
   const rootStyle = rootRaw && shown(rootRaw);
   const rootVars = new Set(root && isElement(root) ? [...query.vwOf(root)].filter((n) => n.startsWith("--")) : []);
-  const body = materialize(doc.body, query);
+  // a hidden one is hidden content, as a hidden input is; one the reader sees is a lost control
+  for (const el of doc.stateOnly ?? []) {
+    if (query.styleOf(el).values["display"] === "none") ctx.diagnostics.report("I002", { message: "Hidden <input> dropped", loc: locOf(el) });
+    else removedControl("input", locOf(el), ctx);
+  }
+  const body = materialize(doc.body, query, doc.stateOnly);
   // the source is seen on a white page unless html says otherwise
   return { body: element(body, rootRaw, rootStyle, backdropOf(rootStyle ?? {}, [255, 255, 255]), rootVars), conditions, fonts };
 };

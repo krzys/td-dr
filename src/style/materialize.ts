@@ -23,12 +23,14 @@ export type CascadeQuery = Pick<CascadeOutput, "styleOf" | "vwOf" | "pseudoOf">;
 const pseudoElement = (p: PseudoElement, loc: SrcLoc | undefined): CascadedElement =>
   withLoc({ type: "element", tag: p.tag, attrs: {}, cascaded: p.cascaded, vw: p.vw, children: [{ type: "text", text: p.text }] }, loc);
 
-export const materialize = (el: DomElement, q: CascadeQuery): CascadedElement => {
+// `skip`: elements the cascade reads but nothing compiles (ParsedDoc.stateOnly)
+export const materialize = (el: DomElement, q: CascadeQuery, skip?: ReadonlySet<DomElement>): CascadedElement => {
   const loc = locOf(el);
   const kids: CascadedNode[] = [];
   for (const n of children(el)) {
-    if (isElement(n)) kids.push(materialize(n, q));
-    else if (isText(n)) kids.push(withLoc({ type: "text", text: n.data }, locOf(n)));
+    if (isElement(n)) {
+      if (!skip?.has(n)) kids.push(materialize(n, q, skip));
+    } else if (isText(n)) kids.push(withLoc({ type: "text", text: n.data }, locOf(n)));
     else if (isComment(n)) kids.push(withLoc({ type: "comment", data: n.data }, locOf(n)));
   }
   for (const p of q.pseudoOf(el)) {

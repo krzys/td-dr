@@ -17,6 +17,9 @@ export type ParsedDoc = {
   body: DomElement;
   styles: StyleSource[]; // <style> blocks in order, then options.css
   meta: DocMeta;
+  // Radios and checkboxes sanitize removed but left in place, so :checked and the sibling
+  // selectors after them match as in the browser; the cascade reads them, nothing compiles them.
+  stateOnly?: ReadonlySet<DomElement>;
 };
 
 // Takes a full document or just body content.

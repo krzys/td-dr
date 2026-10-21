@@ -67,9 +67,11 @@ E008s fail the build.
   kept (I001).
 - `iframe`, `object`, `embed`, `applet`, `portal`, `fencedframe`: removed with what they hold
   (E008). Mail clients load no embedded documents or plugins; link to the page instead.
-- `input`, `select`, `textarea`, `button`, `datalist`: removed (E008), a hidden `input` with I002.
-  Checkbox and radio hacks for interactive email go too. A `<form>` is unwrapped, its text kept
-  (E008). For a call to action use an `<a>`, lowered to a [bulletproof button](#bulletproof-buttons).
+- `input`, `select`, `textarea`, `button`, `datalist`: removed (E008), a hidden `input` with I002,
+  as is a checkbox or radio the stylesheet hides. Checkbox and radio hacks for interactive email go
+  too: what is sent is the state the inputs start in, as `:checked` and the sibling selectors read
+  it. A `<form>` is unwrapped, its text kept (E008). For a call to action use an `<a>`, lowered
+  to a [bulletproof button](#bulletproof-buttons).
 - AMP for Email (`<html ⚡4email>`, `amp4email`, `amp-*` elements, the AMP runtime): refused with
   one E008. td;dr compiles the `text/html` part; AMP goes in its own `text/x-amp-html` part. The
   `amp4email-boilerplate` style is ignored, so what allow mode writes stays visible.

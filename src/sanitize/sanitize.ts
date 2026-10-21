@@ -27,6 +27,9 @@ const CONTROLS = new Set(["input", "select", "textarea", "button", "keygen", "da
 const EMBED_HINT = "Mail clients don't load embedded pages or plugins. Link to the page instead, e.g. with a screenshot of it as the link's image.";
 const CONTROL_HINT = 'Mail clients disable or strip form controls. Link to a form on the web instead; an <a> with data-email="button" makes a button every client shows.';
 
+export const removedControl = (tag: string, loc: SrcLoc | undefined, ctx: Ctx): void =>
+  ctx.diagnostics.report("E008", { message: `<${tag}> removed: mail clients disable or strip form controls`, hint: CONTROL_HINT, loc });
+
 // Conditional comments the MSO patterns depend on, in all their spellings.
 const MSO_COMMENT = /^\s*(\[if[\s\]]|\[endif\]|<!\[endif\])/;
 
@@ -297,6 +300,7 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
   };
 
   const preheader: string[] = [];
+  const stateOnly = new Set<DomElement>();
   // only what a reader would see; stylesheet-hidden text can't be known here
   const shown = (n: DomNode): string => {
     if (isText(n)) return n.data;
@@ -309,12 +313,8 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
   const hintAt = (el: DomElement, message: string): void => ctx.diagnostics.report("E012", { message, hint: PREHEADER_HINT, loc: locOf(el) });
 
   const removed = (tag: string, n: DomNode): void => {
-    const embed = EMBEDS.has(tag);
-    ctx.diagnostics.report("E008", {
-      message: `<${tag}> removed: ${embed ? "mail clients don't load embedded documents or plugins" : "mail clients disable or strip form controls"}`,
-      hint: embed ? EMBED_HINT : CONTROL_HINT,
-      loc: locOf(n),
-    });
+    if (!EMBEDS.has(tag)) return removedControl(tag, locOf(n), ctx);
+    ctx.diagnostics.report("E008", { message: `<${tag}> removed: mail clients don't load embedded documents or plugins`, hint: EMBED_HINT, loc: locOf(n) });
   };
 
   const cleanAttrs = (c: DomElement, svg: boolean): void => {
@@ -395,7 +395,14 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
         continue;
       }
       if (EMBEDS.has(lower) || CONTROLS.has(lower)) {
-        if (lower === "input" && c.attribs["type"]?.trim().toLowerCase() === "hidden") {
+        const type = lower === "input" ? c.attribs["type"]?.trim().toLowerCase() : undefined;
+        // a :checked hack compiles to its initial state, which the cascade reads off these;
+        // the style stage reports them, as only it knows whether the reader sees them
+        if (type === "radio" || type === "checkbox") {
+          stateOnly.add(c);
+          continue;
+        }
+        if (type === "hidden") {
           ctx.diagnostics.report("I002", { message: "Hidden <input> dropped", hint: "A hidden input only feeds a form submit, which mail clients don't do.", loc: locOf(c) });
         } else removed(lower, c);
         detach(kids, c);
@@ -475,5 +482,5 @@ export const sanitize = (doc: ParsedDoc, ctx: Ctx): ParsedDoc => {
   }
 
   const meta = preheader.length > 0 ? { ...doc.meta, preheader: preheader.join(" ") } : doc.meta;
-  return { document, body, styles: doc.styles, meta };
+  return stateOnly.size > 0 ? { document, body, styles: doc.styles, meta, stateOnly } : { document, body, styles: doc.styles, meta };
 };
