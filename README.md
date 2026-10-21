@@ -49,8 +49,9 @@ for (const d of diagnostics) console.log(d.severity, d.code, d.message, d.loc);
 | `template` | none | `"handlebars"` or `"liquid"`: write fields and blocks for an ESP ([templates](docs/templates.md)). |
 | `trace` | `false` | Also return which input element each output tag came from. |
 
-A diagnostic is `{ code, severity, message, hint?, loc?: { line, col, file? } }`: `E…` errors,
-`W…` warnings, `I…` notes ([all codes](docs/support.md#diagnostic-codes)). The package also exports
+A diagnostic is `{ code, severity, message, hint?, loc?: { line, col, file? }, locs? }`: `E…` errors,
+`W…` warnings, `I…` notes ([all codes](docs/support.md#diagnostic-codes)). One said the same way at
+several places comes once, as "… (N places)" at the first, with every place in `locs`. The package also exports
 `preview(html, props)`, `field(path)` and `writeString(text, dialect)` for templates.
 
 ## Command line

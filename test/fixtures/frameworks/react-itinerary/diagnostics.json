@@ -52,42 +52,30 @@
   {
     "code": "W003",
     "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
+    "message": "shorter items' backgrounds won't stretch (4 places)",
     "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
     "loc": {
       "line": 191,
       "col": 1088
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
-    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
-    "loc": {
-      "line": 191,
-      "col": 1121
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
-    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
-    "loc": {
-      "line": 191,
-      "col": 1691
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
-    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
-    "loc": {
-      "line": 191,
-      "col": 1724
-    }
+    },
+    "locs": [
+      {
+        "line": 191,
+        "col": 1088
+      },
+      {
+        "line": 191,
+        "col": 1121
+      },
+      {
+        "line": 191,
+        "col": 1691
+      },
+      {
+        "line": 191,
+        "col": 1724
+      }
+    ]
   },
   {
     "code": "W003",

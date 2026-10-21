@@ -2,42 +2,30 @@
   {
     "code": "W001",
     "severity": "warning",
-    "message": "min-width: 160px is dropped",
+    "message": "min-width: 160px is dropped (4 places)",
     "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
     "loc": {
       "line": 7,
       "col": 3
-    }
-  },
-  {
-    "code": "W001",
-    "severity": "warning",
-    "message": "min-width: 160px is dropped",
-    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
-    "loc": {
-      "line": 8,
-      "col": 3
-    }
-  },
-  {
-    "code": "W001",
-    "severity": "warning",
-    "message": "min-width: 160px is dropped",
-    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
-    "loc": {
-      "line": 9,
-      "col": 3
-    }
-  },
-  {
-    "code": "W001",
-    "severity": "warning",
-    "message": "min-width: 160px is dropped",
-    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
-    "loc": {
-      "line": 10,
-      "col": 3
-    }
+    },
+    "locs": [
+      {
+        "line": 7,
+        "col": 3
+      },
+      {
+        "line": 8,
+        "col": 3
+      },
+      {
+        "line": 9,
+        "col": 3
+      },
+      {
+        "line": 10,
+        "col": 3
+      }
+    ]
   },
   {
     "code": "W003",

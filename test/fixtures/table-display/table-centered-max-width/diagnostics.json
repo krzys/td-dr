@@ -2,21 +2,21 @@
   {
     "code": "W003",
     "severity": "warning",
-    "message": "max-width on a display: table without a width is ignored: the table is as wide as its content, uncapped",
+    "message": "max-width on a display: table without a width is ignored: the table is as wide as its content, uncapped (2 places)",
     "hint": "Give the table a width, or put the max-width on a wrapper around it.",
     "loc": {
       "line": 2,
       "col": 3
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "max-width on a display: table without a width is ignored: the table is as wide as its content, uncapped",
-    "hint": "Give the table a width, or put the max-width on a wrapper around it.",
-    "loc": {
-      "line": 5,
-      "col": 3
-    }
+    },
+    "locs": [
+      {
+        "line": 2,
+        "col": 3
+      },
+      {
+        "line": 5,
+        "col": 3
+      }
+    ]
   }
 ]

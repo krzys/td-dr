@@ -38,10 +38,10 @@ describe(":checked tabs collapse to the initial state", () => {
     expect(html).not.toMatch(/<label/);
     expect(html).toContain(">A<");
     expect(html).not.toMatch(/>[BC]</);
-    expect(diagnostics.filter((d) => d.code === "I002").map((d) => d.message)).toEqual([
-      "Hidden <input> dropped", "Hidden <input> dropped", "Hidden <input> dropped",
-      "Hidden <label> dropped", "Hidden <label> dropped", "Hidden <label> dropped",
-      "Hidden <div> dropped", "Hidden <div> dropped",
+    expect(diagnostics.filter((d) => d.code === "I002").map((d) => [d.message, d.locs?.length])).toEqual([
+      ["Hidden <input> dropped (3 places)", 3],
+      ["Hidden <label> dropped (3 places)", 3],
+      ["Hidden <div> dropped (2 places)", 2],
     ]);
   });
 

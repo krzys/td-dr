@@ -3,7 +3,7 @@ import { readFileSync, realpathSync, statSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { LANG_TAG } from "./ctx.ts";
-import { compile } from "./index.ts";
+import { compile, type Diagnostic } from "./index.ts";
 import { decodeCss, decodeHtml } from "./parse/decode.ts";
 import { UnknownTargetError } from "./targets/capabilities.ts";
 
@@ -77,6 +77,13 @@ type BuildEmails = (o: {
 }) => Promise<
   Array<{ email: string; dialect?: string; file?: string; skipped?: string; error?: string; assets?: string[]; diagnostics: Array<{ severity: string; code: string; message: string; hint?: string }> }>
 >;
+
+// "file:line:col: severity code: message", then the other places of one said for several, then the hint
+const formatDiagnostic = (d: Diagnostic, file: string): string => {
+  const where = d.loc ? `${d.loc.file ?? file}:${d.loc.line}:${d.loc.col}` : file;
+  const others = (d.locs ?? []).slice(1).map((l) => `${l.file && l.file !== d.loc?.file ? `${l.file}:` : ""}${l.line}:${l.col}`);
+  return `${where}: ${d.severity} ${d.code}: ${d.message}\n${others.length > 0 ? `  also at: ${others.join(", ")}\n` : ""}${d.hint ? `  hint: ${d.hint}\n` : ""}`;
+};
 
 const buildDir = async (
   dir: string,
@@ -281,11 +288,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     return 2;
   }
 
-  for (const d of result.diagnostics) {
-    const where = d.loc ? `${d.loc.file ?? input}:${d.loc.line}:${d.loc.col}` : input;
-    io.stderr(`${where}: ${d.severity} ${d.code}: ${d.message}\n`);
-    if (d.hint) io.stderr(`  hint: ${d.hint}\n`);
-  }
+  for (const d of result.diagnostics) io.stderr(formatDiagnostic(d, input));
 
   if (values.out) {
     try {

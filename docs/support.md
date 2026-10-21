@@ -740,7 +740,9 @@ Seen in a local test of a few mail clients, beyond the caniemail data:
 
 Defaults from `src/diagnostics/codes.ts`; codes are never renumbered. With `strict: false`, errors
 are reported as warnings and the input is kept as written, except E018, which leaves no output to
-keep. Client-support problems are warnings even in strict mode.
+keep. Client-support problems are warnings even in strict mode. A diagnostic is said once: the same
+code, message and hint at several places comes as one "… (N places)" at the first of them, with
+every place in `locs` (the CLI prints them as "also at").
 
 | Code | Meaning |
 |---|---|

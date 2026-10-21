@@ -62,32 +62,26 @@
   {
     "code": "I010",
     "severity": "info",
-    "message": "Link text \"Read more →\" doesn't say where it goes",
+    "message": "Link text \"Read more →\" doesn't say where it goes (3 places)",
     "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
     "loc": {
       "line": 157,
       "col": 1043
-    }
-  },
-  {
-    "code": "I010",
-    "severity": "info",
-    "message": "Link text \"Read more →\" doesn't say where it goes",
-    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
-    "loc": {
-      "line": 157,
-      "col": 1400
-    }
-  },
-  {
-    "code": "I010",
-    "severity": "info",
-    "message": "Link text \"Read more →\" doesn't say where it goes",
-    "hint": "Read alone, as screen readers list links, it means nothing. Name the destination, e.g. \"Read the spring guide\".",
-    "loc": {
-      "line": 157,
-      "col": 1753
-    }
+    },
+    "locs": [
+      {
+        "line": 157,
+        "col": 1043
+      },
+      {
+        "line": 157,
+        "col": 1400
+      },
+      {
+        "line": 157,
+        "col": 1753
+      }
+    ]
   },
   {
     "code": "I013",

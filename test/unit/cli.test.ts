@@ -99,6 +99,14 @@ describe("cli", () => {
     expect(t.err.join("")).toBe("in.html:2:7: error E999: msg\n  hint: h\n");
   });
 
+  it("lists the other places of a diagnostic said for several", async () => {
+    const locs = [{ line: 2, col: 7 }, { line: 5, col: 1 }, { line: 9, col: 3 }];
+    vi.mocked(compile).mockReturnValueOnce({ html: "", diagnostics: [{ code: "W001", severity: "warning", message: "m (3 places)", loc: locs[0], locs }] as never });
+    const t = fakeIO();
+    expect(await run(["build", "in.html"], t.io)).toBe(0);
+    expect(t.err.join("")).toBe("in.html:2:7: warning W001: m (3 places)\n  also at: 5:1, 9:3\n");
+  });
+
   it("passes --lang to compile, and rejects one that isn't a language tag", async () => {
     vi.mocked(compile).mockReturnValueOnce(clean);
     expect(await run(["build", "in.html", "--lang", "de-AT"], fakeIO().io)).toBe(0);

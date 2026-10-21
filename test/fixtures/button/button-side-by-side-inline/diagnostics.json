@@ -12,21 +12,21 @@
   {
     "code": "W003",
     "severity": "warning",
-    "message": "this button sits inside text, so it isn't bulletproofed: Outlook drops its padding and background",
+    "message": "this button sits inside text, so it isn't bulletproofed: Outlook drops its padding and background (2 places)",
     "hint": "Make it its own block: move it out of the paragraph or text run, e.g. into a <div> of its own.",
     "loc": {
       "line": 2,
       "col": 3
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "this button sits inside text, so it isn't bulletproofed: Outlook drops its padding and background",
-    "hint": "Make it its own block: move it out of the paragraph or text run, e.g. into a <div> of its own.",
-    "loc": {
-      "line": 3,
-      "col": 3
-    }
+    },
+    "locs": [
+      {
+        "line": 2,
+        "col": 3
+      },
+      {
+        "line": 3,
+        "col": 3
+      }
+    ]
   }
 ]

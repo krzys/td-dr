@@ -1,5 +1,5 @@
 import { createCtx, type CompileOptions } from "./ctx.ts";
-import type { Diagnostic } from "./diagnostics/diagnostic.ts";
+import { collapse, type Diagnostic } from "./diagnostics/diagnostic.ts";
 import type { TraceEntry } from "./post/trace.ts";
 import { stripBom } from "./parse/decode.ts";
 import { runTraced } from "./pipeline.ts";
@@ -19,5 +19,5 @@ export type CompileResult = { html: string; diagnostics: Diagnostic[]; trace?: T
 export const compile = (html: string, options: CompileOptions = {}): CompileResult => {
   const ctx = createCtx(options);
   const out = runTraced(stripBom(html), ctx);
-  return { ...out, diagnostics: ctx.diagnostics.list() };
+  return { ...out, diagnostics: collapse(ctx.diagnostics.list()) };
 };

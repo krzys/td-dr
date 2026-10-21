@@ -12,41 +12,29 @@
   {
     "code": "W003",
     "severity": "warning",
-    "message": "align-items: baseline is approximated as top",
+    "message": "align-items: baseline is approximated as top (4 places)",
     "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
     "loc": {
       "line": 14,
       "col": 5
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "align-items: baseline is approximated as top",
-    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
-    "loc": {
-      "line": 19,
-      "col": 5
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "align-items: baseline is approximated as top",
-    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
-    "loc": {
-      "line": 24,
-      "col": 5
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "align-items: baseline is approximated as top",
-    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
-    "loc": {
-      "line": 29,
-      "col": 5
-    }
+    },
+    "locs": [
+      {
+        "line": 14,
+        "col": 5
+      },
+      {
+        "line": 19,
+        "col": 5
+      },
+      {
+        "line": 24,
+        "col": 5
+      },
+      {
+        "line": 29,
+        "col": 5
+      }
+    ]
   }
 ]

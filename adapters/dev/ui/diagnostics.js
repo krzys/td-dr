@@ -96,6 +96,8 @@ export const renderDiagnostics = (list, ds, source, { filter = "all", selected =
         { class: "diag-body" },
         h("span", { class: "diag-line" }, h("code", { class: "diag-code" }, d.code), h("span", { class: "diag-msg" }, d.message)),
         d.hint && h("span", { class: "diag-hint" }, rich(d.hint)),
+        // one row said for several places names the others (docs/support.md#diagnostic-codes)
+        d.locs && d.locs.length > 1 && h("span", { class: "diag-hint" }, `Also at ${d.locs.slice(1).map((l) => { const p = l.file ? l : place(l); return `${l.file ? `${l.file}:` : ""}${p.line}:${p.col}`; }).join(", ")}`),
       ),
       where && h("span", { class: "loc" }, where),
     );

@@ -102,91 +102,73 @@
   {
     "code": "W001",
     "severity": "warning",
-    "message": "box-shadow: 0 2px 8px rgba(15, 42, 74, 0.06) is dropped",
+    "message": "box-shadow: 0 2px 8px rgba(15, 42, 74, 0.06) is dropped (2 places)",
     "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
     "loc": {
       "line": 79,
       "col": 5
-    }
-  },
-  {
-    "code": "W001",
-    "severity": "warning",
-    "message": "box-shadow: 0 2px 8px rgba(15, 42, 74, 0.06) is dropped",
-    "hint": "There's no email-safe way to keep this exactly, so td;dr left it out or used the closest safe form.",
-    "loc": {
-      "line": 132,
-      "col": 5
-    }
+    },
+    "locs": [
+      {
+        "line": 79,
+        "col": 5
+      },
+      {
+        "line": 132,
+        "col": 5
+      }
+    ]
   },
   {
     "code": "I004",
     "severity": "info",
-    "message": "<a href> around a block: the link moves onto the 2 text runs or images inside",
+    "message": "<a href> around a block: the link moves onto the 2 text runs or images inside (3 places)",
     "hint": "Email clients can't make a whole box a link (Outlook drops a link around a table), so each text run and image inside gets the href; the padding between them isn't clickable.",
     "loc": {
       "line": 157,
       "col": 7
-    }
-  },
-  {
-    "code": "I004",
-    "severity": "info",
-    "message": "<a href> around a block: the link moves onto the 2 text runs or images inside",
-    "hint": "Email clients can't make a whole box a link (Outlook drops a link around a table), so each text run and image inside gets the href; the padding between them isn't clickable.",
-    "loc": {
-      "line": 161,
-      "col": 7
-    }
-  },
-  {
-    "code": "I004",
-    "severity": "info",
-    "message": "<a href> around a block: the link moves onto the 2 text runs or images inside",
-    "hint": "Email clients can't make a whole box a link (Outlook drops a link around a table), so each text run and image inside gets the href; the padding between them isn't clickable.",
-    "loc": {
-      "line": 165,
-      "col": 7
-    }
+    },
+    "locs": [
+      {
+        "line": 157,
+        "col": 7
+      },
+      {
+        "line": 161,
+        "col": 7
+      },
+      {
+        "line": 165,
+        "col": 7
+      }
+    ]
   },
   {
     "code": "W003",
     "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
+    "message": "shorter items' backgrounds won't stretch (4 places)",
     "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
     "loc": {
       "line": 176,
       "col": 9
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
-    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
-    "loc": {
-      "line": 177,
-      "col": 9
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
-    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
-    "loc": {
-      "line": 178,
-      "col": 9
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
-    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
-    "loc": {
-      "line": 179,
-      "col": 9
-    }
+    },
+    "locs": [
+      {
+        "line": 176,
+        "col": 9
+      },
+      {
+        "line": 177,
+        "col": 9
+      },
+      {
+        "line": 178,
+        "col": 9
+      },
+      {
+        "line": 179,
+        "col": 9
+      }
+    ]
   }
 ]

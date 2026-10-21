@@ -12,42 +12,42 @@
   {
     "code": "I002",
     "severity": "info",
-    "message": "Hidden <input> dropped",
+    "message": "Hidden <input> dropped (2 places)",
     "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
     "loc": {
       "line": 12,
       "col": 5
-    }
+    },
+    "locs": [
+      {
+        "line": 12,
+        "col": 5
+      },
+      {
+        "line": 13,
+        "col": 5
+      }
+    ]
   },
   {
     "code": "I002",
     "severity": "info",
-    "message": "Hidden <input> dropped",
-    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
-    "loc": {
-      "line": 13,
-      "col": 5
-    }
-  },
-  {
-    "code": "I002",
-    "severity": "info",
-    "message": "Hidden <label> dropped",
+    "message": "Hidden <label> dropped (2 places)",
     "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
     "loc": {
       "line": 14,
       "col": 5
-    }
-  },
-  {
-    "code": "I002",
-    "severity": "info",
-    "message": "Hidden <label> dropped",
-    "hint": "display:none content is not emitted. For preview text use data-email=\"preheader\".",
-    "loc": {
-      "line": 15,
-      "col": 5
-    }
+    },
+    "locs": [
+      {
+        "line": 14,
+        "col": 5
+      },
+      {
+        "line": 15,
+        "col": 5
+      }
+    ]
   },
   {
     "code": "I002",

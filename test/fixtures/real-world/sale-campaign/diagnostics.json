@@ -102,102 +102,78 @@
   {
     "code": "W003",
     "severity": "warning",
-    "message": "align-items: baseline is approximated as top",
+    "message": "align-items: baseline is approximated as top (4 places)",
     "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
     "loc": {
       "line": 92,
       "col": 11
-    }
+    },
+    "locs": [
+      {
+        "line": 92,
+        "col": 11
+      },
+      {
+        "line": 97,
+        "col": 11
+      },
+      {
+        "line": 102,
+        "col": 11
+      },
+      {
+        "line": 107,
+        "col": 11
+      }
+    ]
   },
   {
     "code": "W003",
     "severity": "warning",
-    "message": "align-items: baseline is approximated as top",
-    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
-    "loc": {
-      "line": 97,
-      "col": 11
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "align-items: baseline is approximated as top",
-    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
-    "loc": {
-      "line": 102,
-      "col": 11
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "align-items: baseline is approximated as top",
-    "hint": "Tables can't express this exactly, so the email will differ slightly from the browser here.",
-    "loc": {
-      "line": 107,
-      "col": 11
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "flex-grow on a calc() flex-basis is ignored; the item keeps its calc() width",
+    "message": "flex-grow on a calc() flex-basis is ignored; the item keeps its calc() width (4 places)",
     "hint": "This only matters when its line has room left over; if the line is already full, flex: 0 0 calc(...) says the same thing. A px flex-basis lets an item grow.",
     "loc": {
       "line": 90,
       "col": 9
-    }
+    },
+    "locs": [
+      {
+        "line": 90,
+        "col": 9
+      },
+      {
+        "line": 95,
+        "col": 9
+      },
+      {
+        "line": 100,
+        "col": 9
+      },
+      {
+        "line": 105,
+        "col": 9
+      }
+    ]
   },
   {
     "code": "W003",
     "severity": "warning",
-    "message": "flex-grow on a calc() flex-basis is ignored; the item keeps its calc() width",
-    "hint": "This only matters when its line has room left over; if the line is already full, flex: 0 0 calc(...) says the same thing. A px flex-basis lets an item grow.",
-    "loc": {
-      "line": 95,
-      "col": 9
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "flex-grow on a calc() flex-basis is ignored; the item keeps its calc() width",
-    "hint": "This only matters when its line has room left over; if the line is already full, flex: 0 0 calc(...) says the same thing. A px flex-basis lets an item grow.",
-    "loc": {
-      "line": 100,
-      "col": 9
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "flex-grow on a calc() flex-basis is ignored; the item keeps its calc() width",
-    "hint": "This only matters when its line has room left over; if the line is already full, flex: 0 0 calc(...) says the same thing. A px flex-basis lets an item grow.",
-    "loc": {
-      "line": 105,
-      "col": 9
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
+    "message": "shorter items' backgrounds won't stretch (2 places)",
     "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
     "loc": {
       "line": 129,
       "col": 11
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "shorter items' backgrounds won't stretch",
-    "hint": "Only full-width boxes can stretch to the row's height in email; drop the item's width or align it to the top.",
-    "loc": {
-      "line": 130,
-      "col": 11
-    }
+    },
+    "locs": [
+      {
+        "line": 129,
+        "col": 11
+      },
+      {
+        "line": 130,
+        "col": 11
+      }
+    ]
   },
   {
     "code": "W001",

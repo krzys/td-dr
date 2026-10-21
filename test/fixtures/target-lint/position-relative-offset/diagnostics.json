@@ -12,21 +12,21 @@
   {
     "code": "E002",
     "severity": "error",
-    "message": "position: relative with top: -6px is not supported",
+    "message": "position: relative with top: -6px is not supported (2 places)",
     "hint": "Absolute, fixed and sticky positioning do not work in email clients; use normal flow or flex. Without strict mode the element stays where it sits in the HTML.",
     "loc": {
       "line": 9,
       "col": 3
-    }
-  },
-  {
-    "code": "E002",
-    "severity": "error",
-    "message": "position: relative with top: -6px is not supported",
-    "hint": "Absolute, fixed and sticky positioning do not work in email clients; use normal flow or flex. Without strict mode the element stays where it sits in the HTML.",
-    "loc": {
-      "line": 13,
-      "col": 3
-    }
+    },
+    "locs": [
+      {
+        "line": 9,
+        "col": 3
+      },
+      {
+        "line": 13,
+        "col": 3
+      }
+    ]
   }
 ]

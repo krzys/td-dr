@@ -22,21 +22,21 @@
   {
     "code": "W003",
     "severity": "warning",
-    "message": "Outlook button size is estimated; give the button a px width",
+    "message": "Outlook button size is estimated; give the button a px width (2 places)",
     "hint": "Outlook draws rounded buttons with a fixed-size shape, so td;dr guesses it from the text.",
     "loc": {
       "line": 3,
       "col": 36
-    }
-  },
-  {
-    "code": "W003",
-    "severity": "warning",
-    "message": "Outlook button size is estimated; give the button a px width",
-    "hint": "Outlook draws rounded buttons with a fixed-size shape, so td;dr guesses it from the text.",
-    "loc": {
-      "line": 4,
-      "col": 34
-    }
+    },
+    "locs": [
+      {
+        "line": 3,
+        "col": 36
+      },
+      {
+        "line": 4,
+        "col": 34
+      }
+    ]
   }
 ]

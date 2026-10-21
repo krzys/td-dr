@@ -82,12 +82,22 @@
   {
     "code": "W001",
     "severity": "warning",
-    "message": "Text clipped to its background becomes solid #2f3cff",
+    "message": "Text clipped to its background becomes solid #2f3cff (2 places)",
     "hint": "Email clients can't clip a background to text; the first colour stop is used. Set a solid color to choose it.",
     "loc": {
       "line": 34,
       "col": 5
-    }
+    },
+    "locs": [
+      {
+        "line": 34,
+        "col": 5
+      },
+      {
+        "line": 83,
+        "col": 5
+      }
+    ]
   },
   {
     "code": "W003",
@@ -122,52 +132,30 @@
   {
     "code": "E005",
     "severity": "error",
-    "message": "margin-left: -8px is negative",
+    "message": "margin-left: -8px is negative (4 places)",
     "hint": "Negative margins on flex and grid items are never lowered: space the items with gap or padding, or for an overlap (an avatar stack) use a single pre-composed image.",
     "loc": {
       "line": 77,
       "col": 7
-    }
-  },
-  {
-    "code": "E005",
-    "severity": "error",
-    "message": "margin-left: -8px is negative",
-    "hint": "Negative margins on flex and grid items are never lowered: space the items with gap or padding, or for an overlap (an avatar stack) use a single pre-composed image.",
-    "loc": {
-      "line": 78,
-      "col": 7
-    }
-  },
-  {
-    "code": "E005",
-    "severity": "error",
-    "message": "margin-left: -8px is negative",
-    "hint": "Negative margins on flex and grid items are never lowered: space the items with gap or padding, or for an overlap (an avatar stack) use a single pre-composed image.",
-    "loc": {
-      "line": 79,
-      "col": 7
-    }
-  },
-  {
-    "code": "E005",
-    "severity": "error",
-    "message": "margin-left: -8px is negative",
-    "hint": "Negative margins on flex and grid items are never lowered: space the items with gap or padding, or for an overlap (an avatar stack) use a single pre-composed image.",
-    "loc": {
-      "line": 80,
-      "col": 7
-    }
-  },
-  {
-    "code": "W001",
-    "severity": "warning",
-    "message": "Text clipped to its background becomes solid #2f3cff",
-    "hint": "Email clients can't clip a background to text; the first colour stop is used. Set a solid color to choose it.",
-    "loc": {
-      "line": 83,
-      "col": 5
-    }
+    },
+    "locs": [
+      {
+        "line": 77,
+        "col": 7
+      },
+      {
+        "line": 78,
+        "col": 7
+      },
+      {
+        "line": 79,
+        "col": 7
+      },
+      {
+        "line": 80,
+        "col": 7
+      }
+    ]
   },
   {
     "code": "W001",
