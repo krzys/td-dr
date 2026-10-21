@@ -1,11 +1,33 @@
 {
   "name": "tddr",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "description": "td;dr (too divvy; didn't render) — compile normal HTML/CSS into email-safe HTML",
+  "keywords": [
+    "email",
+    "html-email",
+    "email-templates",
+    "outlook",
+    "mso",
+    "compiler",
+    "css-inliner",
+    "responsive-email",
+    "react",
+    "vue",
+    "vite"
+  ],
+  "license": "MIT",
+  "author": "Krzysztof Sternik",
+  "homepage": "https://github.com/krzys/td-dr#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krzys/td-dr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/krzys/td-dr/issues"
+  },
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.18"
   },
   "bin": {
     "tddr": "./dist/cli.js"

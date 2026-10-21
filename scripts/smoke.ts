@@ -171,7 +171,7 @@ console.log(JSON.stringify({ html, errors: diagnostics.filter((d) => d.severity 
   await check("tddr build in.html -o out.html (node_modules/.bin)", () => {
     must(tddr, ["build", "email.html", "-o", "out.html"]);
     assert(readFileSync(join(APP, "out.html"), "utf8").includes('role="presentation"'), "out.html has no email tables");
-    assert(must(tddr, ["--version"]).trim() === "0.0.0", "--version");
+    assert(must(tddr, ["--version"]).trim() === (JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")) as { version: string }).version, "--version");
   });
 
   await check('types: "tddr" type-checks with skipLibCheck false, no DOM or Node types', () => {
