@@ -88,8 +88,8 @@ E008s fail the build.
 | `vw`, `vmin`, `vmax`, `clamp()`, `min()`, `max()` | Resolved at the [design width](#design-width) (I006). Text sizes stay live in a narrow-screen head rule; layout values are fixed. `vh` is E006. |
 | `hsl()`, `oklch()`, `color-mix()`, other modern colours (`rgb()` with commas stays; in space syntax it is lowered too) | Hex or `rgba()`. Translucent colours are flattened over a known solid backdrop; over an image or gradient they stay as written (W001). |
 | Logical properties, `dir` | Physical sides by the resolved direction ([right-to-left](#right-to-left-text)). |
-| `::before` / `::after` with static `content` | Written as text. Other pseudo-elements warn. |
-| `@media` width and `prefers-color-scheme`, `:hover` | [Head styles](#head-styles). Other media features warn. |
+| `::before` / `::after` with static `content` | Written as text. Other pseudo-elements, and `::before` under a state (`:hover::before`), warn (W001). |
+| `@media` width and `prefers-color-scheme`, `:hover` | [Head styles](#head-styles). Other media features warn. Other states (`:focus`, `:default`, `:invalid`…) are skipped (W001), not syntax errors. |
 | `:checked` (radio and checkbox tabs) | Applied in the initial state, as inlining has no other; what only another state shows is dropped, counted in one W001. A `<label for>` naming a hidden radio or checkbox switches nothing and is dropped too (I002), and counted; one holding a heading or other block (an accordion's question) stays. |
 | `@import`, `@font-face`, font `<link>` | [Web fonts](#web-fonts). |
 | `@container`, other at-rules, rules inside a `style` attribute | Skipped (W001). |

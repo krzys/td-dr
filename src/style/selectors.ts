@@ -5,7 +5,9 @@ export type SelectorKind = "static" | "dynamic" | "noise";
 const QUOTED = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
 const blankStrings = (s: string): string => s.replace(QUOTED, '""');
 
-const STATE = "hover|focus|focus-within|focus-visible|active|visited|target";
+// user and UI state; css-select knows few of the form and media ones and would throw on them
+const STATE =
+  "hover|focus|focus-within|focus-visible|active|visited|target|target-within|local-link|default|indeterminate|valid|invalid|user-valid|user-invalid|in-range|out-of-range|placeholder-shown|autofill|open|modal|popover-open|fullscreen|playing|paused|current|past|future";
 const LEGACY_ELEMENTS = "before|after|first-line|first-letter";
 
 // Things css-select can't answer statically (user state, or no element to match).
@@ -88,4 +90,18 @@ export const hoverSubject = (selector: string): string | undefined => {
   out += s.slice(pos);
   if (out === "" || /[\s>+~]$/.test(out)) out += "*";
   return classifySelector(out, false) === "static" ? out : undefined;
+};
+
+// What makes a dynamic selector one inlining can't follow: a pseudo-element other than ::before and
+// ::after, else a state other than :hover, else a :hover off the subject; `on` is a ::before or
+// ::after the state sits with.
+export type DynamicPart = { element: string } | { state: string; on?: string };
+export const dynamicPart = (selector: string): DynamicPart => {
+  const s = blankStrings(selector);
+  const elements = (s.match(PSEUDO_ELEMENT) ?? []).map((e) => `::${e.replace(/^::?/, "").toLowerCase()}`);
+  const element = elements.find((e) => !BEFORE_AFTER.test(e));
+  if (element) return { element };
+  const states = [...s.matchAll(new RegExp(`(?<!:):(${STATE})(?![\\w-])`, "gi"))].map((m) => `:${m[1]!.toLowerCase()}`);
+  const state = states.find((x) => x !== ":hover") ?? ":hover";
+  return elements[0] ? { state, on: elements[0] } : { state };
 };

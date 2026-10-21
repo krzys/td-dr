@@ -342,6 +342,26 @@ describe("selector noise", () => {
     expect(styled("li::marker{color:red}", "<ul><li>x</li></ul>").ctx.diagnostics.list()[0]?.hint).toContain("marker");
   });
 
+  test("a skipped selector says what it is that can't be followed", () => {
+    const note = (sel: string) => styled(`${sel}{color:red;content:"!"}`, '<ul><li class="c"><p class="t">x</p><a href="#">y</a></li></ul>').ctx.diagnostics.list();
+    expect(note("p::first-letter")[0]?.message).toContain("styles ::first-letter, which inline styles can't reach");
+    expect(note("p::first-letter")[0]?.hint).toContain("<span>");
+    expect(note("li::marker")[0]?.message).not.toContain("state");
+    expect(note("a:focus")[0]?.message).toContain("depends on :focus");
+    expect(note("a:hover:focus")[0]?.message).toContain("depends on :focus");
+    expect(note(".c:hover .t")[0]?.message).toContain("puts :hover on an element other than the one it styles");
+    expect(note(".t:hover::before")[0]?.message).toContain("adds ::before only on :hover");
+    for (const sel of ["p::first-letter", "a:focus", ".c:hover .t", ".t:hover::before"]) expect(note(sel)[0]?.hint, sel).not.toMatch(/ignore :hover and ::before/);
+  });
+
+  test("a form or media state css-select doesn't know is a skipped state, not a syntax error", () => {
+    for (const sel of ["p:default", "p:invalid", "p:placeholder-shown", "p:open"]) {
+      const r = styled(`${sel}{color:red}`);
+      expect(codesOf(r.ctx), sel).toEqual(["W001"]);
+      expect(r.ctx.diagnostics.list()[0]?.message, sel).toContain(`depends on ${sel.slice(1)}`);
+    }
+  });
+
   test("the usable part of a list still applies", () => {
     const r = styled("*, ::after, ::before, ::backdrop, ::file-selector-button{margin-top:0} html, :host{color:red}");
     expect(r.values["margin-top"]).toBe("0");

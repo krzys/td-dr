@@ -2,8 +2,8 @@
   {
     "code": "W001",
     "severity": "warning",
-    "message": "Selector \".hov:hover::before\" depends on state or pseudo-elements and was skipped",
-    "hint": "Styles are inlined, and Gmail and Outlook ignore :hover and ::before anyway; style the element itself.",
+    "message": "Selector \".hov:hover::before\" adds ::before only on :hover and was skipped",
+    "hint": "::before text is inserted from rules without a state (.note::before); put it in that rule, or in the HTML.",
     "loc": {
       "line": 7,
       "col": 3

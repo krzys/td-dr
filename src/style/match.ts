@@ -7,7 +7,7 @@ import type { DomElement } from "../parse/dom.ts";
 import type { ParsedDoc } from "../parse/html.ts";
 import { hoverCombined, type EnvScope } from "./conditions.ts";
 import { nestSelector, nestSpecForm } from "./nesting.ts";
-import { classifySelector, hoverSubject, pseudoTarget, subjectOf, type SelectorKind } from "./selectors.ts";
+import { classifySelector, dynamicPart, hoverSubject, pseudoTarget, subjectOf, type SelectorKind } from "./selectors.ts";
 import { specificity, type Specificity } from "./specificity.ts";
 import type { Env } from "./types.ts";
 
@@ -40,13 +40,32 @@ const reportDynamic = (selector: string, loc: SrcLoc | undefined, select: Select
     // can't tell, so say it
   }
   if (!lands) return;
-  ctx.diagnostics.report("W001", {
-    message: `Selector "${selector}" depends on state or pseudo-elements and was skipped`,
-    hint: /::marker/i.test(selector)
-      ? "List markers can't be styled in email; set the colour on the <li> (it colours the marker too), or use a custom bullet."
-      : "Styles are inlined, and Gmail and Outlook ignore :hover and ::before anyway; style the element itself.",
-    loc,
-  });
+  ctx.diagnostics.report("W001", { ...dynamicNote(selector), loc });
+};
+
+// docs/support.md#css-values: ::before/::after are inserted and :hover on the subject is a head rule
+const dynamicNote = (selector: string): { message: string; hint: string } => {
+  const part = dynamicPart(selector);
+  if ("element" in part) {
+    const message = `Selector "${selector}" styles ${part.element}, which inline styles can't reach, and was skipped`;
+    if (part.element === "::marker") return { message, hint: "List markers can't be styled in email; set the colour on the <li> (it colours the marker too), or use a custom bullet." };
+    if (part.element === "::first-letter" || part.element === "::first-line") return { message, hint: `Wrap the first ${part.element === "::first-letter" ? "letter" : "line"} in a <span> and style the span.` };
+    return { message, hint: "Of the pseudo-elements only ::before and ::after are inserted, as text; style the element itself." };
+  }
+  if (part.on)
+    return {
+      message: `Selector "${selector}" adds ${part.on} only on ${part.state} and was skipped`,
+      hint: `${part.on} text is inserted from rules without a state (.note${part.on}); put it in that rule, or in the HTML.`,
+    };
+  if (part.state === ":hover")
+    return {
+      message: `Selector "${selector}" puts :hover on an element other than the one it styles and was skipped`,
+      hint: "A :hover rule becomes a head rule only when the hover sits on the styled element (.card:hover, a.cta:hover); write the rule for that element.",
+    };
+  return {
+    message: `Selector "${selector}" depends on ${part.state}, which email can't follow, and was skipped`,
+    hint: "Of the states only :hover is carried (as a head rule); style the element itself.",
+  };
 };
 
 export type RuleMatch = {
