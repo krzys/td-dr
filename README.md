@@ -68,6 +68,7 @@ tddr dev emails                                                # preview server,
 | `--targets`, `--width`, `--lang` | As the options above. |
 | `--css <file>` | Extra stylesheet (file builds, repeatable). |
 | `--allow-unsupported`, `--allow-svg` | `strict: false`, `allowSvg: true`. |
+| `--format text\|json\|sarif` | How diagnostics are said (default `text`). |
 | `--file-name <pattern>` | Folder builds: output name from `[name]` and `[dialect]` (default `[name].[dialect].html`). |
 | `--no-verify` | Folder builds: skip the equivalence check. |
 | `--base-url <url>` | Folder builds and dev: where images are hosted; a build copies them to `<out>/assets`. |
@@ -79,6 +80,11 @@ an element at that element's `.vue` line; any other is said at the email's file,
 the rendered page, not the component. The exit code is 1 when an error is reported (the output is
 still written, empty after E018, bar a folder build's template that fails its equivalence check or
 loses a field: E016, E012, E013) and 2 for usage errors.
+
+`--format json` prints the diagnostics to stdout instead, as a list of
+`{ file, line?, column?, code, severity, message, hint?, count, places, dialect? }`, and
+`--format sarif` as a SARIF 2.1.0 log for code scanning; anything else the build says moves to
+stderr, so a file build needs `-o`.
 
 **Folder builds.** An emails folder holds one email per subfolder (`index.jsx` / `index.tsx`,
 `App.vue`) or per file (`welcome.jsx`, `digest.vue`), each default-exporting its component. Every

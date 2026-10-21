@@ -5,6 +5,7 @@ import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { LANG_TAG } from "./ctx.ts";
 import { compile, type Diagnostic } from "./index.ts";
+import { jsonReport, sarifReport, type Reported } from "./diagnostics/report.ts";
 import { decodeCss, decodeHtml } from "./parse/decode.ts";
 import { UnknownTargetError } from "./targets/capabilities.ts";
 
@@ -31,6 +32,8 @@ Build options:
   --allow-svg             keep inline <svg> with a warning (Gmail and Outlook drop it)
   --lang <tag>            the email's language (default: <html lang>, or a component's
                           export const lang, else en)
+  --format <f>            diagnostics as text (default, on stderr), json or sarif
+                          (on stdout, so a file build needs -o)
 
 Folder build:
   --file-name <pattern>   output file per email and dialect, inside --out, from
@@ -53,7 +56,7 @@ Folder build and dev server:
 // adapters/dev's startDevServer, as far as the CLI uses it (a test holds the two together)
 export type StartDevServer = (o: { dir: string; port?: number; host?: string; baseUrl?: string }) => Promise<{ url: string }>;
 
-const BUILD_FLAGS = ["out", "targets", "width", "css", "allow-unsupported", "allow-svg", "lang", "file-name", "no-verify"] as const;
+const BUILD_FLAGS = ["out", "targets", "width", "css", "allow-unsupported", "allow-svg", "lang", "file-name", "no-verify", "format"] as const;
 const DEV_FLAGS = ["port", "host"] as const;
 
 // Adapters load lazily so `tddr build in.html` never imports Vite, an optional peer; tsup emits them
@@ -87,6 +90,27 @@ const formatDiagnostic = (d: Diagnostic, file: string, dialect?: string): string
   return `${where}: ${d.severity} ${d.code}: ${d.message}\n${others.length > 0 ? `  also at: ${others.join(", ")}\n` : ""}${d.hint ? `  hint: ${d.hint}\n` : ""}`;
 };
 
+const FORMATS = ["text", "json", "sarif"] as const;
+type Format = (typeof FORMATS)[number];
+
+// Text says each diagnostic on stderr as it comes. JSON and SARIF are one document on stdout, said at
+// the end, so what else a build says ("wrote …") goes to stderr instead.
+type Reporter = { progress(s: string): void; add(d: Diagnostic, file: string, dialect?: string): void; end(): void };
+const reporter = (format: Format, io: CliIO): Reporter => {
+  const items: Reported[] = [];
+  return {
+    progress: (s) => (format === "text" ? io.stdout(s) : io.stderr(s)),
+    add(diagnostic, file, dialect) {
+      if (format === "text") io.stderr(formatDiagnostic(diagnostic, file, dialect));
+      else items.push({ diagnostic, file, ...(dialect !== undefined && { dialect }) });
+    },
+    end() {
+      if (format === "json") io.stdout(jsonReport(items));
+      if (format === "sarif") io.stdout(sarifReport(items, version()));
+    },
+  };
+};
+
 const rel = (file: string): string => relative(process.cwd(), file).replaceAll("\\", "/");
 
 const buildDir = async (
@@ -94,6 +118,7 @@ const buildDir = async (
   values: { out?: string; "base-url"?: string; "file-name"?: string; "allow-unsupported"?: boolean; "allow-svg"?: boolean; "no-verify"?: boolean },
   compile: { targets?: string[]; width?: number; lang?: string },
   io: CliIO,
+  report: Reporter,
 ): Promise<number> => {
   const out = values.out ?? "dist/emails";
   let results;
@@ -116,24 +141,25 @@ const buildDir = async (
   for (const r of results) {
     const where = r.entry ? rel(r.entry) : r.email;
     const what = r.dialect ? `${where} (${r.dialect})` : where;
-    if (r.skipped) io.stdout(`skipped ${r.email}: ${r.skipped}\n`);
+    if (r.skipped) report.progress(`skipped ${r.email}: ${r.skipped}\n`);
     if (r.error) {
       // a render failure starts with the email's name already
       io.stderr(`${what}: ${r.error.startsWith(`${r.email}: `) ? r.error.slice(r.email.length + 2) : r.error}\n`);
       failed = true;
     }
-    if (r.file) io.stdout(`wrote ${r.file}\n`);
+    if (r.file) report.progress(`wrote ${r.file}\n`);
     for (const d of r.diagnostics) {
       // a line in the rendered page is in no file anyone wrote, so that place is said as the email's
       // file; one a Vue component marked, in the component (docs/templates.md#native-component-code)
       const { loc, locs, ...rest } = d;
       const inFiles = locs?.filter((l) => l.file).map((l) => ({ ...l, file: rel(l.file!) }));
       const said: Diagnostic = loc?.file ? { ...rest, loc: { ...loc, file: rel(loc.file) }, ...(inFiles && { locs: inFiles }) } : rest;
-      io.stderr(formatDiagnostic(said, where, r.dialect));
+      report.add(said, where, r.dialect);
       failed ||= d.severity === "error";
     }
   }
-  if (values["base-url"] && results.some((r) => r.assets?.length)) io.stdout(`images in ${out}/assets go to ${values["base-url"]}\n`);
+  report.end();
+  if (values["base-url"] && results.some((r) => r.assets?.length)) report.progress(`images in ${out}/assets go to ${values["base-url"]}\n`);
   return failed ? 1 : 0;
 };
 
@@ -199,6 +225,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
         "base-url": { type: "string" },
         "file-name": { type: "string" },
         "no-verify": { type: "boolean" },
+        format: { type: "string" },
         help: { type: "boolean", short: "h" },
         version: { type: "boolean", short: "v" },
       },
@@ -245,6 +272,12 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     io.stderr(`tddr: --lang must be a language tag like de or pt-BR, got "${values.lang}"\n`);
     return 2;
   }
+  const format = values.format ?? "text";
+  if (!(FORMATS as readonly string[]).includes(format)) {
+    io.stderr(`tddr: --format must be text, json or sarif, got "${format}"\n`);
+    return 2;
+  }
+  const report = reporter(format as Format, io);
   const targets = values.targets
     ?.split(",")
     .map((t) => t.trim())
@@ -257,7 +290,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
       io.stderr("tddr: --css doesn't apply to a folder build; import the stylesheet in the email\n");
       return 2;
     }
-    return buildDir(input, values, compileFlags, io);
+    return buildDir(input, values, compileFlags, io, report);
   }
   if (values["base-url"] !== undefined) {
     io.stderr("tddr: --base-url applies to a folder build or dev\n");
@@ -269,6 +302,10 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
   }
   if (values["no-verify"]) {
     io.stderr("tddr: --no-verify applies to a folder build\n");
+    return 2;
+  }
+  if (format !== "text" && !values.out) {
+    io.stderr(`tddr: --format ${format} writes the report to stdout; give -o for the HTML\n`);
     return 2;
   }
 
@@ -298,7 +335,8 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     return 2;
   }
 
-  for (const d of result.diagnostics) io.stderr(formatDiagnostic(d, input));
+  for (const d of result.diagnostics) report.add(d, input);
+  report.end();
 
   if (values.out) {
     try {

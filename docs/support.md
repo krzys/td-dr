@@ -785,7 +785,9 @@ are reported as warnings and the input is kept as written, except E018, which le
 keep. Client-support problems are warnings even in strict mode. A diagnostic is said once: once per
 declaration (`padding: 5% 8%` is one E006, not one per side, and `-webkit-mask` next to `mask` is
 left out), and the same code, message and hint at several places comes as one "… (N places)" at the
-first of them, with every place in `locs` (the CLI prints them as "also at").
+first of them, with every place in `locs` (the CLI prints them as "also at"). With `--format sarif` each code is
+a rule of the `tddr` tool, its title the short description and its hint the help; errors, warnings
+and notes keep their level.
 
 | Code | Meaning |
 |---|---|
