@@ -80,6 +80,14 @@ export const ownStyle = (el: StyledElement, parent: ComputedStyle | undefined): 
     if (px !== undefined) out["line-height"] = px;
     if (px?.endsWith("px")) out["mso-line-height-rule"] = "exactly";
   }
+  // A factor inherits as a factor, but the parent's went out as px: a box with its own font-size states its own,
+  // as tall as in the source. Not a plain inline, which the parent's line box holds anyway; Word knows no
+  // inline-block and takes it as a run, so that one gets no exact rule either.
+  const own = lineHeightPx(el.style);
+  if (out["line-height"] === undefined && parent && own?.endsWith("px") && own !== lineHeightPx(parent) && (el.style["display"] ?? "inline") !== "inline") {
+    out["line-height"] = own;
+    if (!isInlineLevel(el)) out["mso-line-height-rule"] = "exactly";
+  }
   return out;
 };
 

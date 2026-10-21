@@ -554,8 +554,10 @@ gives it (`font-family`, `font-size`, `line-height`, `color`, …), and `mso-lin
 next to a px `line-height`; a cell whose only content is one text block leaves out what that block
 restates. A `line-height` left at `normal` comes from the shell's wrapper table
 (`line-height:normal`, against a client's base line height such as Roundcube's 1.5) and is written
-on `h1`–`h6`, which clients style directly. Font and colour defaults stay the client's. `margin:0`
-stays on `p` and `h*` (Word adds its own paragraph spacing).
+on `h1`–`h6`, which clients style directly. A box inside with its own `font-size` under a unitless
+`line-height` (an inline-block badge) states its own px `line-height`, not the cell's it would
+inherit. Font and colour defaults stay the client's. `margin:0` stays on `p` and `h*` (Word adds its
+own paragraph spacing).
 
 ### Accessibility
 
@@ -609,8 +611,9 @@ How the emitter answers:
   images don't. The `PixelsPerInch` 96 block (in `<noscript>`, which other parsers skip) fixes most
   of it, together with explicit px sizes.
 - **`mso-*` properties:** `mso-line-height-rule:exactly` beside every px `line-height` (never on a
-  cell holding only images); `mso-table-lspace` / `rspace: 0pt` against gaps beside nested tables;
-  `mso-padding-alt` for button and spacer cells; `mso-hide:all` for hidden content.
+  cell holding only images, or on an inline-block, which Word takes as a run); `mso-table-lspace` /
+  `rspace: 0pt` against gaps beside nested tables; `mso-padding-alt` for button and spacer cells;
+  `mso-hide:all` for hidden content.
 - **Spacing:** margins become cell padding, `margin: 0 auto` becomes `align="center"`;
   `border-collapse: collapse` avoids white seams around painted cells.
 - **Empty cells** render taller than set (and WebKit collapses a cell with no content): spacer and
