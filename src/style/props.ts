@@ -30,6 +30,31 @@ export const LEGACY_ALIGN = "--tddr-legacy-align";
 
 export const isInherited = (prop: string): boolean => INHERITED.has(prop) || prop.startsWith("--");
 
+const HEADINGS = ["h1", "h2", "h3", "h4", "h5", "h6"];
+// Font properties no client sets but on these tags (ua.ts; Word's heading
+// styles, a webmail's h1–h6 and dt rules), with their initial values.
+const QUIET: Readonly<Record<string, { initial: readonly string[]; tags: ReadonlySet<string> }>> = {
+  "font-style": { initial: ["normal"], tags: new Set([...HEADINGS, "em", "i", "cite", "var", "dfn", "address"]) },
+  "font-variant": { initial: ["normal"], tags: new Set(HEADINGS) },
+  "font-weight": { initial: ["normal", "400"], tags: new Set([...HEADINGS, "b", "strong", "th", "dt", "optgroup"]) },
+  "font-optical-sizing": { initial: ["auto"], tags: new Set() },
+};
+const setAbove = (prop: string): string => `--tddr-set-${prop}`;
+const atInitial = (prop: string, v: string | undefined): boolean => v === undefined || !!QUIET[prop]?.initial.includes(v.trim().toLowerCase());
+
+// Marks the elements where one of them leaves its initial value; as a custom property the mark
+// inherits, so everything below knows something above says another value. font-variant:normal also
+// takes back font-variant-caps & co.
+export const markQuiet = (style: Record<string, string>): void => {
+  for (const prop of Object.keys(QUIET)) if (!atInitial(prop, style[prop])) style[setAbove(prop)] = "1";
+  if (Object.entries(style).some(([p, v]) => p.startsWith("font-variant-") && !atInitial("font-variant", v))) style[setAbove("font-variant")] = "1";
+};
+
+// At its initial value with nothing above saying another, one of them says nothing the element
+// doesn't get anyway, in every client (docs/support.md#text-styles). `tag` undefined: an emitted cell.
+export const saysNothing = (tag: string | undefined, style: Readonly<Record<string, string>>, prop: string, v: string): boolean =>
+  QUIET[prop] !== undefined && atInitial(prop, v) && style[setAbove(prop)] === undefined && !(tag !== undefined && QUIET[prop].tags.has(tag));
+
 // Initial values for properties rules ask about; a missing computed value means this.
 export const INITIAL: Readonly<Record<string, string>> = {
   display: "inline",

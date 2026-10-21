@@ -556,7 +556,9 @@ restates. A `line-height` left at `normal` comes from the shell's wrapper table
 (`line-height:normal`, against a client's base line height such as Roundcube's 1.5) and is written
 on `h1`–`h6`, which clients style directly. A box inside with its own `font-size` under a unitless
 `line-height` (an inline-block badge) states its own px `line-height`, not the cell's it would
-inherit. Font and colour defaults stay the client's. `margin:0` stays on `p` and `h*` (Word adds its
+inherit. Font and colour defaults stay the client's. `font-style`, `font-variant`, `font-weight` and
+`font-optical-sizing` at their initial value are left out where nothing above says another, except on
+the tags clients style themselves (`h1`–`h6`, `b`, `strong`, `th`, `dt`, `em`, `i`, `cite`, …). `margin:0` stays on `p` and `h*` (Word adds its
 own paragraph spacing).
 
 ### Accessibility

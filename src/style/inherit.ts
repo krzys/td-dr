@@ -1,6 +1,6 @@
 import type { Ctx } from "../ctx.ts";
 import type { SrcLoc } from "../loc.ts";
-import { isInherited, LEGACY_ALIGN } from "./props.ts";
+import { isInherited, LEGACY_ALIGN, markQuiet } from "./props.ts";
 import { expandDeclaration, parsePending, toPhysical } from "./shorthands.ts";
 import { hasModernColor, lowerColors, type Scheme } from "./colors.ts";
 import { formatPx, INITIAL_FONT_SIZE, parsePx, reduceMath, resolveFontSize, toPx, type FontSizes } from "./units.ts";
@@ -145,5 +145,6 @@ export const computeValues = (
     const style = out[`border-${side}-style`];
     if (out[`border-${side}-width`] !== undefined && (style === undefined || style === "none" || style === "hidden")) out[`border-${side}-width`] = "0";
   }
+  markQuiet(out);
   return out;
 };

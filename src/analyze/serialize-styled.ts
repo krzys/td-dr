@@ -6,7 +6,7 @@ import { isInlineLevel } from "./classify.ts";
 import { floatOf, floatSpacing } from "./float.ts";
 
 const FLOAT_ATTRS: ReadonlySet<string> = new Set(["align", "hspace", "vspace"]);
-import { isInherited, lineHeightPx, textAlignOf } from "../style/props.ts";
+import { isInherited, lineHeightPx, saysNothing, textAlignOf } from "../style/props.ts";
 import type { ComputedStyle, StyledElement, StyledNode } from "../style/types.ts";
 
 const HEADING = /^h[1-6]$/;
@@ -67,7 +67,8 @@ export const ownStyle = (el: StyledElement, parent: ComputedStyle | undefined): 
       // a kept element says its display: the diff against the screens where it is hidden needs the real value, not the tag's guess;
       // a hidden one says so too, for clients that ignore the hidden attribute
       if ("display" in el.declared || el.keep || v === "none") out[p] = v;
-    } else if (!isInherited(p) || parent?.[p] !== v || (p === "color" && el.tag === "a")) out[p] = v; // clients colour bare links
+    } else if (saysNothing(el.tag, el.style, p, v)) continue;
+    else if (!isInherited(p) || parent?.[p] !== v || (p === "color" && el.tag === "a")) out[p] = v; // clients colour bare links
   }
   dropResets(el.tag, out, el.style);
   // The shell's reset collapses every table's borders (Outlook seams). An author table on the separate

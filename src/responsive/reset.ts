@@ -31,6 +31,9 @@ const RESET: Readonly<Record<string, string>> = {
   "text-decoration": "none",
   "letter-spacing": "normal",
   "font-style": "normal",
+  "font-variant": "normal",
+  "font-weight": "normal",
+  "font-optical-sizing": "auto",
   "white-space": "normal",
 };
 
