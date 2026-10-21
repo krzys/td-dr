@@ -317,6 +317,8 @@ describe("verifyEmail", () => {
   let vite: ViteDevServer;
   beforeAll(async () => {
     vite = await createEmailServer({ root: repo });
+    // the first check loads the compiler and engines through vite, about 4s; pay it here, not in the first test
+    await verified(vite, email("match"));
   });
   afterAll(() => vite.close());
 
