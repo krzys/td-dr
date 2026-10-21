@@ -492,8 +492,10 @@ u + #body a { color:inherit; text-decoration:none; }
 
 - `lang` comes from `<html lang>` (or its `xml:lang`), else the `lang` option (or a component's
   `export const lang`), else `en` with I009; it and `dir` go on `<html>` and the article wrapper, as
-  some clients strip `<html>` attributes. The root container's background becomes the page background. `<title>` is
-  the source's title (empty otherwise).
+  some clients strip `<html>` attributes. The root container's background becomes the page
+  background. `<title>` is the source's title, empty otherwise, with I015 when the source is a whole
+  page (it writes its own `<html>` or `<head>`) or a component; a fragment placed in a page of its
+  own isn't reported.
 - Gmail turns `<body>` into a `<div>`, so the background lives on the wrapper table; `u + #body`
   targets Gmail.
 - The content cell states the document's side (`right` under `<html dir="rtl">`): browsers stop the
@@ -535,7 +537,7 @@ checks run on the styled input, skip hidden and Outlook-only content, and are ne
 (link without a name), W016 (contrast under WCAG AA: 4.5:1, 3:1 for 24px or 18.66px bold text,
 against the nearest solid background, else the fallback colour behind an image, else white; one
 diagnostic per colour pair),
-I009 (no language), I010 (link text such as "click here"), I011 (skipped heading levels or several
+I009 (no language), I015 (a whole page or component without a title), I010 (link text such as "click here"), I011 (skipped heading levels or several
 `h1`), I012 (alt text that is a file name or placeholder word), I013 (text under 12px). A template field in link text or alt counts as a
 name.
 
@@ -808,3 +810,4 @@ first of them, with every place in `locs` (the CLI prints them as "also at").
 | I012 | Alt text looks like a placeholder or file name. |
 | I013 | Text under 12px. |
 | I014 | Dark design without a dark-mode rule. |
+| I015 | Email has no title: the browser copy's tab, which a screen reader says first, is empty. |

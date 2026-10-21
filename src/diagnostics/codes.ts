@@ -54,6 +54,7 @@ export const codes = {
   I012: { severity: "info", title: "Alt text looks like a placeholder", hint: "A file name or a word like \"image\" tells the reader nothing. Describe what the image shows, or use alt=\"\" if it's decoration." },
   I013: { severity: "info", title: "Very small text", hint: "Under 12px is hard to read on phones; 14px or more is the usual floor for body text." },
   I014: { severity: "info", title: "Dark design without a dark-mode style", hint: "Gmail on iOS and classic Outlook invert dark backgrounds to light. Test it, or add a prefers-color-scheme block." },
+  I015: { severity: "info", title: "Email has no title", hint: "The online copy (view in browser) shows the <title> in its tab, and a screen reader says it first. Add a <title> to the <head>; a component can write one in its markup." },
   I001: { severity: "info", title: "Removed unsafe markup", hint: "Scripts, event handlers and framework markers are stripped from email output." },
 } as const satisfies Record<string, CodeInfo>;
 

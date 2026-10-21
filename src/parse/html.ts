@@ -10,7 +10,9 @@ import { findAllElements, findElement, locOf, textContent, type DomDocument, typ
 export type StyleSource = { css: string; origin: "author" | "extra"; loc?: SrcLoc };
 
 // preheader: text of the data-email="preheader" elements, which sanitize takes out of the body
-export type DocMeta = { lang?: string; dir?: string; title?: string; preheader?: string; fontLinks?: string[] }; // fontLinks: stylesheet hrefs of web font <link>s
+// fontLinks: stylesheet hrefs of web font <link>s; page: the source writes its own <html> or <head>,
+// so it is a whole email rather than a fragment the caller places in a page of its own
+export type DocMeta = { lang?: string; dir?: string; title?: string; preheader?: string; fontLinks?: string[]; page?: boolean };
 
 export type ParsedDoc = {
   document: DomDocument;
@@ -67,6 +69,9 @@ export const parse = (html: string, ctx: Ctx): ParsedDoc => {
   if (lang) meta.lang = lang;
   if (htmlEl?.attribs["dir"]) meta.dir = htmlEl.attribs["dir"];
   if (title) meta.title = textContent(title).trim();
+  // parse5 adds the <html> and <head> a fragment leaves out, without a source location
+  const head = findElement(document, (el) => el.name === "head");
+  if ((htmlEl && locOf(htmlEl)) || (head && locOf(head))) meta.page = true;
 
   return { document, body, styles, meta };
 };

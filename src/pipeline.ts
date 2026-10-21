@@ -195,7 +195,7 @@ const stages = (input: string, given: Ctx): Traced => {
   const { body: styled, fonts, conditions } = computeStyles(parsed, ctx, DESKTOP, shared?.keep, shared?.stacked);
   // the screens that stack are compiled quietly, so what they can't carry is said here
   if (shared) for (const n of stackNotes(probe.body, others)) ctx.diagnostics.report("W003", n);
-  lintInput(styled, ctx, { lang: parsed.meta.lang ?? ctx.options.lang, dark: conditions.dark });
+  lintInput(styled, ctx, { lang: parsed.meta.lang ?? ctx.options.lang, dark: conditions.dark, untitled: parsed.meta.page === true && !parsed.meta.title });
   // always marked: the screens diff by the markers, and the self-lint places a W006 by them
   const marked = markTree(styled);
   const traced = tracing(ctx);

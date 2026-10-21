@@ -21,7 +21,7 @@ describe("contracts", () => {
   test("parse keeps source locations, styles and meta", () => {
     const ctx = testCtx({ css: [".x{color:red}"] });
     const doc = parse('<html lang="pl"><head><title> T </title><style>p{}</style></head><body>\n<p>a</p></body></html>', ctx);
-    expect(doc.meta).toEqual({ lang: "pl", title: "T" });
+    expect(doc.meta).toEqual({ lang: "pl", title: "T", page: true });
     expect(doc.styles.map((s) => s.origin)).toEqual(["author", "extra"]);
     expect(doc.styles[0]?.loc?.line).toBe(1);
     const p = doc.body.children.find((c) => "name" in c && c.name === "p");

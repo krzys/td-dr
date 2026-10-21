@@ -75,4 +75,13 @@ describe("buildEmails", () => {
     ]);
     expect(readdirSync(to)).toEqual(["fine.handlebars.html"]);
   });
+
+  it("says when an email has no <title>, and not when a component writes one", async () => {
+    const results = await buildEmails({ dir, root: dir, out: out(), baseUrl: BASE });
+    expect(results[0]!.diagnostics.filter((d) => d.code === "I015")).toEqual([expect.objectContaining({ severity: "info", message: "Email has no title" })]);
+    const fail = resolve(import.meta.dirname, "../../vite-build-fail");
+    const fine = (await buildEmails({ dir: fail, root: fail, out: out() })).find((r) => r.email === "fine")!;
+    expect(fine.diagnostics.map((d) => d.code)).not.toContain("I015");
+    expect(readFileSync(fine.file!, "utf8")).toContain("<title>Welcome</title>");
+  });
 });

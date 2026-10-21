@@ -16,7 +16,7 @@ describe("renderEmail, svg", () => {
 
   it("passes compile.allowSvg through to compile()", async () => {
     const r = await renderEmail(vite, icon(), { data: {}, mode: "html", compile: { strict: true, allowSvg: true, lang: "en" } });
-    expect(r.diagnostics.map((d) => d.code)).toEqual(["W010"]);
+    expect(r.diagnostics.map((d) => d.code)).toEqual(["W010", "I015"]);
     expect(r.html).toContain("<svg");
   });
 

@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "code": "I015",
+    "severity": "info",
+    "message": "Email has no title",
+    "hint": "The online copy (view in browser) shows the <title> in its tab, and a screen reader says it first. Add a <title> to the <head>; a component can write one in its markup.",
+    "loc": {
+      "line": 19,
+      "col": 1
+    }
+  }
+]

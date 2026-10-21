@@ -4,7 +4,8 @@ import { FIELD_OPEN } from "../template/tokens.ts";
 import { WHITE, paintOf, type Paint } from "./colour.ts";
 
 // What the compile knows beyond the styled tree; without it the document checks stay quiet.
-export type LintDoc = { lang: string | undefined; dark: boolean };
+// untitled: a whole page whose <title> is missing or empty
+export type LintDoc = { lang: string | undefined; dark: boolean; untitled?: boolean };
 export type Check = (body: StyledElement, ctx: Ctx, doc: LintDoc | undefined) => void;
 
 const MERGE_TAG = /\{\{|\{%|\*\|[^|]*\|\*|%%[^%]+%%|<%|\$\{/;

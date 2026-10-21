@@ -396,11 +396,12 @@ describe("buildEmails", () => {
     const to = out();
     const results = await buildEmails({ dir: root, root: repo, out: to });
     expect(results.map((r) => [r.email, r.dialect, r.error !== undefined, r.diagnostics.map((d) => d.code)])).toEqual([
-      ["bare", "handlebars", false, ["I005"]],
-      ["hints", "handlebars", false, []],
-      ["hints", "liquid", false, []],
-      ["match", "handlebars", false, []],
-      ["match", "liquid", false, []],
+      // I015: none of these components writes a <title>
+      ["bare", "handlebars", false, ["I005", "I015"]],
+      ["hints", "handlebars", false, ["I015"]],
+      ["hints", "liquid", false, ["I015"]],
+      ["match", "handlebars", false, ["I015"]],
+      ["match", "liquid", false, ["I015"]],
       ["mismatch", undefined, true, ["E016", "E016"]],
       ["pure", undefined, true, ["E016", "E016"]],
     ]);
@@ -425,7 +426,7 @@ describe("buildEmails", () => {
     const off = await buildEmails({ dir, root: repo, out: out(), verify: false });
     const shape = (rs: typeof on) => rs.map((r) => [r.dialect, r.error ?? null, r.diagnostics.map((d) => [d.code, d.message])]);
     expect(shape(on)).toEqual(shape(off));
-    expect(on.map((r) => [r.dialect, r.diagnostics.map((d) => d.code)])).toEqual([["handlebars", ["E002"]], ["liquid", ["E002"]]]);
+    expect(on.map((r) => [r.dialect, r.diagnostics.map((d) => d.code)])).toEqual([["handlebars", ["E002", "I015"]], ["liquid", ["E002", "I015"]]]);
     expect(JSON.stringify(on)).not.toContain("HTML render");
     expect(on.every((r) => r.file && !r.error)).toBe(true);
   }, 30_000);
@@ -470,10 +471,11 @@ describe("the dev server", () => {
     const dir = folder({ "bare/index.jsx": 'export const lang = "en";\nexport const template = ["handlebars"];\nexport default function Bare() {\n  return <p>Hello</p>;\n}\n' });
     const dev = await startDevServer({ dir, root: repo, port: 0, host: "127.0.0.1" });
     try {
+      // no I005; the component writes no <title>
       const r = await post(dev.url, { email: "bare", mode: "handlebars", data: {} });
-      expect(r.diagnostics.map((d) => d.code)).toEqual([]);
+      expect(r.diagnostics.map((d) => d.code)).toEqual(["I015"]);
       const none = await post(dev.url, { email: "bare", mode: "handlebars" });
-      expect(none.diagnostics.map((d) => d.code)).toEqual([]);
+      expect(none.diagnostics.map((d) => d.code)).toEqual(["I015"]);
     } finally {
       await dev.close();
     }
@@ -503,8 +505,8 @@ describe("the dev server", () => {
     try {
       const r = await post(dev.url, { email: "boom", mode: "handlebars", data: "default" });
       expect(r.html).toContain("Hello");
-      expect(r.diagnostics.map((d) => d.code)).toEqual(["I005"]);
-      expect(r.diagnostics[0]!.message).toContain("which failed: boom: rendering with react failed: second render");
+      expect(r.diagnostics.map((d) => d.code)).toEqual(["I015", "I005"]);
+      expect(r.diagnostics[1]!.message).toContain("which failed: boom: rendering with react failed: second render");
     } finally {
       await dev.close();
     }

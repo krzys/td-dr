@@ -1,6 +1,7 @@
 import { stripVTControlCharacters } from "node:util";
 import { isRunnableDevEnvironment, normalizePath, type RunnableDevEnvironment, type ViteDevServer } from "vite";
 import { compile, preview, type CompileOptions, type Diagnostic, type DialectName, type TraceEntry } from "../../src/index.ts";
+import { codes } from "../../src/diagnostics/codes.ts";
 import { startTags } from "../../src/template/tags.ts";
 import { placeAssets, type Placed } from "./assets.ts";
 import { collectCss } from "./css.ts";
@@ -87,6 +88,11 @@ const withAssets = (vite: ViteDevServer, page: string, o: Pick<RenderOptions, "b
 
 export type CompiledTemplate = { input: string; template: string; diagnostics: Diagnostic[]; assets: AssetFile[]; trace?: TraceEntry[] };
 
+// I015 for a component: its markup is compiled as a fragment, so the compiler can't tell an
+// email without a <title> from one placed in a page; the shell's empty <title> tells it here
+const titled = (html: string): Diagnostic[] =>
+  html.includes("<title></title>") ? [{ code: "I015", severity: codes.I015.severity, message: codes.I015.title, hint: codes.I015.hint }] : [];
+
 // what a build writes for a template email: the template itself, before any data
 export const compileTemplate = async (
   vite: ViteDevServer,
@@ -103,7 +109,7 @@ export const compileTemplate = async (
   // compiling the page itself keeps diagnostic locations pointing into text the dev server can show
   const placed = withAssets(vite, sourcePage(css, markup), o);
   const out = compile(placed.page, { ...optionsFor(email, o.compile), template: dialect });
-  return { input: placed.page, template: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics], assets: placed.files, ...(out.trace && { trace: out.trace }) };
+  return { input: placed.page, template: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics, ...titled(out.html)], assets: placed.files, ...(out.trace && { trace: out.trace }) };
 };
 
 // a compiled template filled by the dialect's engine; without it, preview() stands in.
@@ -247,5 +253,5 @@ export const renderEmail = async (vite: ViteDevServer, email: EmailEntry, o: Ren
   const { component, css } = await loadEmail(vite, email);
   const placed = withAssets(vite, sourcePage(css, await renderMarkup(email, component, data)), o);
   const out = compile(placed.page, { ...optionsFor(email, o.compile), trace: true });
-  return { source: placed.page, input: placed.page, html: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics], assets: placed.files, ...(out.trace && { trace: out.trace }) };
+  return { source: placed.page, input: placed.page, html: out.html, diagnostics: [...placed.diagnostics, ...out.diagnostics, ...titled(out.html)], assets: placed.files, ...(out.trace && { trace: out.trace }) };
 };

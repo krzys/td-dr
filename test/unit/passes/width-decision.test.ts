@@ -26,7 +26,7 @@ describe("W011 / W004: the width decision is data", () => {
 
   test("compiled, the root is reported once, also when other screens are compiled too", () => {
     const html = `<html><head><style>@media (max-width:480px){ .t{ color:red } }</style></head><body><div style="width:640px;margin:0 auto"><p class="t" style="margin:0">hi</p></div></body></html>`;
-    expect(codes(html, 500).map((c) => c.slice(0, 4))).toEqual(["W011"]);
+    expect(codes(html, 500).map((c) => c.slice(0, 4))).toEqual(["W011", "I015"]);
   });
 
   test("a ::before shares its host's source position, not its host's W011: its own clamp is W004", () => {
@@ -34,6 +34,7 @@ describe("W011 / W004: the width decision is data", () => {
     const host = `<html><head>${style()}</head><body>\n<div class="r" style="width:600px;margin:0 auto;background:#eee"><p>Hello</p></div>\n</body></html>`;
     expect(codes(host, 480)).toEqual([
       "W011 Container is 600px wide but the width option is 480px; it is laid out at 480px",
+      "I015 Email has no title",
       "W004 width 560px is wider than its slot (480px) and was clamped",
     ]);
     // the pseudo-element is the root itself: its W011 is the one, no W004 on top

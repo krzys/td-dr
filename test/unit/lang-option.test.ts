@@ -28,3 +28,16 @@ describe("lang", () => {
     }
   });
 });
+
+describe("title", () => {
+  const i015 = (input: string) => compile(input, { lang: "en" }).diagnostics.filter((d) => d.code === "I015");
+  it("is an I015 when a whole page has none, or an empty one", () => {
+    for (const input of ["<!doctype html><html><body><p>x</p></body></html>", "<head><title> </title></head><p>x</p>"]) {
+      expect(i015(input), input).toEqual([expect.objectContaining({ severity: "info", hint: expect.stringMatching(/<title>/) })]);
+    }
+  });
+  it("says nothing for a page with a title, or for a fragment the caller places in its own page", () => {
+    expect(i015("<html><head><title>Spring guide</title></head><body><p>x</p></body></html>")).toEqual([]);
+    expect(i015("<p>x</p>")).toEqual([]);
+  });
+});

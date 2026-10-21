@@ -37,6 +37,9 @@ catches a difference when the email has data sets.
 `tddr/react` and `tddr/vue` also export `If` / `ElseIf` / `Else` (prop `when`) and `Each` (prop
 `of`; children as a function, or a scoped slot in Vue) as an escape hatch.
 
+A component renders into the body, so it sets the page title by writing a `<title>` anywhere in
+its markup; td;dr moves it to the head. Without one the title is empty, with I015.
+
 ### Hints in plain HTML
 
 For HTML passed to `compile(html, { template })`:
