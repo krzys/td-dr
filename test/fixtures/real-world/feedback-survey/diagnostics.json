@@ -32,7 +32,7 @@
   {
     "code": "W005",
     "severity": "warning",
-    "message": "linear-gradient() isn't supported in Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Android (2 places)",
+    "message": "linear-gradient() isn't supported in Outlook Windows, Outlook.com, Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android; partly in Gmail Android",
     "hint": "Gradients can be created in VML using `type=\"gradient\"` on a `<v:fill>`. See [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element#gradient-fill).",
     "loc": {
       "line": 41,
@@ -47,16 +47,6 @@
     "loc": {
       "line": 42,
       "col": 7
-    }
-  },
-  {
-    "code": "W005",
-    "severity": "warning",
-    "message": "background-image isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
-    "hint": "Background images can be used in VML. See [backgrounds.cm](https://backgrounds.cm/) and [VML documentation](https://docs.microsoft.com/en-us/windows/win32/vml/web-workshop---how-to-use-vml-on-web-pages-----fill--element).",
-    "loc": {
-      "line": 92,
-      "col": 5
     }
   },
   {

@@ -89,9 +89,10 @@ const PARTIAL_IRRELEVANT: Readonly<Record<string, (v: string) => boolean>> = {
 export const lintInput = (body: StyledElement, ctx: Ctx, doc?: LintDoc): void => {
   const seen = new Map<string, Seen>();
 
-  const lint = (el: StyledElement, role: Role): void => {
+  // `raw`: inside an element kept as raw html, whose gradient text is made solid too (rules/unsupported.ts)
+  const lint = (el: StyledElement, role: Role, raw = false): void => {
     // the clipped gradient never reaches the output: solid colour (W001 at analysis) or the author's colour
-    const clipped = role === "text-root" && (el.style["background-clip"] ?? el.style["-webkit-background-clip"]) === "text";
+    const clipped = (role === "text-root" || raw) && (el.style["background-clip"] ?? el.style["-webkit-background-clip"]) === "text";
     // a cell paints the image: a url is covered by VML and the fallback colour, a gradient is not
     const paints = role === "container" || (role === "text-root" && !isInlineLevel(el) && !KEEPS_BOX.has(el.tag));
     for (const [prop, value] of Object.entries(el.declared)) {
@@ -109,10 +110,10 @@ export const lintInput = (body: StyledElement, ctx: Ctx, doc?: LintDoc): void =>
     }
   };
 
-  const nested = (el: StyledElement): void => {
+  const nested = (el: StyledElement, raw = false): void => {
     if (isHidden(el)) return; // dropped with I002
-    lint(el, "nested");
-    for (const c of el.children) if (c.type === "element") nested(c);
+    lint(el, "nested", raw);
+    for (const c of el.children) if (c.type === "element") nested(c, raw);
   };
 
   // Children of a container, found the way analyzeChildren does.
@@ -177,7 +178,7 @@ export const lintInput = (body: StyledElement, ctx: Ctx, doc?: LintDoc): void =>
       if (el.tag === "hr") return; // becomes a divider cell, never emitted
       lint(el, "text-root");
       for (const c of el.children) if (c.type === "element") nested(c);
-    } else nested(el); // unsupported: kept raw, nothing is lowered
+    } else nested(el, rule === "unsupported"); // kept raw, nothing is lowered
   };
   root(body);
 
