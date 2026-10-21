@@ -149,7 +149,7 @@ export const lintInput = (body: StyledElement, ctx: Ctx, doc?: LintDoc): void =>
       // the button table gets the box, the label keeps text styles
       lint(el, "button");
       for (const c of el.children) if (c.type === "element") nested(c);
-    } else if (rule === "flex") {
+    } else if (rule === "flex" || rule === "grid") {
       lint(el, "container");
       for (const c of el.children) if (c.type === "element") root(c);
     } else if (rule === "block") {

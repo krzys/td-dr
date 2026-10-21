@@ -50,16 +50,6 @@
     }
   },
   {
-    "code": "I003",
-    "severity": "info",
-    "message": "padding is only partly supported in Outlook Windows (4 places)",
-    "hint": "Partial. Only supported on table cells.",
-    "loc": {
-      "line": 55,
-      "col": 7
-    }
-  },
-  {
     "code": "W005",
     "severity": "warning",
     "message": "background-image isn't supported in Outlook Windows; partly in Yahoo! Mail Desktop Webmail, Yahoo! Mail iOS, Yahoo! Mail Android",
