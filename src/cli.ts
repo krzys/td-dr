@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { readFileSync, realpathSync, statSync, writeFileSync } from "node:fs";
-import { relative } from "node:path";
+import { readFileSync, realpathSync, statSync, watch, writeFileSync } from "node:fs";
+import { basename, dirname, relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { loadConfig } from "./config-file.ts";
@@ -18,6 +18,8 @@ export type CliIO = {
   readFile(path: string): Promise<Uint8Array | string> | Uint8Array | string;
   writeFile(path: string, s: string): Promise<void> | void;
   isDir?(path: string): boolean;
+  // calls onChange whenever one of the files may have changed
+  watch?(files: string[], onChange: () => void): void;
 };
 
 const HELP = `Usage: tddr build <input.html> [options]
@@ -39,6 +41,8 @@ Build options:
                           (on stdout, so a file build needs -o)
   --text                  also write the plain-text part, <name>.txt next to each
                           HTML file (a file build needs -o)
+  --watch                 build one file again whenever it or a --css file changes
+                          (a file build needs -o); also for check
 
 Folder build:
   --file-name <pattern>   output file per email and dialect, inside --out, from
@@ -74,7 +78,7 @@ const WRITE_FLAGS = ["out", "text", "file-name"] as const;
 const FOREIGN = {
   build: [...DEV_FLAGS, "max-warnings"],
   check: [...DEV_FLAGS, ...WRITE_FLAGS],
-  dev: [...BUILD_FLAGS, "max-warnings"],
+  dev: [...BUILD_FLAGS, "max-warnings", "watch"],
 } as const;
 
 // Adapters load lazily so `tddr build in.html` never imports Vite, an optional peer; tsup emits them
@@ -129,10 +133,12 @@ const reporter = (format: Format, io: CliIO): Reporter => {
   };
 };
 
+const plural = (n: number, word: string): string => `${n} ${word}${n === 1 ? "" : "s"}`;
+
 // 1 on an error and, for check --max-warnings, on more warnings than that
 const verdict = (errors: boolean, warnings: number, maxWarnings: number | undefined, io: CliIO): number => {
   const over = maxWarnings !== undefined && warnings > maxWarnings;
-  if (over) io.stderr(`tddr: ${warnings} warning${warnings === 1 ? "" : "s"}, more than --max-warnings ${maxWarnings}\n`);
+  if (over) io.stderr(`tddr: ${plural(warnings, "warning")}, more than --max-warnings ${maxWarnings}\n`);
   return errors || over ? 1 : 0;
 };
 
@@ -291,6 +297,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
         format: { type: "string" },
         text: { type: "boolean" },
         "max-warnings": { type: "string" },
+        watch: { type: "boolean" },
         help: { type: "boolean", short: "h" },
         version: { type: "boolean", short: "v" },
       },
@@ -356,7 +363,6 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     io.stderr(`tddr: --format must be text, json or sarif, got "${format}"\n`);
     return 2;
   }
-  const report = reporter(format as Format, io);
   const flagTargets = values.targets
     ?.split(",")
     .map((t) => t.trim())
@@ -366,10 +372,15 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
   const compileFlags = { ...(targets?.length && { targets }), ...(width !== undefined && { width }), ...(values.lang !== undefined && { lang: values.lang }) };
 
   if (io.isDir?.(input)) {
+    if (values.watch) {
+      io.stderr("tddr: --watch takes one file, not a folder; tddr dev rebuilds a folder's emails on save\n");
+      return 2;
+    }
     if (values.css) {
       io.stderr("tddr: --css doesn't apply to a folder build; import the stylesheet in the email\n");
       return 2;
     }
+    const report = reporter(format as Format, io);
     return buildDir(input, { ...values, ...withBaseUrl(values, config) }, compileFlags, io, report, checking ? { maxWarnings } : undefined);
   }
   if (values["base-url"] !== undefined) {
@@ -392,7 +403,41 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     io.stderr(`tddr: --format ${format} writes the report to stdout; give -o for the HTML\n`);
     return 2;
   }
+  if (values.watch && !values.out && !checking) {
+    io.stderr("tddr: --watch writes the HTML on every change; give -o for it\n");
+    return 2;
+  }
 
+  const once = (): Promise<FileBuild> =>
+    buildFile(input, values, compileFlags, checking ? { maxWarnings } : undefined, reporter(format as Format, io), io);
+  if (!values.watch) return (await once()).code;
+
+  // the status line after each build; a build that couldn't read its input said why already
+  const files = [input, ...(values.css ?? [])];
+  return watchFiles(
+    files,
+    async () => {
+      const { diagnostics } = await once();
+      if (!diagnostics) return;
+      const n = (severity: "error" | "warning"): string => plural(diagnostics.filter((d) => d.severity === severity).length, severity);
+      io.stderr(`${checking ? `checked ${input}` : `built ${values.out}`}: ${n("error")}, ${n("warning")}\n`);
+    },
+    io,
+  );
+};
+
+// what one file's build said: its exit code, and its diagnostics when it got as far as compiling
+type FileBuild = { code: number; diagnostics?: Diagnostic[] };
+
+// One file: compile it with its --css, say the diagnostics, then write -o (or stdout); check writes nothing.
+const buildFile = async (
+  input: string,
+  values: { out?: string; css?: string[]; text?: boolean; "allow-unsupported"?: boolean; "allow-svg"?: boolean },
+  options: { targets?: string[]; width?: number; lang?: string },
+  check: { maxWarnings: number | undefined } | undefined,
+  report: Reporter,
+  io: CliIO,
+): Promise<FileBuild> => {
   let html: string;
   const css: string[] = [];
   try {
@@ -400,7 +445,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     for (const f of values.css ?? []) css.push(text(await io.readFile(f), decodeCss));
   } catch (e) {
     io.stderr(`tddr: ${(e as Error).message}\n`);
-    return 2;
+    return { code: 2 };
   }
 
   let result;
@@ -409,20 +454,19 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
       css,
       strict: !values["allow-unsupported"],
       ...(values["allow-svg"] && { allowSvg: true }),
-      ...(width !== undefined && { width }),
-      ...(targets?.length && { targets }),
-      ...(values.lang !== undefined && { lang: values.lang }),
+      ...options,
     });
   } catch (e) {
     if (!(e instanceof UnknownTargetError)) throw e;
     io.stderr(`tddr: ${e.message}\n`);
-    return 2;
+    return { code: 2 };
   }
 
-  for (const d of result.diagnostics) report.add(d, input);
+  const { diagnostics } = result;
+  for (const d of diagnostics) report.add(d, input);
   report.end();
-  const errors = result.diagnostics.some((d) => d.severity === "error");
-  if (checking) return verdict(errors, result.diagnostics.filter((d) => d.severity === "warning").length, maxWarnings, io);
+  const errors = diagnostics.some((d) => d.severity === "error");
+  if (check) return { code: verdict(errors, diagnostics.filter((d) => d.severity === "warning").length, check.maxWarnings, io), diagnostics };
 
   if (values.out) {
     try {
@@ -432,13 +476,58 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
       }
     } catch (e) {
       io.stderr(`tddr: ${(e as Error).message}\n`);
-      return 2;
+      return { code: 2, diagnostics };
     }
   } else {
     io.stdout(result.html);
   }
 
-  return errors ? 1 : 0;
+  return { code: errors ? 1 : 0, diagnostics };
+};
+
+// --watch: build once, then again whenever one of the files changes, until the process is stopped. A
+// change while a build runs is built after it; a build that fails or throws is said and waited out.
+const watchFiles = async (files: string[], build: () => Promise<void>, io: CliIO): Promise<number> => {
+  let running = false;
+  let again = false;
+  const go = async (): Promise<void> => {
+    if (running) {
+      again = true;
+      return;
+    }
+    running = true;
+    do {
+      again = false;
+      try {
+        await build();
+      } catch (e) {
+        io.stderr(`tddr: ${(e as Error).message}\n`);
+      }
+    } while (again);
+    running = false;
+  };
+  // an editor's save is often several events; they settle into one build
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  io.watch?.(files, () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => void go(), WATCH_SETTLE_MS);
+  });
+  io.stderr(`watching ${files.join(", ")}\n`);
+  await go();
+  return 0;
+};
+
+const WATCH_SETTLE_MS = 50;
+
+// Each file's folder is watched rather than the file, so a save that replaces the file (write to a
+// temporary, then rename) is still seen.
+const watchPaths = (files: string[], onChange: () => void): void => {
+  const names = new Map<string, Set<string>>();
+  for (const f of files) {
+    const dir = dirname(resolve(f));
+    names.set(dir, (names.get(dir) ?? new Set()).add(basename(f)));
+  }
+  for (const [dir, watched] of names) watch(dir, (_, name) => (name === null || watched.has(name) ? onChange() : undefined));
 };
 
 // argv[1] can be a symlink (npm/pnpm bins), import.meta.url is already resolved
@@ -456,5 +545,6 @@ if (isMain()) {
     readFile: (p) => readFileSync(p),
     writeFile: (p, s) => writeFileSync(p, s),
     isDir: (p) => statSync(p, { throwIfNoEntry: false })?.isDirectory() ?? false,
+    watch: watchPaths,
   });
 }

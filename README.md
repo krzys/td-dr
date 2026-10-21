@@ -77,6 +77,7 @@ tddr dev emails                                                # preview server,
 | `--base-url <url>` | Folder builds and dev: where images are hosted; a build copies them to `<out>/assets`. |
 | `--port <n>`, `--host <h>` | Dev server address. |
 | `--max-warnings <n>` | `tddr check`: also exit 1 on more than `n` warnings. |
+| `--watch` | File builds (with `-o`) and checks: build again whenever the file or a `--css` file changes. |
 
 A file build prints each diagnostic to stderr as `file:line:col: severity CODE: message`, then
 `  hint: …`. A folder build adds the dialect after the place, and says a Vue email's diagnostic on
@@ -92,7 +93,9 @@ stderr, so a file build needs `-o`.
 
 `tddr check <file|dir>` builds as `tddr build` does, with its flags bar `-o`, `--text` and
 `--file-name`, and says the same diagnostics, but writes nothing; `--format json|sarif` goes to
-stdout.
+stdout. With `--watch` a file build or check keeps running, says each build's diagnostics and a
+line like `built out.html: 0 errors, 2 warnings`, and waits for the next change even after an
+error; for a folder, `tddr dev` does that.
 
 **Folder builds.** An emails folder holds one email per subfolder (`index.jsx` / `index.tsx`,
 `App.vue`) or per file (`welcome.jsx`, `digest.vue`), each default-exporting its component. Every
