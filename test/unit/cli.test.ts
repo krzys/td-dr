@@ -205,3 +205,25 @@ describe("cli", () => {
     expect(await run(["build", "a.html", "b.html"], t.io)).toBe(2);
   });
 });
+
+describe("cli --text", () => {
+  it("writes the plain-text part next to -o", async () => {
+    vi.mocked(compile).mockReturnValueOnce({ html: '<p>Hi <a href="https://ex.test/">there</a></p>', diagnostics: [] } as never);
+    const t = fakeIO();
+    expect(await run(["build", "in.html", "-o", "out/welcome.html", "--text"], t.io)).toBe(0);
+    expect(t.written["out/welcome.txt"]).toBe("Hi there (https://ex.test/)\n");
+    expect(t.out).toEqual([]);
+    const other = fakeIO();
+    expect(await run(["build", "in.html", "-o", "welcome", "--text"], other.io)).toBe(0);
+    expect(Object.keys(other.written)).toEqual(["welcome", "welcome.txt"]);
+  });
+
+  it("needs -o for a file build, and isn't a dev flag", async () => {
+    const t = fakeIO();
+    expect(await run(["build", "in.html", "--text"], t.io)).toBe(2);
+    expect(t.err.join("")).toBe("tddr: --text writes <name>.txt next to the HTML; give -o for it\n");
+    const dev = fakeIO();
+    expect(await run(["dev", "--text"], dev.io)).toBe(2);
+    expect(dev.err.join("")).toContain('--text doesn\'t apply to "dev"');
+  });
+});

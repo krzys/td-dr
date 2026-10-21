@@ -4,7 +4,7 @@ import { relative } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { LANG_TAG } from "./ctx.ts";
-import { compile, type Diagnostic } from "./index.ts";
+import { compile, toText, type Diagnostic } from "./index.ts";
 import { jsonReport, sarifReport, type Reported } from "./diagnostics/report.ts";
 import { decodeCss, decodeHtml } from "./parse/decode.ts";
 import { UnknownTargetError } from "./targets/capabilities.ts";
@@ -34,6 +34,8 @@ Build options:
                           export const lang, else en)
   --format <f>            diagnostics as text (default, on stderr), json or sarif
                           (on stdout, so a file build needs -o)
+  --text                  also write the plain-text part, <name>.txt next to each
+                          HTML file (a file build needs -o)
 
 Folder build:
   --file-name <pattern>   output file per email and dialect, inside --out, from
@@ -56,7 +58,7 @@ Folder build and dev server:
 // adapters/dev's startDevServer, as far as the CLI uses it (a test holds the two together)
 export type StartDevServer = (o: { dir: string; port?: number; host?: string; baseUrl?: string }) => Promise<{ url: string }>;
 
-const BUILD_FLAGS = ["out", "targets", "width", "css", "allow-unsupported", "allow-svg", "lang", "file-name", "no-verify", "format"] as const;
+const BUILD_FLAGS = ["out", "targets", "width", "css", "allow-unsupported", "allow-svg", "lang", "file-name", "no-verify", "format", "text"] as const;
 const DEV_FLAGS = ["port", "host"] as const;
 
 // Adapters load lazily so `tddr build in.html` never imports Vite, an optional peer; tsup emits them
@@ -111,11 +113,21 @@ const reporter = (format: Format, io: CliIO): Reporter => {
   };
 };
 
+// out.html -> out.txt
+const textFile = (html: string): string => `${html.replace(/\.html?$/i, "")}.txt`;
+
+// the plain-text part beside an HTML file the build wrote
+const writeText = async (file: string, io: CliIO, report: Reporter): Promise<void> => {
+  const txt = textFile(file);
+  await io.writeFile(txt, toText(text(await io.readFile(file), decodeHtml)));
+  report.progress(`wrote ${txt}\n`);
+};
+
 const rel = (file: string): string => relative(process.cwd(), file).replaceAll("\\", "/");
 
 const buildDir = async (
   dir: string,
-  values: { out?: string; "base-url"?: string; "file-name"?: string; "allow-unsupported"?: boolean; "allow-svg"?: boolean; "no-verify"?: boolean },
+  values: { out?: string; "base-url"?: string; "file-name"?: string; "allow-unsupported"?: boolean; "allow-svg"?: boolean; "no-verify"?: boolean; text?: boolean },
   compile: { targets?: string[]; width?: number; lang?: string },
   io: CliIO,
   report: Reporter,
@@ -148,6 +160,14 @@ const buildDir = async (
       failed = true;
     }
     if (r.file) report.progress(`wrote ${r.file}\n`);
+    if (r.file && values.text) {
+      try {
+        await writeText(r.file, io, report);
+      } catch (e) {
+        io.stderr(`tddr: ${(e as Error).message}\n`);
+        return 2;
+      }
+    }
     for (const d of r.diagnostics) {
       // a line in the rendered page is in no file anyone wrote, so that place is said as the email's
       // file; one a Vue component marked, in the component (docs/templates.md#native-component-code)
@@ -226,6 +246,7 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
         "file-name": { type: "string" },
         "no-verify": { type: "boolean" },
         format: { type: "string" },
+        text: { type: "boolean" },
         help: { type: "boolean", short: "h" },
         version: { type: "boolean", short: "v" },
       },
@@ -304,6 +325,10 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
     io.stderr("tddr: --no-verify applies to a folder build\n");
     return 2;
   }
+  if (values.text && !values.out) {
+    io.stderr("tddr: --text writes <name>.txt next to the HTML; give -o for it\n");
+    return 2;
+  }
   if (format !== "text" && !values.out) {
     io.stderr(`tddr: --format ${format} writes the report to stdout; give -o for the HTML\n`);
     return 2;
@@ -341,6 +366,9 @@ export const run = async (argv: string[], io: CliIO): Promise<number> => {
   if (values.out) {
     try {
       await io.writeFile(values.out, result.html);
+      if (values.text) {
+        await io.writeFile(textFile(values.out), toText(result.html));
+      }
     } catch (e) {
       io.stderr(`tddr: ${(e as Error).message}\n`);
       return 2;

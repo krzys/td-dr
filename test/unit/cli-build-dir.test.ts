@@ -138,6 +138,18 @@ describe("tddr build <folder>", () => {
     expect(file.err()).toContain("--no-verify applies to a folder build");
   });
 
+  it("--text writes each template's plain-text part next to it", async () => {
+    const written: Record<string, string> = {};
+    const t = io();
+    t.io.readFile = (p) => (p === "/p/dist/emails/badge.handlebars.html" ? "<h1>Hi {{user.name}}</h1>" : "");
+    t.io.writeFile = (p, s) => void (written[p] = s);
+    expect(await run(["build", "emails", "--text"], t.io)).toBe(0);
+    expect(written).toEqual({ "/p/dist/emails/badge.handlebars.txt": "Hi {{user.name}}\n================\n" });
+    expect(t.out()).toBe(
+      ["wrote /p/dist/emails/badge.handlebars.html", "wrote /p/dist/emails/badge.handlebars.txt", "skipped plain: not a template", ""].join("\n"),
+    );
+  });
+
   it("rejects flags that don't fit the input", async () => {
     const dir = io();
     expect(await run(["build", "emails", "--css", "x.css"], dir.io)).toBe(2);

@@ -70,6 +70,7 @@ tddr dev emails                                                # preview server,
 | `--css <file>` | Extra stylesheet (file builds, repeatable). |
 | `--allow-unsupported`, `--allow-svg` | `strict: false`, `allowSvg: true`. |
 | `--format text\|json\|sarif` | How diagnostics are said (default `text`). |
+| `--text` | Also write the [plain-text part](docs/support.md#plain-text-part), `<name>.txt` next to each HTML file (file builds need `-o`). |
 | `--file-name <pattern>` | Folder builds: output name from `[name]` and `[dialect]` (default `[name].[dialect].html`). |
 | `--no-verify` | Folder builds: skip the equivalence check. |
 | `--base-url <url>` | Folder builds and dev: where images are hosted; a build copies them to `<out>/assets`. |
