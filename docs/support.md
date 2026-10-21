@@ -342,8 +342,9 @@ the base didn't.
   has none, and a stretched card keeps its inner padding cell.
 - **Vertical distribution:** a min-height column may switch between `center` and `flex-end`, or
   between the `space-*` values ([height and vertical distribution](#height-and-vertical-distribution)).
-- **Stack a row:** each column cell becomes `display:block;width:100%`, gutters drop, the column
-  gap becomes `padding-top`. Outlook keeps the desktop row. Wrapping rows stack by themselves.
+- **Stack a row:** each column cell becomes `display:block;width:100%` (a bordered painted one
+  `box-sizing:border-box`, so its border stays inside that width), gutters drop, the column gap
+  becomes `padding-top`. Outlook keeps the desktop row. Wrapping rows stack by themselves.
 - `mso-*` declarations and comment content are ignored (Outlook never applies `@media`, `:hover`
   or dark rules).
 

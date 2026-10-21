@@ -190,7 +190,9 @@ const paintedCellsOf = (e: EmitContext, { col: c, row: r, drop, stack }: Cell, c
             ? [
                 ["display", "block"],
                 ["width", blockWidth(blocked.item, blocked.item.inset.left + blocked.item.inset.right > 0)],
-                ["max-width", blocked.item.cap !== undefined ? `${blocked.item.cap - bx}px` : undefined],
+                ["max-width", blocked.item.cap !== undefined ? `${blocked.item.cap}px` : undefined],
+                // a block's width leaves its border out; the item's own width (or the line) holds it
+                ["box-sizing", bx ? "border-box" : undefined],
                 // the gap above sits outside the paint
                 ["margin", blockMargin(blocked, true)],
                 // a block takes its height from its content, not the row
