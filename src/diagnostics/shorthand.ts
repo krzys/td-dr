@@ -26,7 +26,7 @@ const shorthand = (family: string, values: readonly string[]): string | undefine
 };
 
 // "border-top-color: x; border-right-color: x; …" inside one message
-const joinWithin = (message: string): string => {
+export const joinWithin = (message: string): string => {
   const found = sidesIn(message);
   for (let i = 0; i + 3 < found.length; i++) {
     const run = found.slice(i, i + 4);

@@ -65,6 +65,43 @@ describe("head styles", () => {
     expect(out.diagnostics.filter((d) => d.code === "E005")).toHaveLength(1);
   });
 
+  it("says which screens a forwarded diagnostic comes from", () => {
+    const narrow = compile(page("@media (max-width:480px){.x{margin-left:-8px}}"), { strict: false }).diagnostics.find((d) => d.code === "E005");
+    expect(narrow?.message).toMatch(/^At 480px and below: /);
+    const dark = compile(page("@media (prefers-color-scheme:dark){.x{margin-left:-8px}}"), { strict: false }).diagnostics.find((d) => d.code === "E005");
+    expect(dark?.message).toMatch(/^In dark mode: /);
+  });
+
+  it("names the screens a forwarded diagnostic comes from as the breakpoints they make up", () => {
+    const out = compile(page("@media (max-width:600px){.x{margin-left:-8px}} @media (max-width:480px){.x{padding:2px}}"), { strict: false });
+    const e = out.diagnostics.filter((d) => d.code === "E005");
+    expect(e).toHaveLength(1);
+    expect(e[0]!.message).toMatch(/^At 600px and below: /);
+    const mid = compile(page("@media (max-width:600px){.x{padding:6px}} @media (min-width:481px) and (max-width:600px){.x{margin-left:-8px}} @media (max-width:480px){.x{padding:2px}}"), { strict: false });
+    expect(mid.diagnostics.find((d) => d.code === "E005")?.message).toMatch(/^At 481–600px: /);
+  });
+
+  it("reports one E017 for an element every narrow screen restructures the same way, naming the declarations", () => {
+    const out = compile(
+      page(".row{display:flex;flex-direction:column} @media (max-width:600px){.row{flex-direction:row}} @media (max-width:480px){.x{padding:2px}}", '<div class="row"><div>a</div><div>b</div></div>'),
+      { strict: false },
+    );
+    const e = out.diagnostics.filter((d) => d.code === "E017");
+    expect(e).toHaveLength(1);
+    expect(e[0]!.message).toMatch(/^The max-width 600px rules change the layout structure/);
+    expect(e[0]!.message).toContain("{ flex-direction: row }");
+    expect(e[0]!.message).not.toMatch(/the base has "</);
+  });
+
+  it("quotes a border shorthand the screen writes as the shorthand, not its longhands", () => {
+    const e017 = (screen: string): string | undefined =>
+      compile(page(`.row{display:flex;flex-direction:column;color:#333333;border-right:1px solid #cccccc} @media (max-width:600px){.row{${screen}}}`, '<div class="row"><div>a</div><div>b</div></div>'), { strict: false })
+        .diagnostics.find((d) => d.code === "E017")?.message;
+    expect(e017("flex-direction:row;border:0")).toContain("{ flex-direction: row; border: 0 }");
+    expect(e017("flex-direction:row;border:2px dashed #ff0000")).toContain("{ flex-direction: row; border: 2px dashed #ff0000 }");
+    expect(e017("flex-direction:row;border-top:0")).toContain("{ flex-direction: row; border-top: 0 }");
+  });
+
   it("does not repeat what the base already says", () => {
     const out = compile(page(".x{margin-left:-8px} @media (max-width:480px){.x{padding:2px}}"), { strict: false });
     expect(out.diagnostics.filter((d) => d.code === "E005")).toHaveLength(1);

@@ -24,7 +24,8 @@ import { diffVariant, tokenize, type Compiled } from "./responsive/diff.ts";
 import { shownElsewhere } from "./responsive/keep.ts";
 import { layoutNotes, stackedElsewhere, stackNotes } from "./responsive/stack.ts";
 import { buildHead, type Found, type Head } from "./responsive/rules.ts";
-import { variantsOf, type Variant } from "./responsive/variants.ts";
+import { labelOf, scopeOf, variantsOf, type Variant } from "./responsive/variants.ts";
+import { changedAt } from "./responsive/changed.ts";
 import { lintDropped, lintPlaceholders, reportTemplate } from "./template/lint.ts";
 import { hasTemplate } from "./template/tokens.ts";
 import { writeTemplate } from "./template/write.ts";
@@ -115,27 +116,45 @@ const compileScreen = (doc: ParsedDoc, given: Ctx, screen: Screen, shared: Share
   return { html, elements: marked.found, diagnostics: ctx.diagnostics.list() };
 };
 
+// What a screen says, said once for all the screens that say it, led by which ones they are.
+type Said = { d: Diagnostic; on: Variant[] };
+const sayOnce = (said: Said[], d: Diagnostic, on: Variant, same: (a: Diagnostic, b: Diagnostic) => boolean): void => {
+  const s = said.find((x) => same(x.d, d));
+  if (s) s.on.push(on);
+  else said.push({ d, on: [on] });
+};
+const sameError = (label: (d: Diagnostic) => string) => (a: Diagnostic, b: Diagnostic): boolean =>
+  sameDiagnostic({ ...a, message: label(a) }, { ...b, message: label(b) }) && a.hint === b.hint;
+
 // The base's html with a class on every element a screen changes, and the head rules for them.
 const responsive = (doc: ParsedDoc, ctx: Ctx, base: Base, screens: readonly Screen[], shared: Shared): Head | undefined => {
   const found: Found[] = [];
-  const reported = [...ctx.diagnostics.list()];
+  const reported = ctx.diagnostics.list();
+  const forwarded: Said[] = [];
+  const dropped: Said[] = [];
+  // an E017 with its screen's label taken out, so the screens that fail one way say it once
+  const labels = new Map<Diagnostic, string>();
+  const unlabelled = (d: Diagnostic): string => d.message.replace(labels.get(d) ?? "", "\0");
   for (const screen of screens) {
     const compiled = compileScreen(doc, ctx, screen, shared);
-    const diff = diffVariant(base, compiled, screen.variant.label);
+    const { label } = screen.variant;
+    const diff = diffVariant(base, compiled, label);
     if ("error" in diff) {
       // a dropped screen is never emitted, so what it says on the way is not the author's to read
+      const changed = diff.structure && diff.loc ? changedAt(base.styled, screen.styled, diff.loc) : undefined;
+      const error = changed ? `The ${label} rules change the layout structure of ${changed}` : diff.error;
       const notes = layoutNotes(base.styled, screen.styled);
-      ctx.diagnostics.report("E017", { message: [diff.error, ...notes].join("; "), hint: diff.hint, loc: diff.loc });
+      const d: Diagnostic = { code: "E017", severity: "error", message: [error, ...notes].join("; "), ...(diff.hint ? { hint: diff.hint } : {}), ...(diff.loc ? { loc: diff.loc } : {}) };
+      labels.set(d, label);
+      sayOnce(dropped, d, screen.variant, sameError(unlabelled));
       continue;
     }
     found.push({ variant: screen.variant, overrides: diff.overrides });
-    // what only this screen says: once, however many screens say it
-    for (const d of compiled.diagnostics) {
-      if (reported.some((r) => sameDiagnostic(r, d))) continue;
-      reported.push(d);
-      ctx.diagnostics.report(d.code as Code, { message: d.message, hint: d.hint, loc: d.loc });
-    }
+    // what only the screens say: once, however many screens say it
+    for (const d of compiled.diagnostics) if (!reported.some((r) => sameDiagnostic(r, d))) sayOnce(forwarded, d, screen.variant, sameDiagnostic);
   }
+  for (const { d, on } of dropped) ctx.diagnostics.report("E017", { message: unlabelled(d).replace("\0", labelOf(on)), hint: d.hint, loc: d.loc });
+  for (const { d, on } of forwarded) ctx.diagnostics.report(d.code as Code, { message: `${scopeOf(on)}: ${d.message}`, hint: d.hint, loc: d.loc });
   return buildHead(base.html, tokenize(base.html), found);
 };
 

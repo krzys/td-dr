@@ -344,8 +344,15 @@ the base didn't.
 Anything else is **E017** and only that screen is dropped: a different tag sequence (column count,
 `column-reverse`, a column turned into a row, stacking a wrapping row), different text, attributes
 or element order, or a declaration that can't be taken back. The message names the screen and the
-first difference; the location is the author element owning it. To vary content, put each version
+first difference (for a different tag sequence, the declarations that screen's rules change on the
+element, as `{ flex-direction: row; border: 0 }`, shorthands as written); the location is the author element owning it. Screens that
+fail at one element the same way are one E017 named by the breakpoint they make up (`max-width
+600px`, not each of the ranges the design width splits it into). To vary content, put each version
 in the markup and hide the others per screen.
+
+What only another screen says (a value td;dr can't carry there) is said once, led by those screens:
+"At 600px and below: …", "At 481–600px: …", "In dark mode: …", "On :hover: …". A dropped screen
+says nothing besides its E017.
 
 ### Dark mode
 

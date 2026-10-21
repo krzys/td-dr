@@ -22,7 +22,7 @@
   {
     "code": "E017",
     "severity": "error",
-    "message": "The max-width 480px rules change the layout structure: the base has \"<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing...\" where this screen has \"</td>\"",
+    "message": "The max-width 480px rules change the layout structure of this <div> with { flex-direction: column }",
     "hint": "Head rules can change padding, sizes, colours, show or hide blocks and stack a flex row or grid (flex-direction: column, display: block, one grid track) on narrow screens, but not change the column count, reverse the order or turn a column into a row; fluid rows already wrap on phones.",
     "loc": {
       "line": 14,

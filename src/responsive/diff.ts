@@ -7,7 +7,8 @@ import { inheritsFrom, resetFor } from "./reset.ts";
 export type Tag = { name: string; closing: boolean; text: string; start: number; end: number };
 export type Decls = Array<readonly [string, string]>;
 export type Override = { index: number; decls: Decls };
-export type Mismatch = { error: string; hint?: string; loc?: SrcLoc | undefined };
+// `structure`: the tags differ, so the error quotes tags the author never wrote (src/responsive/changed.ts)
+export type Mismatch = { error: string; hint?: string; loc?: SrcLoc | undefined; structure?: true };
 export type Diff = { overrides: Override[] } | Mismatch;
 // One compile's emitted body html. `elements`: the trace markers that name author elements (a text
 // run's marker names its first node, and the emitter picks one or the other by the box it builds).
@@ -179,7 +180,7 @@ const checkStructure = (base: Side, variant: Side, label: string): Mismatch | un
     const b = base.tags[i]?.tag;
     const v = variant.tags[i]?.tag;
     if (b && v && b.name === v.name && b.closing === v.closing) continue;
-    return { error: `The ${label} rules change the layout structure: the base has ${quoted(b)} where this screen has ${quoted(v)}`, loc: locOf(ownerAt(base, Math.min(i, base.tags.length))?.source) };
+    return { error: `The ${label} rules change the layout structure: the base has ${quoted(b)} where this screen has ${quoted(v)}`, loc: locOf(ownerAt(base, Math.min(i, base.tags.length))?.source), structure: true };
   }
   return undefined;
 };
