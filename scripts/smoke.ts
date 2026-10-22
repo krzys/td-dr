@@ -145,7 +145,7 @@ const steps = async (): Promise<void> => {
   if (!(await check("install the tarball without optional peers", () => install([tarball])))) return;
 
   await check("every exports target and the bin exist", () => {
-    const dir = join(APP, "node_modules/tddr");
+    const dir = join(APP, "node_modules/@krzys_s/tddr");
     const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as { bin: Record<string, string>; exports: Record<string, Record<string, string>> };
     const targets = [...Object.values(pkg.bin), ...Object.values(pkg.exports).flatMap((e) => Object.values(e))];
     const missing = targets.filter((t) => !existsSync(join(dir, t)));
@@ -153,12 +153,12 @@ const steps = async (): Promise<void> => {
     for (const peer of PEERS) assert(!existsSync(join(APP, "node_modules", peer)), `optional peer ${peer} got installed`);
   });
 
-  await check('import { compile } from "tddr" compiles an email without errors', () => {
+  await check('import { compile } from "@krzys_s/tddr" compiles an email without errors', () => {
     write("email.html", EMAIL);
     write(
       "compile.mjs",
       `import { readFileSync } from "node:fs";
-import { compile } from "tddr";
+import { compile } from "@krzys_s/tddr";
 const { html, diagnostics } = compile(readFileSync("email.html", "utf8"));
 console.log(JSON.stringify({ html, errors: diagnostics.filter((d) => d.severity === "error") }));`,
     );
@@ -174,10 +174,10 @@ console.log(JSON.stringify({ html, errors: diagnostics.filter((d) => d.severity 
     assert(must(tddr, ["--version"]).trim() === (JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")) as { version: string }).version, "--version");
   });
 
-  await check('types: "tddr" type-checks with skipLibCheck false, no DOM or Node types', () => {
+  await check('types: "@krzys_s/tddr" type-checks with skipLibCheck false, no DOM or Node types', () => {
     write(
       "core.ts",
-      `import { compile, field, preview, writeString, type CompileOptions, type CompileResult, type Diagnostic, type DialectName } from "tddr";
+      `import { compile, field, preview, writeString, type CompileOptions, type CompileResult, type Diagnostic, type DialectName } from "@krzys_s/tddr";
 const options: CompileOptions = { targets: ["gmail"], width: 600, template: "handlebars" };
 const result: CompileResult = compile("<p>hi</p>", options);
 const errors: Diagnostic[] = result.diagnostics.filter((d) => d.severity === "error");
@@ -190,9 +190,9 @@ export { errors, dialect, field, preview, writeString };`,
 
   // ERR_MODULE_NOT_FOUND names the package; anything vaguer would leave a user guessing
   const missingPeer: Array<[entry: string, peer: string]> = [
-    ["tddr/react", "react"],
-    ["tddr/vue", "vue"],
-    ["tddr/vite", "vite"],
+    ["@krzys_s/tddr/react", "react"],
+    ["@krzys_s/tddr/vue", "vue"],
+    ["@krzys_s/tddr/vite", "vite"],
   ];
   for (const [entry, peer] of missingPeer)
     await check(`import "${entry}" without its peer fails naming "${peer}"`, () => {
@@ -215,10 +215,10 @@ export { errors, dialect, field, preview, writeString };`,
   await check("types: all four entries type-check with skipLibCheck false", () => {
     write(
       "adapters.ts",
-      `import * as core from "tddr";
-import { Each, Else, ElseIf, If, render, renderTemplate } from "tddr/react";
-import { render as renderVue, renderTemplate as renderVueTemplate } from "tddr/vue";
-import { buildEmails, createEmailServer, findEmails, renderEmail, tddr, verifyEmail, type BuildOptions, type BuildResult, type EmailEntry } from "tddr/vite";
+      `import * as core from "@krzys_s/tddr";
+import { Each, Else, ElseIf, If, render, renderTemplate } from "@krzys_s/tddr/react";
+import { render as renderVue, renderTemplate as renderVueTemplate } from "@krzys_s/tddr/vue";
+import { buildEmails, createEmailServer, findEmails, renderEmail, tddr, verifyEmail, type BuildOptions, type BuildResult, type EmailEntry } from "@krzys_s/tddr/vite";
 import type { Plugin } from "vite";
 const plugins: Plugin[] = tddr();
 const options: BuildOptions | undefined = undefined;
@@ -230,13 +230,13 @@ export { core, Each, Else, ElseIf, If, render, renderTemplate, renderVue, render
     must(process.execPath, [TSC, "-p", "."]);
   });
 
-  await check("tddr/react render and renderTemplate", () => {
+  await check("@krzys_s/tddr/react render and renderTemplate", () => {
     // renderTemplate's fields need tddr's JSX runtime, which only the tddr() Vite plugin wires in
     // (the folder build below covers that); here a component without fields
     write(
       "react.mjs",
       `import { createElement as h } from "react";
-import { render, renderTemplate } from "tddr/react";
+import { render, renderTemplate } from "@krzys_s/tddr/react";
 const Hello = ({ name }) => h("table", null, h("tbody", null, h("tr", null, h("td", { style: { color: "#333333" } }, "Hello ", name))));
 const Static = () => h("p", { style: { margin: 0 } }, "Static");
 console.log(JSON.stringify({ html: render(Hello, { name: "Ada" }), template: await renderTemplate(Static) }));`,
@@ -246,12 +246,12 @@ console.log(JSON.stringify({ html: render(Hello, { name: "Ada" }), template: awa
     assert(template === '<p style="margin:0">Static</p>', `renderTemplate: ${template}`);
   });
 
-  await check("tddr/vue render and renderTemplate", () => {
+  await check("@krzys_s/tddr/vue render and renderTemplate", () => {
     write(
       "vue.mjs",
       `import { defineComponent, h } from "vue";
-import { compile } from "tddr";
-import { render, renderTemplate } from "tddr/vue";
+import { compile } from "@krzys_s/tddr";
+import { render, renderTemplate } from "@krzys_s/tddr/vue";
 const Hello = defineComponent({ props: { user: Object }, setup: (p) => () => h("p", { style: "color:#333333" }, "Hello " + p.user.name) });
 const template = compile(await renderTemplate(Hello), { template: "liquid" });
 console.log(JSON.stringify({ html: await render(Hello, { user: { name: "Ada" } }), liquid: template.html }));`,

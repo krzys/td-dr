@@ -11,18 +11,18 @@ Write markup as for a browser (flex, grid, gap, `max-width`, `var()`, `@layer`, 
 server-rendered output of React and Vue components). td;dr turns it into nested tables, inline
 styles, Outlook conditional (MSO) markup and VML, plus a small head `<style>` for clients that read
 one. Anything it can't lower faithfully is a diagnostic with a source location and a hint, never
-dropped silently. The package, binary and import name is `tddr`.
+dropped silently. The package is `@krzys_s/tddr`; its command is `tddr`.
 
 ## Install
 
 Node.js 22.18 or later.
 
 ```sh
-npm install tddr   # or: pnpm add tddr
+npm install @krzys_s/tddr   # or: pnpm add @krzys_s/tddr
 ```
 
-Optional peers, only for what you use: `vite` (`tddr dev`, folder builds, `tddr/vite`), `react` and
-`react-dom` (`tddr/react`), `vue` (`tddr/vue`), `handlebars` and `liquidjs` (the template
+Optional peers, only for what you use: `vite` (`tddr dev`, folder builds, `@krzys_s/tddr/vite`), `react` and
+`react-dom` (`@krzys_s/tddr/react`), `vue` (`@krzys_s/tddr/vue`), `handlebars` and `liquidjs` (the template
 equivalence check and engine-filled previews).
 
 ## Status
@@ -35,7 +35,7 @@ client behaviour not confirmed in a real client is marked **unverified** in
 ## Compile
 
 ```ts
-import { compile } from "tddr";
+import { compile } from "@krzys_s/tddr";
 
 const { html, diagnostics } = compile(source, { targets: ["gmail", "outlook-2019"] });
 for (const d of diagnostics) console.log(d.severity, d.code, d.message, d.loc);
@@ -125,7 +125,7 @@ folder builds and dev; a flag wins over it. Node (22.18 or later) loads a `.ts` 
 stripping its types, so it can use only erasable TypeScript.
 
 ```ts
-import { defineConfig } from "tddr";
+import { defineConfig } from "@krzys_s/tddr";
 
 export default defineConfig({ targets: ["gmail", "outlook-2019"], width: 640, baseUrl: "https://cdn.example.com/emails" });
 ```
@@ -153,8 +153,8 @@ export default function Receipt({ customer, order }) {
 
 In a template render props are symbolic: printing one writes a field, `.map` a loop, and `?:`,
 `&&`, `||`, `!`, comparisons, early returns and `switch` write conditional blocks; Vue's `v-if` /
-`v-for` work the same way. `tddr/react` and `tddr/vue` also export `If`, `ElseIf`, `Else`, `Each`
-and `render(Component, props)`; `tddr/vite` exports the Vite plugin and `buildEmails`,
+`v-for` work the same way. `@krzys_s/tddr/react` and `@krzys_s/tddr/vue` also export `If`, `ElseIf`, `Else`, `Each`
+and `render(Component, props)`; `@krzys_s/tddr/vite` exports the Vite plugin and `buildEmails`,
 `renderEmail` (the compiled `html` and its plain-text part, `text`), `createEmailServer`, `findEmails`.
 
 ## Support and limits
@@ -187,8 +187,8 @@ and `pnpm smoke` are described with the other commands in
 [architecture.md](docs/architecture.md#verification).
 
 The tarball holds `dist/`, `LICENSE`, `NOTICE`, `README.md` and `package.json`. To try a local build
-in another project, `pnpm build && pnpm pack`, then add the `.tgz` there. The `tddr/react`,
-`tddr/vue` and `tddr/vite` types import their framework's types (`@types/react`, Vue with the `DOM`
+in another project, `pnpm build && pnpm pack`, then add the `.tgz` there. The `@krzys_s/tddr/react`,
+`@krzys_s/tddr/vue` and `@krzys_s/tddr/vite` types import their framework's types (`@types/react`, Vue with the `DOM`
 lib, `@types/node`).
 
 ## Documentation

@@ -1,5 +1,5 @@
 {
-  "name": "tddr",
+  "name": "@krzys_s/tddr",
   "version": "0.1.0",
   "description": "td;dr (too divvy; didn't render) — compile normal HTML/CSS into email-safe HTML",
   "keywords": [

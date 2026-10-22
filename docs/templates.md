@@ -42,7 +42,7 @@ first element it repeats or shows (a component's own first element when the `v-f
 component); one a component renders several times keeps its count and is said at that line once. JSX gives the build no such hook, so a React email's
 diagnostic, and one on no element, is said at the email's file.
 
-`tddr/react` and `tddr/vue` also export `If` / `ElseIf` / `Else` (prop `when`) and `Each` (prop
+`@krzys_s/tddr/react` and `@krzys_s/tddr/vue` also export `If` / `ElseIf` / `Else` (prop `when`) and `Each` (prop
 `of`; children as a function, or a scoped slot in Vue) as an escape hatch.
 
 A component renders into the body, so it sets the page title by writing a `<title>` anywhere in

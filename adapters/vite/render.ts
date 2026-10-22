@@ -35,7 +35,7 @@ const fail = (email: EmailEntry, what: string, err: unknown): never => {
 
 const emailEnv = (vite: ViteDevServer): RunnableDevEnvironment => {
   const env = vite.environments[EMAIL_ENV];
-  if (!env || !isRunnableDevEnvironment(env)) throw new Error("This Vite server has no email environment; add tddr() from tddr/vite to its plugins");
+  if (!env || !isRunnableDevEnvironment(env)) throw new Error("This Vite server has no email environment; add tddr() from @krzys_s/tddr/vite to its plugins");
   return env;
 };
 

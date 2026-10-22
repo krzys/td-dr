@@ -14,4 +14,4 @@ The first release.
   (Handlebars and Liquid) checked for equivalence against their real engines, and a plain-text part.
 - The `tddr` command line: `build`, `check` and `dev`, with `--watch`, `--text`, JSON and SARIF
   diagnostics and a `tddr.config.ts`.
-- `tddr/react`, `tddr/vue` and `tddr/vite` for component emails.
+- `@krzys_s/tddr/react`, `@krzys_s/tddr/vue` and `@krzys_s/tddr/vite` for component emails.
