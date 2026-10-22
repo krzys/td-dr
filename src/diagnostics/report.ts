@@ -1,4 +1,4 @@
-// Diagnostics for tools rather than people: `tddr build --format json|sarif` (README.md#command-line).
+// Diagnostics for tools rather than people: `tddr build --format json|sarif` (docs/cli.md#json-and-sarif).
 import { isAbsolute } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { SrcLoc } from "../loc.ts";

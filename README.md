@@ -5,34 +5,112 @@
   </picture>
 </h1>
 
-**too divvy; didn't render** — a compiler from ordinary HTML and CSS to email-safe HTML.
+**too divvy; didn't render** — write an email like a web page, send HTML that email clients render.
 
-Write markup as for a browser (flex, grid, gap, `max-width`, `var()`, `@layer`, `@media`, or the
-server-rendered output of React and Vue components). td;dr turns it into nested tables, inline
-styles, Outlook conditional (MSO) markup and VML, plus a small head `<style>` for clients that read
-one. Anything it can't lower faithfully is a diagnostic with a source location and a hint, never
-dropped silently. The package is `@krzys_s/tddr`; its command is `tddr`.
+- **You write** ordinary HTML and CSS: flex, grid, `gap`, `max-width`, `var()`, `@media`, or React
+  and Vue components.
+- **You get** the HTML email clients need: nested tables, inline styles, Outlook-only markup, and a
+  small `<style>` for the clients that read one.
+- **When something can't be converted faithfully**, you get a diagnostic with the line, the reason
+  and a hint. Nothing is dropped silently.
 
-## Install
+## Quick start
 
 Node.js 22.18 or later.
 
 ```sh
-npm install @krzys_s/tddr   # or: pnpm add @krzys_s/tddr
+npm install @krzys_s/tddr
 ```
 
-Optional peers, only for what you use: `vite` (`tddr dev`, folder builds, `@krzys_s/tddr/vite`), `react` and
-`react-dom` (`@krzys_s/tddr/react`), `vue` (`@krzys_s/tddr/vue`), `handlebars` and `liquidjs` (the template
-equivalence check and engine-filled previews).
+Write `email.html` the way you would for a browser:
 
-## Status
+```html
+<style>
+  .row { display: flex; gap: 16px; max-width: 600px; margin: 0 auto; }
+  .col { flex: 1; padding: 16px; background: #f4f4f5; border-radius: 8px; }
+</style>
+<div class="row">
+  <div class="col">Fast</div>
+  <div class="col">Safe</div>
+</div>
+```
 
-td;dr is at 0.x: options, diagnostics and output may change between minor versions (see
-`CHANGELOG.md`). Output is checked by golden tests and rendered in Chromium, Firefox and WebKit;
-client behaviour not confirmed in a real client is marked **unverified** in
-[Support and limits](docs/support.md), Outlook's Word engine included.
+Compile it:
 
-## Compile
+```sh
+npx tddr build email.html -o out.html
+```
+
+```
+email.html:6:3: warning W005: border-radius isn't supported in Outlook Windows; partly in Yahoo! Mail … (2 places)
+  hint: Round corners can be used in VML with the `RoundRect` element. …
+email.html: info I009: Language defaulted to English
+  hint: Screen readers pick a voice from lang. Set <html lang>, the lang option (--lang), …
+```
+
+`out.html` is a complete email document. The flex row became a table, with the styles inline:
+
+```html
+<table role="presentation" width="100%" … style="width:100%;max-width:600px;margin:0 auto;border-collapse:separate;">
+<tr>
+<td width="292" valign="top" bgcolor="#f4f4f5" style="width:48.67%;background-color:#f4f4f5;border-radius:8px;">
+  … Fast …
+</td>
+…
+```
+
+## Pick how you use it
+
+| You have | Use | Section |
+|---|---|---|
+| An HTML file | `tddr build email.html` | [Command line](#command-line) |
+| HTML in your own code | `compile(html)` | [From code](#from-code) |
+| React or Vue components | an `emails/` folder, `tddr dev`, `tddr build emails` | [React and Vue](#react-and-vue) |
+| Handlebars or Liquid templates for an email service | the same components, with `export const template` | [Templates for an email service](#templates-for-an-email-service) |
+
+Install only the extras you use:
+
+| For | Also install |
+|---|---|
+| `tddr dev`, folder builds, `@krzys_s/tddr/vite` | `vite` |
+| React components (`@krzys_s/tddr/react`) | `react`, `react-dom` |
+| Vue components (`@krzys_s/tddr/vue`) | `vue` |
+| Checking Handlebars or Liquid output, previews filled by the real engine | `handlebars`, `liquidjs` |
+
+## Command line
+
+```sh
+tddr build email.html -o out.html          # compile one file
+tddr build email.html -o out.html --watch  # …and again on every save
+tddr check email.html                      # report diagnostics, write nothing
+tddr dev emails                            # preview server at localhost:3100
+tddr build emails                          # every template email in a folder
+```
+
+Common flags:
+
+| Flag | Meaning |
+|---|---|
+| `-o, --out <path>` | Output file (or folder). Without it, a file build prints to stdout. |
+| `--targets gmail,outlook-2019` | Which clients to check support for (default `broad`, [all presets](#options)). |
+| `--width <px>` | Design width (default: the root container's px width, else 600). |
+| `--text` | Also write the plain-text part, `<name>.txt`. |
+| `--format json\|sarif` | Machine-readable diagnostics, for CI and code scanning. |
+| `--max-warnings <n>` | `tddr check`: fail on more than `n` warnings. |
+
+The exit code is 1 when an error is reported and 2 for a usage error. Every flag, the output formats
+and what each command writes are in the [command-line reference](docs/cli.md).
+
+Defaults for `targets`, `width` and `baseUrl` can go in `tddr.config.ts` in the directory you run
+from; a flag wins over it:
+
+```ts
+import { defineConfig } from "@krzys_s/tddr";
+
+export default defineConfig({ targets: ["gmail", "outlook-2019"], width: 640, baseUrl: "https://cdn.example.com/emails" });
+```
+
+## From code
 
 ```ts
 import { compile } from "@krzys_s/tddr";
@@ -41,103 +119,41 @@ const { html, diagnostics } = compile(source, { targets: ["gmail", "outlook-2019
 for (const d of diagnostics) console.log(d.severity, d.code, d.message, d.loc);
 ```
 
-`source` is a full document or a body fragment.
+`source` is a full document or just the body's content.
+
+### Options
 
 | Option | Default | Meaning |
 |---|---|---|
-| `css` | `[]` | Extra stylesheets, applied after the document's `<style>` blocks. |
-| `targets` | `["broad"]` | Client presets for support lint: `broad`, `gmail`, `outlook-2019`, `outlook-com`, `outlook-new`, `outlook-mobile`, `apple-mail`, `yahoo`, `samsung`. |
-| `width` | from the email | Design width in px; without it, the root container's px width, else 600 ([details](docs/support.md#design-width)). |
-| `strict` | `true` | Unsupported input is an error; `false` makes it a warning and keeps the input as written. |
-| `allowSvg` | `false` | Keep inline `<svg>` with W010 instead of E008. |
-| `lang` | from the source | Language when there is no `<html lang>`; else `en` with I009. |
-| `template` | none | `"handlebars"` or `"liquid"`: write fields and blocks for an ESP ([templates](docs/templates.md)). |
+| `targets` | `["broad"]` | Clients to check support for: `broad`, `gmail`, `outlook-2019`, `outlook-com`, `outlook-new`, `outlook-mobile`, `apple-mail`, `yahoo`, `samsung`. |
+| `width` | from the email | Design width in px: the root container's px width, else 600 ([details](docs/support.md#design-width)). |
+| `css` | `[]` | Extra stylesheets, applied after the document's own `<style>` blocks. |
+| `strict` | `true` | Unsupported input is an error. `false` makes it a warning and keeps the input as written. |
+| `allowSvg` | `false` | Keep inline `<svg>` (warning W010) instead of refusing it (error E008). |
+| `lang` | from the source | Language when there is no `<html lang>`; else `en`, with a note (I009). |
+| `template` | none | `"handlebars"` or `"liquid"`: write template fields and blocks ([templates](docs/templates.md)). |
 | `trace` | `false` | Also return which input element each output tag came from. |
 
-A diagnostic is `{ code, severity, message, hint?, loc?: { line, col, file? }, locs? }`: `E…` errors,
-`W…` warnings, `I…` notes ([all codes](docs/support.md#diagnostic-codes)). One said the same way at
-several places comes once, as "… (N places)" at the first, with every place in `locs`. The package also exports
-`preview(html, props)`, `field(path)` and `writeString(text, dialect)` for templates, and
-`toText(html, { template })`, which turns a compiled email into its plain-text part ([how](docs/support.md#plain-text-part)).
+### Diagnostics
 
-## Command line
+Each diagnostic is `{ code, severity, message, hint?, loc?: { line, col, file? }, locs? }`. Codes
+starting with `E` are errors, `W` warnings, `I` notes ([every code](docs/support.md#diagnostic-codes)).
+The same problem in several places is reported once, as "… (N places)", with every place in `locs`.
 
-```sh
-tddr build email.html -o out.html --targets gmail,outlook-2019 --width 640 --lang de
-tddr build emails --base-url https://cdn.example.com/emails   # every template email in a folder
-tddr check emails --max-warnings 0                             # the same diagnostics, nothing written
-tddr dev emails                                                # preview server, localhost:3100
-```
+### Other exports
 
-| Flag | Meaning |
-|---|---|
-| `-o, --out <path>` | Output file; for a folder, the output folder (default `dist/emails`). Without it a file build writes to stdout. |
-| `--targets`, `--width`, `--lang` | As the options above. |
-| `--css <file>` | Extra stylesheet (file builds, repeatable). |
-| `--allow-unsupported`, `--allow-svg` | `strict: false`, `allowSvg: true`. |
-| `--format text\|json\|sarif` | How diagnostics are said (default `text`). |
-| `--text` | Also write the [plain-text part](docs/support.md#plain-text-part), `<name>.txt` next to each HTML file (file builds need `-o`). |
-| `--file-name <pattern>` | Folder builds: output name from `[name]` and `[dialect]` (default `[name].[dialect].html`). |
-| `--no-verify` | Folder builds: skip the equivalence check. |
-| `--base-url <url>` | Folder builds and dev: where images are hosted; a build copies them to `<out>/assets`. |
-| `--port <n>`, `--host <h>` | Dev server address. |
-| `--max-warnings <n>` | `tddr check`: also exit 1 on more than `n` warnings. |
-| `--watch` | File builds (with `-o`) and checks: build again whenever the file or a `--css` file changes. |
-
-A file build prints each diagnostic to stderr as `file:line:col: severity CODE: message`, then
-`  hint: …`. A folder build adds the dialect after the place, and says a Vue email's diagnostic on
-an element at that element's `.vue` line; any other is said at the email's file, as its line is in
-the rendered page, not the component. The exit code is 1 when an error is reported (the output is
-still written, empty after E018, bar a folder build's template that fails its equivalence check or
-loses a field: E016, E012, E013) and 2 for usage errors.
-
-`--format json` prints the diagnostics to stdout instead, as a list of
-`{ file, line?, column?, code, severity, message, hint?, count, places, dialect? }`, and
-`--format sarif` as a SARIF 2.1.0 log for code scanning; anything else the build says moves to
-stderr, so a file build needs `-o`. A folder's email that wrote nothing is in it too, as an E019 at its file.
-
-`tddr check <file|dir>` builds as `tddr build` does, with its flags bar `-o`, `--text` and
-`--file-name`, and says the same diagnostics, but writes nothing; `--format json|sarif` goes to
-stdout. With `--watch` a file build or check keeps running, says each build's diagnostics and a
-line like `built out.html: 0 errors, 2 warnings`, and waits for the next change even after an
-error; for a folder, `tddr dev` does that.
-
-**Folder builds.** An emails folder holds one email per subfolder (`index.jsx` / `index.tsx`,
-`App.vue`) or per file (`welcome.jsx`, `digest.vue`), each default-exporting its component. Every
-`*.json` in an email's folder, or `<name>.json` / `<name>.*.json` beside a single file, is a data
-set. `tddr build emails` builds every email that declares
-`export const template = ["handlebars", "liquid"]`, once per dialect, and fills each data set with
-the real engine to compare against the HTML render (E016 on a difference). Local images are hosted
-under `--base-url` (E015 without one) unless every target shows `data:` images. Plain emails are
-skipped.
-
-**Dev server.** `tddr dev [dir]` (default `./emails`) shows source and compiled output side by side
-or as a difference overlay at any width, with editable data sets, diagnostics linked into both
-panes, the size against Gmail's clip and reload on save. Simulate shows the compiled frame as a
-stricter client would: without `<style>`, without `@media`, with images off or in an approximate
-forced dark; the code, size and Copy stay the real output. It uses the project's Vite config when
-there is one; without one it adds the Vue and Tailwind Vite plugins when they are installed. A `.vue`
-email no Vue plugin compiled fails with a message saying so.
-
-**Config.** `tddr build`, `check` and `dev` read `tddr.config.ts` (or `.mts`, `.js`, `.mjs`) from the
-current directory, not the input's folder. It sets `targets` and `width` for builds and `baseUrl` for
-folder builds and dev; a flag wins over it. Node (22.18 or later) loads a `.ts` config itself,
-stripping its types, so it can use only erasable TypeScript.
-
-```ts
-import { defineConfig } from "@krzys_s/tddr";
-
-export default defineConfig({ targets: ["gmail", "outlook-2019"], width: 640, baseUrl: "https://cdn.example.com/emails" });
-```
+- `toText(html, { template })` turns a compiled email into its plain-text part
+  ([how](docs/support.md#plain-text-part)).
+- `preview(html, props)`, `field(path)` and `writeString(text, dialect)` help with templates.
 
 ## React and Vue
 
-Components render a body fragment; td;dr owns the document. The email's CSS is whatever its module
-graph imports (plain CSS, `<style scoped>`, Tailwind through its Vite plugin).
+A component renders the email's body; td;dr writes the rest of the document. The CSS is whatever the
+component imports: plain CSS, `<style scoped>`, or Tailwind through its Vite plugin.
 
 ```jsx
+// emails/receipt.jsx
 import "./styles.css";
-export const template = ["handlebars", "liquid"]; // omit for a plain email
 export const lang = "en";
 
 export default function Receipt({ customer, order }) {
@@ -151,54 +167,85 @@ export default function Receipt({ customer, order }) {
 }
 ```
 
-In a template render props are symbolic: printing one writes a field, `.map` a loop, and `?:`,
-`&&`, `||`, `!`, comparisons, early returns and `switch` write conditional blocks; Vue's `v-if` /
-`v-for` work the same way. `@krzys_s/tddr/react` and `@krzys_s/tddr/vue` also export `If`, `ElseIf`, `Else`, `Each`
-and `render(Component, props)`; `@krzys_s/tddr/vite` exports the Vite plugin and `buildEmails`,
-`renderEmail` (the compiled `html` and its plain-text part, `text`), `createEmailServer`, `findEmails`.
+An `emails/` folder holds one email per file (`receipt.jsx`, `digest.vue`) or per subfolder
+(`index.jsx`, `index.tsx`, `App.vue`). Sample data goes in `receipt.json` (or `receipt.*.json` for
+several sets) beside a file, or in any `*.json` in an email's subfolder.
 
-## Support and limits
+**Preview.** `tddr dev` (default folder `./emails`) shows the source and the compiled email side by
+side, or one over the other as a difference, at any width. It has editable sample data, diagnostics
+that point into both panes, the size against Gmail's clip, and reload on save. *Simulate* shows the
+email as a stricter client would: without `<style>`, without `@media`, with images off, or in an
+approximate forced dark mode. It uses your project's Vite config if there is one; otherwise it adds
+the Vue and Tailwind Vite plugins when they are installed.
 
-- **Layout:** block flow with margin collapsing, centred `max-width` containers, flex rows and
-  columns (px, %, `calc(P% ± Npx)`, grow and content-sized items, `gap`, alignment, equal-height
-  cards, `order`), `flex-wrap` as fluid-hybrid columns that stack without media queries, simple
-  grids, `display: table`.
-- **Boxes and content:** padding, borders, radii, background colours, images and gradients (VML in
-  Outlook), bulletproof buttons, fluid and floated images, links around cards, lists, dividers.
-- **CSS:** the full cascade with `@layer`, nesting, `var()`, `@supports`, logical properties;
-  `calc()`, `clamp()` and `vw` resolved at the design width; modern colours lowered.
-- **Head styles:** `@media` width rules, `prefers-color-scheme: dark` and `:hover` become
-  `!important` class rules; web fonts stay, with an Outlook fallback.
-- **ESP templates:** Handlebars and Liquid output from the same React or Vue components, checked
-  against their data sets with the real engines ([templates](docs/templates.md)).
-- **Lint:** client support per target from caniemail data, accessibility, dark-mode risks, Gmail's
-  102,000-byte clip and 16 KB head-style limit.
-- **Refused by design:** positioning, transforms, animations, floats other than on images, negative
-  margins (except full-bleed bands), `%` padding, grid areas and spans, inline SVG (unless allowed),
-  media and form elements.
-- **Limits:** visual checks run in Chromium, Firefox and WebKit, real clients are checked by hand;
-  content-sized columns and fluid line breaks are approximations (W003); folder builds write ESP
-  templates only.
+**In your own code**, `@krzys_s/tddr/react` and `@krzys_s/tddr/vue` export `render(Component, props)`,
+and `@krzys_s/tddr/vite` exports `renderEmail` (the compiled `html` and its plain-text `text`),
+`buildEmails`, `createEmailServer`, `findEmails` and the Vite plugin.
 
-## Development
+## Templates for an email service
 
-`pnpm check` typechecks and runs the unit tests and golden fixtures; `pnpm test:visual`, `pnpm build`
-and `pnpm smoke` are described with the other commands in
-[architecture.md](docs/architecture.md#verification).
+To send through a service that fills in fields itself (Handlebars or Liquid), add one line to the
+component:
 
-The tarball holds `dist/`, `LICENSE`, `NOTICE`, `README.md` and `package.json`. To try a local build
-in another project, `pnpm build && pnpm pack`, then add the `.tgz` there. The `@krzys_s/tddr/react`,
-`@krzys_s/tddr/vue` and `@krzys_s/tddr/vite` types import their framework's types (`@types/react`, Vue with the `DOM`
-lib, `@types/node`).
+```jsx
+export const template = ["handlebars", "liquid"];
+```
+
+Now the props are placeholders instead of values: printing `{customer.firstName}` writes a field,
+`.map` writes a loop, and `?:`, `&&`, `||`, `!`, comparisons, early returns and `switch` write
+conditional blocks. Vue's `v-if` and `v-for` work the same way. For anything plain code can't
+express, `@krzys_s/tddr/react` and `@krzys_s/tddr/vue` also export `If`, `ElseIf`, `Else` and `Each`.
+
+`tddr build emails` writes each such email once per template language, `receipt.handlebars.html`
+and `receipt.liquid.html`. Then it fills every sample data set with the real Handlebars and Liquid
+engines and checks the result matches the component's own render (error E016 if not). Local images
+need `--base-url`, where they will be hosted (E015 without it); the build copies them to `<out>/assets`.
+Emails without `export const template` are skipped by folder builds.
+
+The full rules are in [Templates](docs/templates.md).
+
+## What it supports
+
+- **Layout:** normal block flow (with margin collapsing), centred `max-width` containers, flex rows
+  and columns (px, %, `calc(P% ± Npx)`, grow, `gap`, alignment, equal-height cards, `order`),
+  `flex-wrap` as columns that stack on small screens without media queries, simple grids,
+  `display: table`.
+- **Boxes and content:** padding, borders, rounded corners, background colours, images and
+  gradients (also in Outlook), bulletproof buttons, fluid and floated images, linked cards, lists,
+  dividers.
+- **CSS:** the full cascade with `@layer`, nesting, `var()`, `@supports` and logical properties.
+  `calc()`, `clamp()` and `vw` are worked out at the design width; modern colour syntax is converted.
+- **Responsive and dark mode:** `@media` width rules, `prefers-color-scheme: dark` and `:hover` go
+  into the head `<style>`; web fonts stay, with a fallback for Outlook.
+- **Checks:** client support per target (from caniemail.com data), accessibility, dark-mode risks,
+  Gmail's 102,000-byte clip and its 16 KB limit on head styles.
+- **Refused on purpose**, because email clients can't do them reliably: positioning, transforms,
+  animations, floats (except on images), negative margins (except full-width bands), `%` padding,
+  grid areas and spans, inline SVG (unless allowed), video, audio and forms.
+- **Approximate:** columns sized by their content and line breaks in fluid layouts (warning W003).
+
+Every detail, client by client, is in [Support and limits](docs/support.md).
+
+## Status
+
+td;dr is at 0.x: options, diagnostics and output may change between minor versions (see
+[CHANGELOG.md](CHANGELOG.md)). Output is checked by golden tests and rendered in Chromium, Firefox
+and WebKit; real email clients are checked by hand. Behaviour not yet confirmed in a real client is
+marked **unverified** in [Support and limits](docs/support.md), Outlook's Word engine included.
 
 ## Documentation
 
-- [Support and limits](docs/support.md): layout, CSS, head styles, images and fonts, the email
-  shell, Outlook and MSO, size limits, client data, every diagnostic code.
-- [Templates](docs/templates.md): authoring, dialects, condition semantics, the equivalence check.
-- [Architecture](docs/architecture.md): pipeline, IR phases, modules, design decisions,
-  verification.
+- [Command line](docs/cli.md): every command and flag, output formats, exit codes.
+- [Support and limits](docs/support.md): layout, CSS, head styles, images and fonts, Outlook,
+  size limits, client data, every diagnostic code.
+- [Templates](docs/templates.md): writing template emails, Handlebars and Liquid, how conditions
+  translate, the equivalence check.
+- [Architecture](docs/architecture.md): how the compiler works inside, and how it is tested.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Security issues: [SECURITY.md](SECURITY.md).
 
 ## License
 
-MIT, see `LICENSE`. Contains data from caniemail.com (MIT License), see `NOTICE`.
+MIT, see [LICENSE](LICENSE). Contains data from caniemail.com (MIT License), see [NOTICE](NOTICE).
