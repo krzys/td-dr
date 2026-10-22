@@ -38,7 +38,7 @@ Write `email.html` the way you would for a browser:
 Compile it:
 
 ```sh
-npx tddr build email.html -o out.html
+npx @krzys_s/tddr build email.html -o out.html
 ```
 
 ```
@@ -78,6 +78,10 @@ Install only the extras you use:
 | Checking Handlebars or Liquid output, previews filled by the real engine | `handlebars`, `liquidjs` |
 
 ## Command line
+
+The package installs a `tddr` command. Run it from a `package.json` script, or as `npx tddr` in a
+project that has the package installed; elsewhere, use `npx @krzys_s/tddr`, since `npx tddr` would
+look for a different package named `tddr`.
 
 ```sh
 tddr build email.html -o out.html          # compile one file
