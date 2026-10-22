@@ -15,6 +15,11 @@ pnpm check   # typecheck, unit tests and golden fixtures
 [Verification](docs/architecture.md#verification) lists every command and what each one proves;
 [architecture.md](docs/architecture.md) describes the pipeline.
 
+To try a local build in another project, `pnpm build && pnpm pack`, then add the `.tgz` there. The
+tarball holds `dist/`, `LICENSE`, `NOTICE`, `README.md` and `package.json`. The
+`@krzys_s/tddr/react`, `@krzys_s/tddr/vue` and `@krzys_s/tddr/vite` types import their framework's
+types (`@types/react`, Vue with the `DOM` lib, `@types/node`).
+
 ## Changing output
 
 Every fixture in `test/fixtures/` compiles to exactly its `expected.html` and `diagnostics.json`.
